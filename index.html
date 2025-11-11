@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrato de Orden de Prestación de Servicos</title>
+    <!-- Incluyendo Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos para los campos de rellenar (inline) - AHORA contenteditable */
+        .fill-in {
+            display: inline-block;
+            border: none;
+            border-bottom: 1px solid #333;
+            padding: 0 4px;
+            margin: 0 4px;
+            min-width: 150px;
+            background-color: transparent;
+            font-family: inherit;
+            font-size: inherit;
+            cursor: text; /* Añadido */
+        }
+        .fill-in:focus {
+            outline: none;
+            border-bottom: 2px solid #3b82f6;
+        }
+        .fill-in-long {
+            min-width: 300px;
+        }
+        .fill-in-short {
+            min-width: 80px;
+        }
+
+        /* Estilos para campos de formulario estándar */
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #D1D5DB; /* gray-300 */
+            border-radius: 0.375rem; /* rounded-md */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            background-color: white;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #3B82F6; /* blue-500 */
+            box-shadow: 0 0 0 1px #3B82F6; /* ring-blue-500 */
+        }
+        
+        /* --- INICIO DE NUEVOS ESTILOS --- */
+        
+        /* Ajuste para que los campos de formulario sean editables y crezcan */
+        .form-input[contenteditable="true"] {
+            min-height: 2.5rem; /* Asegura altura mínima igual al input */
+            cursor: text;
+        }
+
+        /* Estilos para simular 'placeholder' en elementos contenteditable */
+        [contenteditable="true"]:empty:before {
+            content: attr(data-placeholder);
+            color: #9CA3AF; /* Tailwind gray-400 */
+            font-style: italic;
+            pointer-events: none; /* Permite hacer clic "a través" del placeholder */
+            display: inline-block;
+        }
+
+        /* Estilo para los placeholders con texto pequeño */
+        .placeholder-text-xs:empty:before {
+            font-size: 0.75rem; /* text-xs */
+        }
+        
+        /* --- FIN DE NUEVOS ESTILOS --- */
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            color: #374151; /* gray-700 */
+        }
+
+        /* Estilos de impresión */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: #fff;
+                margin: 0;
+                padding: 0;
+            }
+            .page-container {
+                box-shadow: none !important;
+                margin: 0 !important;
+                border: none !important;
+                max-width: 100% !important;
+            }
+            /* Evitar saltos de página dentro de secciones clave */
+            .no-break {
+                page-break-inside: avoid;
+            }
+
+            /* Asegura que los campos editables se vean bien al imprimir */
+            [contenteditable="true"] {
+                border-color: #D1D5DB !important; /* Mantiene bordes */
+            }
+            .fill-in[contenteditable="true"] {
+                border-bottom: 1px solid #333 !important; /* Mantiene la línea inferior */
+            }
+            .form-input[contenteditable="true"] {
+                border: 1px solid #D1D5DB !important; /* Mantiene el borde en .form-input */
+            }
+        }
+
+        /* Estilos para el contrato */
+        .clausula-titulo {
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .clausula-contenido {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+        ol.lista-alpha li {
+            margin-bottom: 0.5rem;
+            text-align: justify;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div class="page-container container mx-auto max-w-4xl bg-white shadow-lg rounded-lg my-10 p-10">
+        
+        <!-- Encabezado -->
+        <div class="flex items-start justify-between gap-4 mb-4 pb-4 border-b border-gray-300">
+            <div class="flex-shrink-0">
+                <img src="https://i.postimg.cc/VNSN6KgD/LOGO-OK.png" alt="LOGO-OK" class="h-20">
+            </div>
+            <div class="text-center flex-grow">
+                <h1 class="text-lg font-bold text-gray-800">TRANSPORTES DE HIDROCARBUROS DE COLOMBIA SAS</h1>
+                <h2 class="text-lg font-medium text-gray-700">CONTRATO DE ORDEN DE PRESTACIÓN DE SERVICIOS</h2>
+            </div>
+            <div class="flex-shrink-0">
+                <label class="form-label text-sm">CONTRATO N°</label>
+                <!-- CAMBIO: de <input> a <div> contenteditable -->
+                <div contenteditable="true" class="form-input placeholder-text-xs" data-placeholder="DIGITA PLACA DE VEHÍCULO"></div>
+            </div>
+        </div>
+        
+        <p class="text-sm font-bold text-center mb-6">
+            CELEBRADO ENTRE TRANSHICOL S.A.S CON NÚMERO DE IDENTIFICACIÓN TRIBUTARIA 900.454.872-9 Y, 
+            <!-- CAMBIO: de <input> a <span> contenteditable y se añadió la clase 'contratista-nombre' -->
+            <span contenteditable="true" class="fill-in fill-in-long contratista-nombre" data-placeholder="Nombre completo del contratista"></span>
+            PARA LA PRESTACIÓN DE SERVICIO DE TRANSPORTE DE CARGA TERRESTRE
+        </p>
+
+        <!-- Disposiciones Generales -->
+        <section class="mb-6 no-break">
+            <h3 class="clausula-titulo text-center">DISPOSICIONES GENERALES</h3>
+            <p class="clausula-contenido">
+                <strong>TRANSHICOL S.A.S, NIT 900.454.872-9</strong>, representada legalmente por-: <strong>SANTOS VELANDIA MENDIVELSO</strong>, Identificado con cedula de ciudadanía <strong>N°4.255.924 de Socotá (Boyacá)</strong>, y de otro lado 
+                <!-- CAMBIO: de <input> a <span> contenteditable y se añadió la clase 'contratista-nombre' -->
+                <span contenteditable="true" class="fill-in contratista-nombre" data-placeholder="Nombre completo contratista"></span>, identificado con 
+                <span contenteditable="true" class="fill-in" data-placeholder="Tipo de ID" style="min-width: 80px;"></span>
+                N° <span contenteditable="true" class="fill-in" data-placeholder="No. de identificación"></span> de 
+                <span contenteditable="true" class="fill-in" data-placeholder="Lugar de expedición"></span> y domiciliado en 
+                <span contenteditable="true" class="fill-in fill-in-long" data-placeholder="Dirección completa"></span> en 
+                <span contenteditable="true" class="fill-in" data-placeholder="Ciudad"></span>; teléfono móvil 
+                <span contenteditable="true" class="fill-in" data-placeholder="Teléfono"></span> email: 
+                <span contenteditable="true" class="fill-in" data-placeholder="Email del contratista"></span>, 
+                actuando en nombre propio, Se reconocen los reunidos con la capacidad civil necesaria para contratar y obligarse y, en especial, para otorgar el presente documento y a tal efecto, actuando ambos en su propio nombre y derecho, de su concorde voluntad, dicen, pactan y se regirán por las siguientes:
+            </p>
+        </section>
+
+        <!-- Consideraciones -->
+        <section class="mb-6 no-break">
+            <h3 class="clausula-titulo text-center">CONSIDERACIONES</h3>
+            <p class="clausula-contenido">
+                <strong>Primero.</strong> TRANSHICOL S.A.S, Tiene como actividad principal las actividades de transporte terrestres de carga, en su calidad requiere de los SERVICIOS que son prestados por EL (LA) CONTRATISTA.
+            </p>
+            <p class="clausula-contenido">
+                <strong>Segundo.</strong> EL (LA) CONTRATISTA conoce y acepta las condiciones y especificaciones de las actividades jurídicas y de lo que su objeto social se deriva y se encuentra en capacidad de prestar y ejecutar los SERVICIOS previstos en el CONTRATO.
+            </p>
+            <p class="clausula-contenido">
+                <strong>Tercero.</strong> Este contrato es de naturaleza comercial en los términos del art 981 y s.s. del C. Comercio e increpa el fundamento legal de indemnidad para efectos de terceros.
+            </p>
+        </section>
+
+        <!-- Términos y Condiciones -->
+        <section class="mb-6 no-break">
+            <h3 class="clausula-titulo text-center">TÉRMINOS Y CONDICIONES DEL CONTRATO</h3>
+            <p class="clausula-titulo">Objeto:</p>
+            <p class="clausula-contenido">
+                EL CONTRATISTA en su calidad de Independiente, se obliga para con EL CONTRATANTE a ejecutar las responsabilidades y demás actividades propias del servicio contratado, el cual debe realizar de conformidad con las condiciones y Cláusulas del presente documento y que consistirá en el transporte de carga terrestre junto con el íntegro cumplimiento de las condiciones, calidad, seguridad y trasparencia según la asignación de la ruta indicada por el CONTRATANTE.
+            </p>
+            
+            <p class="clausula-titulo">Primero. EN GENERAL:</p>
+            <p class="clausula-contenido">
+                garantizar la prestación del servicio con calidad, eficiencia reunión condiciones personales optimas y características humanas sobresalientes en cuanto a relaciones interpersonales, responsabilidad seriedad, criterio, honorabilidad, presentación personal, capacidad de manejo, conocimiento y utilización de los elementos puestos a su servicio para la ejecución de su labor.
+                <br><br>
+                <em class="text-sm">El transporte es un contrato por medio del cual una de las partes se obliga para con la otra, a cambio de un precio, a conducir de un lugar a otro, por determinado medio y en el plazo fijado, personas o cosas y entregar éstas al destinatario.</em>
+            </p>
+
+            <p class="clausula-titulo">Segundo. Individualización del vehículo:</p>
+            <p class="clausula-contenido">
+                La individualización detallada del vehículo con cuyo rodante se llevará a cabo la ejecución del presente contrato, se describe así:
+            </p>
+            <!-- Formulario del Vehículo -->
+            <div class="grid grid-cols-2 gap-x-6 gap-y-4 p-4 border rounded-lg bg-gray-50 no-break">
+                <div>
+                    <label class="form-label font-semibold">TIPO</label>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input" data-placeholder="Ej: TRACTOCAMION"></div>
+                </div>
+                <div>
+                    <label class="form-label font-semibold">PLACAS</label>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input" data-placeholder="DIGITA PLACA"></div>
+                </div>
+                <div>
+                    <label class="form-label font-semibold">MARCA</label>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input" data-placeholder="Ej: KENWORTH"></div>
+                </div>
+                <div>
+                    <label class="form-label font-semibold">COLOR</label>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input" data-placeholder="Ej: ORO VERDE"></div>
+                </div>
+                <div>
+                    <label class="form-label font-semibold">LINEA</label>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input" data-placeholder="Ej: T800"></div>
+                </div>
+                <div>
+                    <label class="form-label font-semibold">MODELO</label>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input" data-placeholder="Ej: 2014"></div>
+                </div>
+                <div>
+                    <label class="form-label font-semibold">N° MOTOR</label>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input" data-placeholder="Ej: 79652318"></div>
+                </div>
+                <div>
+                    <label class="form-label font-semibold">N° CHASIS</label>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input" data-placeholder="Ej: 717898"></div>
+                </div>
+                <div class="col-span-2 mt-2 border-t pt-2">
+                    <label class="form-label font-semibold">MARCA TRAILER</label>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input" data-placeholder="Ej: AMERICAN TRUCKS SAS"></div>
+                </div>
+                <div>
+                    <label class="form-label font-semibold">PLACA DEL TRAILER</label>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input" data-placeholder="Ej: S76733"></div>
+                </div>
+                <div>
+                    <label class="form-label font-semibold">COLOR DEL TRAILER</label>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input" data-placeholder="Ej: PLATEADO"></div>
+                </div>
+            </div>
+            
+            <p class="clausula-titulo">Tercero. Propiedad del vehículo:</p>
+            <p class="clausula-contenido">
+                el CONTRATISTA exhibe la tarjeta de propiedad del rodante en igual modo se entiende de buena fe, que el vehículo automotor se encuentra en posesión y/o tenencia de este, manifestando con la suscripción de este contrato ser pacifica e interrumpida y que es autónomo para contraer obligaciones.
+            </p>
+
+            <p class="clausula-titulo">Cuarto. Valor del Contrato y Forma de pago:</p>
+            <p class="clausula-contenido">
+                Este se fija conforme a los valores consignado en el manifiesto de carga según la ruta estipulada, el 1% en la retención en la fuente; el $10*1000$ en ICA; 1.5% en gastos administrativos y otros, para el pago de los impuestos derivados de la ejecución del presente contrato. El precio comprende todo los costos directos e indirectos derivados de la ejecución del contrato y que hacen parte del objeto contractual, incluye entre otros, los equipos, las herramientas, materiales e impuestos a cargo del CONTRATISTA, las deducciones a que haya lugar y en general todo costoso soportados en que incurra el CONTRATISTA para la normal ejecución contractual. 
+                <strong>Parágrafo:</strong> el CONTRATISTA podrá solicitar anticipos sobre el servicio prestado (valor manifiesto de carga), que en ninguna caso será superior al cincuenta por ciento (50%) del (valor manifiesto de carga) el saldo final que quede al favor del CONTRATISTA, será cancelado dentro de los siguientes noventa días (90) calendario, a la posterior entrega del destinatario, previa satisfacción de las partes, no sin antes verificar por él CONTRATANTE la vigencia del pago de la seguridad social del conductor que designe él CONTRATISTA así como aquellos emolumentos de carácter laboral a que haya lugar.
+            </p>
+
+            <p class="clausula-titulo">Quinto. Duración o Plazo:</p>
+            <p class="clausula-contenido">
+                este contrato tiene vigencia de acuerdo a obra labor contratada según prestación del servicio solicitado.
+            </p>
+
+            <p class="clausula-titulo">Sexto. Obligaciones del CONTRATISTA:</p>
+            <p class="clausula-contenido">
+                A cumplir de forma eficiente, oportuna y de buena fe el objeto contractual estipulado y aquellas obligaciones que se deriven del mismo de acuerdo with la naturaleza y la actividad comercial pura y simple del CONTRATANTE y de las que aquí se preceptúan, así:
+            </p>
+            <ol class="list-decimal list-inside space-y-2 text-sm pl-4">
+                <li>evitar dilaciones y/o aplazamientos que puedan afectar directa o indirectamente el desarrollo normal del contrato.</li>
+                <li>Elaborar y rendir informes que sean requeridos.</li>
+                <li>Acatar las recomendaciones que le sean impartidas para el cabal cumplimiento contractual.</li>
+                <li>prohibido utilizar la información para sí o para interpuesta persona y/o tercero en beneficio u provecho que por la naturaleza propia de la ejecución contractual lleve a sus manos o pueda ser percibida por los sentidos.</li>
+                <li>mantener bajo absoluta reserva la información que sea de exclusiva propiedad del CONTRATANTE o sus designatarios, así como los de las Operadoras y/o clientes del CONTRATANTE.</li>
+                <li>Cumplir inequívocamente con los derechos laborales que se deriven con sus conductores que designe entre tanto se aclara que las afiliaciones al régimen de seguridad social integral de los conductores que designe deberé ser coherente con el transporte terrestre de hidrocarburos o similares.</li>
+                <li>A mantener un buen trato al personal en general que esté a cargo o represente a él CONTRATANTE.</li>
+                <li>A cumplir integralmente con los E.P.P. acorde con las exigencias propias del cliente del CONTRATANTE y de este último también, ya sea para sí o para el personal que dote para el cabal cumplimiento del objeto contractual.</li>
+                <li>cumplir cabalmente con la ruta y durante el período indicado.</li>
+                <li>Acatar de manera inequívoca con los protocolos de Higiene y seguridad, así como los horarios previstos por los clientes del CONTRATANTE y de este último también.</li>
+                <li>Acatar de manera inequívoca con los pre operacionales, los A.S.T. y todos aquellos exigidos por el cliente del CONTRATANTE y de este último también.</li>
+                <li>garantizar que el vehículo este en las condiciones óptimas e idóneas para la plena ejecución contractual, en llantas, extintores, equipo de carretera, licencias, permisos, etc.</li>
+                <li>se obliga a recibir, conducir y entregar a su destinatario el bien o servicio que el CONTRATANTE le encargue en las mismas condiciones en que las recibió en los lugares y tiempos determinados por el CONTRATANTE o los clientes de este último.</li>
+                <li>si por alguna eventualidad se extraviara el manifiesto de carga y/o guía de transporte o similar, deberá informar a la autoridad competente (por medio denuncia) y una vez agotado lo anterior informar a él CONTRATANTE.</li>
+                <li>A tener registrado el vehículo automotor de carga ante el Ministerio de Transporte donde tenga el domicilio principal, portar en todo momento y lugar la correspondiente tarjeta de registro.</li>
+                <li>A estar debida registrado ante el RUNT.</li>
+                <li>A informar de manera inmediata en el término de la distancia y las posibilidades de los acontecimientos, siniestros viales y/o cualquier novedad que afecte la seguridad, bienes e integridad física y patrimonial de las partes suscribientes.</li>
+                <li>Acatar de manera inequívoca las legislación, reglamentación y señales tránsito.</li>
+                <li>A tomar rutas alternas o su arbitrio.</li>
+                <li>A cumplir a cabalidad con los puestos de control que disponga el CONTRATANTE de acreditarse operativos de alerta ente el incumplimiento injustificado esta novedad dará lugar a descuentos Autorizados de los valores incurridos en el operativo citado, que le serán deducidos de la liquidación conforme al valor del manifiesto de carga.</li>
+                <li>A contar con aparatos y/o medios de comunicación y ubicación (G.P.S) idóneos exigidos por los clientes del CONTRATANTE y de este último también.</li>
+                <li>Acatar de manera inequívoca el peso máximo permitido, así como las dimensiones de la mercancía (carga) si fuera el caso y el CONTATISTA fuera objeto de multas y/o sanciones conforme a lo establecido en el marco normativos- Leyes 105/1993, 336/1996, Resoluciones 4100/2014 y 1787/2009 del Mintransporte el CONTRATANTE repetirá civilmente en las sumas que equivalgan las multas, y el CONTRATISTA autoriza el descuento de la liquidación final del contrato, empero, y si el saldo no fuera suficiente para cubrir los valores objeto de multa este repetirá en la jurisdicción civil para cobrar dicha sumas.</li>
+                <li>A hacerse responsable inexorablemente y en todo contexto de la carga una vez sale del sitio de cargue hasta el remitente o destino final.</li>
+                <li>A no incurrí en abondo de la carga y en caso de siniestro acudir a las autoridades de carretera para evitar dilapidación o hurto de los fluidos peligrosos.</li>
+                <li>A Gestionar y/o facilitar en todo momento y lugar el transbordo del producto en caso de que el vehículo se vea comprometido en su rodamiento o funcionamiento, así como asumir los gastos que de esta novedad sobrevenga.</li>
+                <li>a tomar los seguros de accidente personales, para los trayectos (rutas) contratados, autorizando al CONTRATANTE para descontar contra el pago del servicio contratado los correspondientes valores por las primas respectivas.</li>
+                <li>Acepta y conviene en caso de que el bien o servicio (producto) refleje faltantes, averías, daños, saqueos, pérdida total o parcial u otro, autoriza a Descontar de la liquidación conforme al valor del manifiesto de carga.</li>
+                <li>A entregar un listado con los talleres autorizados para la revisión y mantenimiento correctivo y preventivo del vehículo (s).</li>
+                <li>asumir el costo de todos los impuestos, tasas y contribuciones que se deriven de la ejecución del presente contrato.</li>
+                <li>A mantener vigente las pólizas de responsabilidad civil contractual y extracontractual, manejo de hidrocarburos y demás que se requieran para el cabal cumplimiento inherente al objeto contractual.</li>
+                <li>Aportar la certificación vigente de disposición final de residuos derivados del bien o servicio transportado conforme a las políticas ambientales para la gestión integral de residuos o desechos peligrosos.</li>
+            </ol>
+            <p class="clausula-contenido mt-2">
+                <strong>Parágrafo Primero: Diligenciamiento de Remesas y Cumplidos:</strong> el CONTRATISTA se obliga a diligenciar en forma adecuada las planillas y reportes como son los reportes de entrega, diligenciando clara e inequívocamente los nombres, teléfonos, razón social del cliente al que se le presto el servicio, dicha Omisión acarreará la retención del pago contractual hasta tanto no se cumpla con este ítem.
+            </p>
+            <p class="clausula-contenido">
+                <strong>Parágrafo Segundo: prohibiciones especiales:</strong> 
+                1).-_transportar personas, sustancias, productos, bien o servicios distinto al esgrimido en la guía de transporte y a los esbozados en el objeto contractual.
+                2).-conducir el vehículo en estado de alicoramiento o bajo alguna sustancia sicoactiva catalogada por la legislación colombiana como ilegal, o en incapacidad física o mental ya sea relativa.
+                3).- ceder el vehículo a persona distinta sin la autorización debida. 
+                4).- sustraerse de portar (todos) los documentos debidos y concernientes al transporte de carga de hidrocarburos o sus derivados.
+                5).- vulnerar los marcos normativos contenidos en los decreto o resoluciones- D/to 2685/1999, D/to 333/1991, Ley 769/2002 y demás normas concordantes y análogas.
+                6).- transitar en horarios y rutas no establecidas.
+                7).- transportar pasajeros, en la parte posterior o cabina excepcionando el escolta asignados siempre que esté debidamente autorizado.
+            </p>
+
+            <p class="clausula-titulo">Séptimo. Autorizaciones especiales del CONTRATISTA:</p>
+            <ol class="list-decimal list-inside space-y-2 text-sm pl-4">
+                <li>contar con un seguro para cubrir los riesgos derivados de la ejecución de la actividad.</li>
+                <li>que él CONTRATANTE a tratamiento de manejo de datos personales tanto del conductor designado como del CONTRATISTA.</li>
+                <li>a descontar sumas económicas por concepto de multas, comparendos, sanciones, perdida o avería del producto bien o servicio transportado, gastos de recuperación del salvamento, transbordo de faltantes y demás gastos que se generen asumiendo así la obligación económica y legal de dicho incumplimiento.</li>
+                <li>a que en cualquier momento y lugar se pueda realizar auditorías en la ejecución del cumplimiento contractual tanto al conductor designado por el CONTRATISTA como a este último.</li>
+                <li>A que cuando el CONTRATANTE lo considere llevar a cabo pruebas invasivas de alcoholimetría o de polígrafo u otras análogas relacionadas con al ejecución del objeto contractual.</li>
+                <li>a que se le descuente los valores por perjuicios materiales que resulten en la mora y/o retraso injustificado en la entrega del producto bien o servicio.</li>
+                <li>que se retenga o descuente a título de garantía del seis por ciento (6%) de los pagos que se le adeuden hasta tanto se verifique el cumplimento total de las acreencias laborales (salarios, prestaciones sociales y seguridad social) que hubiera lugar para con él o (los) conductor(es) a cargo de este.</li>
+            </ol>
+            
+            <p class="clausula-titulo">Octavo. Derechos del CONTRATISTA:</p>
+            <p class="clausula-contenido">
+                la operación de cargue y descargue la realiza el remitente y/o destinario en su orden., en ningún caso estos eventos correrán por cuenta del conductor y/o propietario del Vehículo, o estarán incluidos en el contrato, salvo acuerdo escrito en contrario.
+            </p>
+
+            <p class="clausula-titulo">Noveno. Obligaciones del CONTRATANTE:</p>
+            <ol class="list-decimal list-inside space-y-2 text-sm pl-4">
+                <li>A pagar en la forma estipulada el valor del contrato dentro de los términos esgrimidos.</li>
+                <li>suministrar al contratista antes del despacho, los informes y documentación necesaria para el cabal cumplimiento del transporte del producto, al igual que las formalidades propias de policía, aduana, sanidad, y condiciones de consumo.</li>
+                <li>Elevar denuncias de carácter penal ante la novedad de pérdida del producto y/o del vehículo automotor propiamente dicho o ante cualquier irregularidad que adecua una querella penal.</li>
+                <li>A prestar apoyo oportunamente a él CONTRATISTA ante novedades como atascamiento(s), avería(s), volcamiento(s), problemas mecánicos severo(s) siempre que se encuentre en la ejecución de un recorrido.</li>
+                <li>diligenciar los reportes requeridos por la UIAF, ROS, SARLAFT y demás respetivos y requeridos.</li>
+                <li>supervisar por sí o por interpuesta persona la plena y correcta ejecución del contrato.</li>
+                <li>A realizar auditorías y/o inspección de HSEQ a los vehículos previo a generar la orden de cargue del producto o cuando se considere pertinente.</li>
+                <li>A levantar pliego de incumplimiento contractual siempre que se acredite la causal.</li>
+            </ol>
+
+            <p class="clausula-titulo">Décimo. Supervisión:</p>
+            <p class="clausula-contenido">
+                EL CONTRATANTE o sus delegados podrá supervisar y/o auditar la correcta ejecución del contrato y podrá formular las observaciones y correcciones del caso, para ser analizadas conjuntamente con EL CONTRATISTA.
+            </p>
+
+            <p class="clausula-titulo">Undécimo. Independencia:</p>
+            <p class="clausula-contenido">
+                EL CONTRATISTA actuará inexorablemente por su cuenta y riesgo, con autonomía y sin que exista relación laboral, y por consiguiente tampoco subordinación con EL CONTRATANTE. Sus derechos se limitarán por la naturaleza propia del CONTRATO a exigir el cumplimiento de las obligations del CONTRATANTE y el pago oportuno del pago fijado en la cláusula tercera fijada en este documento.
+            </p>
+
+            <p class="clausula-titulo">Cuarto. Exclusión de la relación laboral:</p> <!-- Nota: El PDF repite "Cuarto" -->
+            <p class="clausula-contenido">
+                el presente contrato no genera relación laboral alguna con EL CONTRATISTA en consecuencia tampoco el pago de prestaciones sociales y de ningún tipo de emolumentos distintos al valor acordado en la cláusula cuarta., De otro lado, EL CONTRATISTA se compromete a garantizar los derechos mínimos laborales del personal que contrate para la plena y correcta ejecución del contrato, Es una obligación inherente del CONTRATISTA mantener los salarios del personal asignado al contrato sean cancelados oportunamente EL CONTRATISTA acreditará el pago de la seguridad social integral de sus delegatarios, así como los comprobantes de nómina respectivos, en caso de mora en el pago de prestaciones sociales y/o salarios, se aplicara la cláusula sexta atinente al caso.
+            </p>
+
+            <p class="clausula-titulo">Quinto. Indemnidad DEL CONTRATANTE:</p> <!-- Nota: El PDF repite "Quinto" -->
+            <p class="clausula-contenido">
+                EL CONTRATISTA mantendrá indemne al CONTRATANTE con todo reclamo, demanda, acción legal (laboral, penal, administrativa, disciplinaria, policiva y demás) y/o costos que pueda causar o surgir por daños o lesiones a personas o bienes ocasionados por el CONTRATISTA durante la ejecución del objeto y obligaciones del contrato, si como a terceros reclamantes.
+                <strong>Parágrafo Primero:</strong> en caso de que se formule reclamo, demanda o acción legal contra ÉL CONTRATANTE por asuntos, que según el contrato sean de responsabilidad del CONTRATISTA se le correrá traslado de tal situación para que por su cuenta adopte oportunamente las medidas previstas por la Ley para mantener indemne ÉL CONTRATANTE y adelante los trámites para llegar a un arreglo del conflicto.
+            </p>
+
+            <p class="clausula-titulo">Duodécimo. Suspensión:</p>
+            <p class="clausula-contenido">
+                La suspensión del contrato podrá ser total o parcialmente por las siguientes razones: (i) solicitud de autoridad competente; (ii) por TRANSHICOL SAS mediante notificación escrita con por lo menos tres (3) días de antelación a la fecha que se requiera dicha suspensión; (iii) por FUERZA MAYOR, CASO FORTUITO y HECHOS DE TERCEROS. Sin que las anteriores generen lugar a indemnización alguna.
+            </p>
+
+            <p class="clausula-titulo">Sexto. Terminación del contrato:</p> <!-- Nota: El PDF repite "Sexto" -->
+            <p class="clausula-contenido">
+                las partes podrán dar por terminado el CONTRATO antes del vencimiento por las siguientes razones:
+                <ol class="list-alpha list-inside pl-4">
+                    <li>Por mutuo acuerdo.</li>
+                    <li>Por liquidación, cesación de pagos, disolución, o por notoria insolvencia.</li>
+                    <li>Cuando se presente un notorio incumplimiento a las cláusulas esgrimidas por parte del CONTRATISTA sin que pueda reclamar indemnización alguna por parte del incumplido.</li>
+                    <li>Por el solo hecho acreditado de incumplimiento de cualquiera de las obligaciones previstas en el CONTRATO.</li>
+                </ol>
+            </p>
+            
+            <p class="clausula-titulo">Decimotercero. Cesión:</p>
+            <p class="clausula-contenido">
+                EL CONTRATISTA no podrá ceder parcial ni totalmente la ejecución del presente contrato a un tercero, sin la previa, expresa y escrita autorización de EL CONTRATANTE.
+            </p>
+
+            <p class="clausula-titulo">Decimocuarto. Cláusula Penal:</p>
+            <p class="clausula-contenido">
+                si ÉL CONTRATISTA dejare de incumplir con las obligaciones contraídas derivadas del objeto del contrato o se declare la caducidad del mismo EL CONTRATANTE hará efectiva una sanción pecuniaria por una suma equivalente al diez por ciento (10%) del valor del contrato, por los posibles perjuicios que en razón al incumplimiento puedan causar a la Empresa, con forme al procedimiento establecido por la ley. Y este pacto contractual, que serán exigidos con la sola presentación de la acción judicial (civil) pertinente. 
+                <strong>Parágrafo Primero:</strong> Dichas sumas serán canceladas dentro de los treinta (30) días siguientes al incumplimiento declarado EL CONTRATANTE, para lo cual ÉL CONTRATISTA autoriza al CONTRATANTE a cobrar dichas sumas por la vía ejecutiva, en razón a que este contrato presta merito ejecutivo de conformidad con el art 422 y siguientes del C.G.P.
+                <strong>Parágrafo Segundo:</strong> ÉL CONTRATISTA renuncia expresamente a todo requerimiento para efectos de constitución en mora, reservándose el derecho a cobrar perjuicios adicionales por encima del monto pactado, siempre que los mismo de acrediten.
+            </p>
+
+            <p class="clausula-titulo">Decimoquinto. Integridad y Divisibilidad:</p>
+            <p class="clausula-contenido">
+                los encabezados en el texto de este CONTRATO solo sirven como referencia y no podrán ser tenidos en cuenta para fines de interpretar y hacer cumplir este contrato. 
+                <strong>PARÁGRAFO:</strong> si cualquier disposición del CONTRATO fuese declaro ineficaz, nula o inexistente o no pudiera hacerse exigible de conformidad con las leyes de la República de Colombia las disposiciones restantes no se entenderán invalidas a menos, que el CONTRATO no se pueda ejecutar sin la disposición ineficaz, nula o inexistente o inexigible.
+            </p>
+
+            <p class="clausula-titulo">Decimosexto. Anexos:</p>
+            <p class="clausula-contenido">
+                ÉL CONTRATSITA declara que se le divulgó en debida forma y tiene pleno convencimiento y conocimiento de los anexos adjuntos.
+            </p>
+
+            <p class="clausula-titulo">Decimoséptimo. Legislación aplicable y Perfeccionamiento:</p>
+            <p class="clausula-contenido">
+                EL CONTRATO se regirá y será interpretado conforme a las leyes de la república de colombiana., y se entiende perfeccionado con la firma de las partes.
+            </p>
+
+            <p class="clausula-titulo">Decimoctavo. Domicilio:</p>
+            <p class="clausula-contenido">
+                para todos los efectos legales y fiscales las partes acuerdan como domicilio contractual el Municipio de Yopal Casanare, donde para constancia se firma a los
+                <!-- CAMBIO: de <input> a <span> contenteditable -->
+                <span contenteditable="true" class="fill-in fill-in-short" data-placeholder="Día (ej: 04)"></span> días del mes
+                <span contenteditable="true" class="fill-in fill-in-short" data-placeholder="Mes (ej: 11)"></span> del año
+                <span contenteditable="true" class="fill-in fill-in-short" data-placeholder="Año (ej: 2025)"></span>
+            </p>
+        </section>
+
+        <!-- Firmas -->
+        <section class="mt-16 pt-10 border-t no-break">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+                <!-- Contratante (Fijo) -->
+                <div class="text-center">
+                    <p class="font-bold mb-2">EL (LA) CONTRATANTE;</p>
+                    <img src="https://i.postimg.cc/k24cf0mD/FIRMA-DON-SANTOS.png" alt="Firma Santos Velandia" class="h-24 mx-auto border-b border-gray-400 pb-2">
+                    <p class="font-semibold mt-2">SANTOS VELANDIA MENDIVELSO</p>
+                    <p class="text-sm">C.C No. 4.255.924 de Socotá (Boyacá)</p>
+                    <p class="text-sm">Representante Legal de TRANSHICOL S.A.S</p>
+                </div>
+
+                <!-- Contratista (Variable) -->
+                <div class="text-center">
+                    <p class="font-bold mb-2">EL (LA) CONTRATISTA;</p>
+                    <div class="border-b border-gray-400 mt-24" style="padding-bottom: 2.5rem;">
+                         <!-- Espacio para firma manuscrita -->
+                    </div>
+                    <!-- CAMBIO: de <input> a <div> contenteditable y se añadió la clase 'contratista-nombre' -->
+                    <div contenteditable="true" class="form-input mt-2 contratista-nombre" data-placeholder="Nombre completo del Contratista"></div>
+                    <!-- CAMBIO: de <input> a <div> contenteditable -->
+                    <div contenteditable="true" class="form-input mt-2" data-placeholder="C.C No."></div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+    
+    <!-- Botón de Imprimir (global) -->
+    <div class="text-center my-10 no-print">
+        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 ease-in-out">
+            Imprimir o Guardar como PDF
+        </button>
+    </div>
+
+    <!-- INICIO: Script para sincronizar los campos de nombre -->
+    <script>
+    // Espera a que el documento esté completamente cargado
+    document.addEventListener('DOMContentLoaded', (event) => {
+        
+        // Selecciona todos los elementos que deben compartir el nombre del contratista
+        const nameFields = document.querySelectorAll('.contratista-nombre');
+
+        // Función para actualizar todos los campos
+        function updateNameFields(sourceElement) {
+            // Usa innerText para elementos contenteditable
+            const newName = sourceElement.innerText;
+            
+            nameFields.forEach(field => {
+                // Solo actualiza los otros campos, no el que se está editando
+                if (field !== sourceElement) {
+                    field.innerText = newName;
+                }
+            });
+        }
+
+        // Añade un 'event listener' a cada campo
+        nameFields.forEach(field => {
+            field.addEventListener('input', (e) => {
+                updateNameFields(e.target);
+            });
+        });
+
+    });
+    </script>
+    <!-- FIN: Script -->
+
+</body>
+</html>
