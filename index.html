@@ -15,7 +15,10 @@
         .field-input {
             width:100%; padding:.55rem .7rem; border:1px solid #d1d5db; border-radius:.6rem;
             background:#fff; font-size:.9rem; transition:border-color .15s, box-shadow .15s; color:#111827;
+            text-transform:uppercase; /* todo lo escrito se ve en MAYUSCULA */
         }
+        /* Las fechas (date) no necesitan mayuscula y el placeholder puede ir normal */
+        .field-input[type="date"] { text-transform:none; }
         .field-input:focus { outline:none; border-color:var(--th-yellow); box-shadow:0 0 0 3px rgba(255,210,46,.25); }
         select.field-input { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .6rem center; background-size:1.15em; padding-right:2rem; }
         textarea.field-input { min-height:5rem; resize:vertical; }
@@ -627,7 +630,7 @@
                 inp.addEventListener('change', sync);
                 sync();
             });
-            $('steps-container').querySelectorAll('input[data-field]').forEach(inp=>{
+            $('steps-container').querySelectorAll('input[data-field], select[data-field]').forEach(inp=>{
                 inp.addEventListener('change', ()=>applyConditionals(inp.dataset.doc));
             });
         }
@@ -636,8 +639,9 @@
             DOCS[docKey].fields.forEach(f=>{
                 if (!f.showIf) return;
                 const ctrlName = inputName(docKey, f.showIf.field);
-                const checked = $('steps-container').querySelector(`input[name="${ctrlName}"]:checked`);
-                const val = checked ? checked.value : '';
+                const radio = $('steps-container').querySelector(`input[name="${ctrlName}"]:checked`);
+                const other = $('steps-container').querySelector(`select[name="${ctrlName}"], textarea[name="${ctrlName}"], input[type="text"][name="${ctrlName}"]`);
+                const val = radio ? radio.value : (other ? other.value : '');
                 const el = document.getElementById(wrapId(docKey, f.name));
                 if (el) el.style.display = f.showIf.in.includes(val) ? '' : 'none';
             });
@@ -658,7 +662,7 @@
                 if (inp.type === 'checkbox' && inp.closest('[data-accept-wrap]')) { out[k] = inp.checked; }
                 else if (inp.type === 'checkbox') { if (inp.checked){ out[k] = out[k]||[]; out[k].push(inp.value); } }
                 else if (inp.type === 'radio') { if (inp.checked) out[k] = inp.value; }
-                else { const v = (inp.value||'').trim(); if (v) out[k] = v; }
+                else { let v = (inp.value||'').trim(); if (v) out[k] = (inp.type === 'date') ? v : v.toUpperCase(); }
             });
             return out;
         }
