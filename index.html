@@ -115,6 +115,31 @@
         <p class="text-center text-[11px] text-gray-400 mt-8">Sus datos se tratan conforme a la Política de Tratamiento de Datos Personales de TRANSHICOL S.A.S.</p>
     </section>
 
+    <!-- ============ PANTALLA 1B: PERSONA NATURAL / EMPRESA (solo Propietario) ============ -->
+    <section id="screen-subtipo" class="max-w-2xl mx-auto px-4 py-10 md:py-14 step-hidden fade-up">
+        <div class="text-center mb-7">
+            <button id="btn-back-selector" class="text-xs font-semibold text-gray-400 hover:text-gray-700 mb-4 inline-flex items-center gap-1">&larr; Volver</button>
+            <h2 class="text-xl md:text-2xl font-black text-gray-800 tracking-tight">¿Cómo diligencia el propietario?</h2>
+            <p class="text-gray-500 mt-2 text-sm">Indique si el vehículo pertenece a una persona natural o a una empresa.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+            <button data-persona="natural" class="persona-card text-left bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:shadow-xl hover:border-[#FFD22E] active:scale-[.99] transition-all">
+                <div class="w-11 h-11 rounded-xl bg-[#181818] text-[#FFD22E] flex items-center justify-center mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+                </div>
+                <h3 class="text-base font-black text-gray-800">Persona natural</h3>
+                <p class="text-sm text-gray-500 mt-1">El propietario es una persona (cédula). Diligencia el SARLAFT y el contrato a su nombre.</p>
+            </button>
+            <button data-persona="empresa" class="persona-card text-left bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:shadow-xl hover:border-[#FFD22E] active:scale-[.99] transition-all">
+                <div class="w-11 h-11 rounded-xl bg-[#181818] text-[#FFD22E] flex items-center justify-center mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h.01M9 12h.01M9 15h.01M9 18h.01"/></svg>
+                </div>
+                <h3 class="text-base font-black text-gray-800">Empresa (NIT)</h3>
+                <p class="text-sm text-gray-500 mt-1">El vehículo pertenece a una empresa. El <b>representante legal</b> diligencia el SARLAFT de personas jurídicas y el contrato.</p>
+            </button>
+        </div>
+    </section>
+
     <!-- ============ PANTALLA 2: WIZARD ============ -->
     <section id="screen-wizard" class="max-w-4xl mx-auto px-4 py-5 step-hidden">
         <!-- Barra de progreso -->
@@ -275,6 +300,16 @@
                 <li>TRANSHICOL S.A.S está facultada para efectuar las verificaciones que considere pertinentes para efectos del SARLAFT.</li>
             </ol>`;
 
+        const SARLAFT_DECLARACION_EMPRESA = `
+            <p>En calidad de representante legal de la empresa, obrando en su nombre, manifiesto bajo la gravedad del juramento que:</p>
+            <ol style="list-style:lower-alpha; padding-left:1.4rem;">
+                <li>Los recursos de la empresa proceden de actividades lícitas y están vinculados al giro normal de sus actividades; no proceden de ninguna actividad ilícita contemplada en la legislación penal colombiana.</li>
+                <li>La empresa no ha efectuado operaciones en las que se haya visto involucrada la ejecución de actividades ilícitas, ni en su provecho ni de terceros.</li>
+                <li>Durante la relación con TRANSHICOL S.A.S la empresa no tendrá relación con terceros cuyos recursos provengan de actividades ilícitas.</li>
+                <li>Si llego a tener conocimiento de alguna de las situaciones anteriores, me comprometo a comunicarlo de inmediato a la empresa.</li>
+                <li>TRANSHICOL S.A.S está facultada para efectuar las verificaciones que considere pertinentes para efectos del SARLAFT.</li>
+            </ol>`;
+
         // Opciones reutilizables
         const SI_NO = [{v:'Sí',l:'Sí'},{v:'No',l:'No'}];
         const SINONA = [{v:'SI',l:'SI'},{v:'NO',l:'NO'},{v:'N/A',l:'N/A'}];
@@ -295,6 +330,12 @@
             veh_tipo:'VEHTIPO', tipo_vehiculo:'VEHTIPO',
             ciudad:'CIUDAD', ciudad_residencia:'CIUDAD',
             direccion:'DIRECCION', direccion_residencia:'DIRECCION',
+            // Empresa / representante legal
+            razon_social:'RAZON', nit:'NIT',
+            rep_nombre:'REPNOMBRE', firma_rep:'REPNOMBRE',
+            rep_cedula:'REPCEDULA', firma_rep_cedula:'REPCEDULA',
+            rep_cargo:'REPCARGO', firma_rep_cargo:'REPCARGO',
+            tipo_sociedad:'TIPOSOC',
         };
         const AC_MAP = { NOMBRE:'name', TEL:'tel', EMAIL:'email', DIRECCION:'street-address', CIUDAD:'address-level2' };
 
@@ -307,10 +348,10 @@
             proveedor: {
                 title: 'Datos del proveedor', code: '',
                 fields: [
-                    { type:'note', text:'Estos datos identifican su registro y se autocompletan en los demás formularios. Podrá ajustarlos en cada documento.' },
+                    { type:'note', text:'Escriba primero su número de cédula: si ya diligenció antes, se autocompletarán sus datos. Todo se replica en los demás formularios.' },
+                    { name:'cedula', label:'Número de cédula', type:'text', required:true, lookup:true, col:2 },
                     { name:'nombre', label:'Nombre completo', type:'text', required:true, col:2 },
                     { name:'tipoId', label:'Tipo de identificación', type:'select', options:['Cédula de ciudadanía','Cédula de extranjería','Pasaporte','PEP'], required:true, default:'Cédula de ciudadanía' },
-                    { name:'cedula', label:'Número de identificación', type:'text', required:true },
                     { name:'telefono', label:'Teléfono / celular', type:'tel', required:true },
                     { name:'correo', label:'Correo electrónico', type:'email' },
                     { name:'placa', label:'Placa del vehículo', type:'text', required:true },
@@ -553,20 +594,131 @@
                     { name:'firma_verificador', label:'Firma del verificador T.H.', type:'text' },
                 ]
             },
+
+            // ── Variante EMPRESA (persona jurídica) — diligencia el representante legal ──
+            proveedorEmpresa: {
+                title: 'Datos de la empresa', code: '',
+                fields: [
+                    { type:'note', text:'La documentación la diligencia el REPRESENTANTE LEGAL en nombre de la empresa. Escriba primero el NIT: si ya diligenció antes, se autocompletarán los datos.' },
+                    { name:'nit', label:'NIT de la empresa', type:'text', required:true, lookup:true, col:2 },
+                    { name:'razon_social', label:'Razón social', type:'text', required:true, col:2 },
+                    { name:'tipo_sociedad', label:'Tipo de sociedad', type:'select', options:['S.A.S','S.A.','Ltda.','E.U.','En comandita','Persona natural comerciante','Otra'] },
+                    { name:'telefono', label:'Teléfono de la empresa', type:'tel', required:true },
+                    { name:'correo', label:'Correo electrónico', type:'email' },
+                    { name:'placa', label:'Placa del vehículo', type:'text', required:true },
+                    { type:'heading', text:'Representante legal' },
+                    { name:'rep_nombre', label:'Nombre del representante legal', type:'text', required:true, col:2 },
+                    { name:'rep_cedula', label:'Cédula del representante legal', type:'text', required:true },
+                    { name:'rep_cargo', label:'Cargo', type:'text', default:'Representante legal' },
+                    { type:'autofill' },
+                ]
+            },
+
+            sarlaftEmpresa: {
+                title: 'Formato SARLAFT (empresa)', code:'Conocimiento de contrapartes — Personas Jurídicas',
+                fields: [
+                    { type:'note', text:'Diligenciado por el representante legal en nombre de la empresa.' },
+                    { type:'heading', text:'Diligenciamiento' },
+                    { name:'fecha_diligencia', label:'Fecha en que se diligencia', type:'date', required:true, default:'today' },
+                    { name:'motivo', label:'Motivo', type:'radio', options:[{v:'Vinculación inicial',l:'Vinculación inicial'},{v:'Actualización periódica',l:'Actualización periódica'},{v:'Novedad por hecho relevante',l:'Novedad por hecho relevante'}], required:true, default:'Vinculación inicial' },
+
+                    { type:'heading', text:'1. Identificación de la empresa' },
+                    { name:'razon_social', label:'Razón social', type:'text', required:true, col:2 },
+                    { name:'nit', label:'NIT', type:'text', required:true },
+                    { name:'tipo_sociedad', label:'Tipo de sociedad', type:'text' },
+                    { name:'fecha_constitucion', label:'Fecha de constitución', type:'date' },
+                    { name:'ciudad', label:'Ciudad de domicilio', type:'text' },
+                    { name:'direccion', label:'Dirección', type:'text', col:2 },
+                    { name:'telefono', label:'Teléfono', type:'tel' },
+                    { name:'correo', label:'Correo electrónico', type:'email' },
+                    { name:'actividad_economica', label:'Actividad económica / código CIIU', type:'text', col:2 },
+
+                    { type:'heading', text:'2. Representante legal' },
+                    { name:'rep_nombre', label:'Nombre completo', type:'text', required:true, col:2 },
+                    { name:'rep_tipo_id', label:'Tipo de identificación', type:'select', options:['Cédula de ciudadanía','Cédula de extranjería','Pasaporte'], default:'Cédula de ciudadanía' },
+                    { name:'rep_cedula', label:'Número de identificación', type:'text', required:true },
+                    { name:'rep_cargo', label:'Cargo', type:'text', default:'Representante legal' },
+
+                    { type:'heading', text:'3. Composición accionaria / beneficiarios finales' },
+                    { type:'note', text:'Relacione los socios o accionistas con participación igual o superior al 5% (nombre, identificación y porcentaje).' },
+                    { name:'beneficiarios', label:'Socios / accionistas ≥ 5%', type:'textarea', col:2 },
+
+                    { type:'heading', text:'4. Preguntas SARLAFT' },
+                    { name:'recursos_publicos', label:'¿La empresa maneja o ha manejado recursos públicos?', type:'radio', options:SI_NO, default:'No' },
+                    { name:'recursos_publicos_detalle', label:'Especifique', type:'text', showIf:{ field:'recursos_publicos', in:['Sí'] } },
+                    { name:'pep', label:'¿Algún administrador, socio o beneficiario final es o fue PEP (Persona Expuesta Políticamente)?', type:'radio', options:SI_NO, default:'No' },
+                    { name:'pep_detalle', label:'Indique quién y el cargo', type:'text', showIf:{ field:'pep', in:['Sí'] }, col:2 },
+                    { name:'operaciones_intl', label:'¿La empresa realiza operaciones internacionales? (marque las que apliquen)', type:'checkgroup', options:['Importaciones','Exportaciones','Giros','Inversiones','Transferencias','Pago de servicios','Préstamos','Otras'] },
+                    { name:'origen_recursos', label:'Origen de los recursos de la empresa', type:'select', options:['Actividad comercial','Prestación de servicios','Rentas','Inversiones','Otros'] },
+                    { name:'origen_otros', label:'Si eligió "Otros", indique cuál', type:'text', showIf:{ field:'origen_recursos', in:['Otros'] } },
+
+                    { type:'heading', text:'5. Declaración de origen de fondos' },
+                    { type:'legal', html:SARLAFT_DECLARACION_EMPRESA },
+                    { name:'acepta_declaracion', type:'accept', label:'En calidad de representante legal declaro bajo la gravedad de juramento que la información es veraz y que los recursos de la empresa provienen de actividades lícitas.', required:true },
+
+                    { type:'heading', text:'Firma del representante legal' },
+                    { name:'firma_rep', label:'Nombre del representante legal (equivale a su firma)', type:'text', required:true, col:2 },
+                    { name:'firma_rep_cargo', label:'Cargo', type:'text', default:'Representante legal' },
+                ]
+            },
+
+            contratoEmpresa: {
+                title: 'Contrato de prestación de servicios (empresa)', code:'Orden de prestación de servicios',
+                fields: [
+                    { name:'contrato_no', label:'N° de contrato (placa del vehículo)', type:'text', required:true },
+                    { type:'heading', text:'Datos del contratista (empresa)' },
+                    { name:'razon_social', label:'Razón social', type:'text', required:true, col:2 },
+                    { name:'nit', label:'NIT', type:'text', required:true },
+                    { name:'tipo_sociedad', label:'Tipo de sociedad', type:'text' },
+                    { name:'direccion', label:'Dirección de domicilio', type:'text', col:2 },
+                    { name:'ciudad', label:'Ciudad', type:'text' },
+                    { name:'telefono', label:'Teléfono', type:'tel' },
+                    { name:'email', label:'Email', type:'email' },
+
+                    { type:'heading', text:'Representante legal' },
+                    { name:'rep_nombre', label:'Nombre del representante legal', type:'text', required:true, col:2 },
+                    { name:'rep_cedula', label:'Cédula del representante legal', type:'text', required:true },
+                    { name:'rep_cargo', label:'Cargo', type:'text', default:'Representante legal' },
+
+                    { type:'heading', text:'Individualización del vehículo' },
+                    { name:'veh_tipo', label:'Tipo', type:'text', placeholder:'Ej: Tractocamión' },
+                    { name:'veh_placas', label:'Placas', type:'text' },
+                    { name:'veh_marca', label:'Marca', type:'text' },
+                    { name:'veh_color', label:'Color', type:'text' },
+                    { name:'veh_linea', label:'Línea', type:'text' },
+                    { name:'veh_modelo', label:'Modelo', type:'text' },
+                    { name:'veh_motor', label:'N° de motor', type:'text' },
+                    { name:'veh_chasis', label:'N° de chasis', type:'text' },
+                    { name:'trailer_marca', label:'Marca del tráiler', type:'text' },
+                    { name:'trailer_placa', label:'Placa del tráiler', type:'text' },
+                    { name:'trailer_color', label:'Color del tráiler', type:'text' },
+
+                    { type:'heading', text:'Términos y condiciones del contrato' },
+                    { type:'legal', html:LEGAL_CONTRATO },
+                    { name:'acepta_contrato', type:'accept', label:'En calidad de representante legal he leído y acepto íntegramente los términos y condiciones del contrato en nombre de la empresa.', required:true },
+
+                    { type:'heading', text:'Firma' },
+                    { name:'fecha_firma', label:'Fecha de firma', type:'date', default:'today' },
+                    { name:'firma_rep', label:'Nombre del representante legal (firma)', type:'text', required:true },
+                    { name:'firma_rep_cedula', label:'C.C. del representante legal', type:'text' },
+                ]
+            },
         };
 
-        // Flujos por tipo de proveedor
+        // Flujos por tipo de proveedor y persona (natural / empresa)
         const FLOWS = {
-            propietario: ['proveedor','sarlaft','contrato'],
-            conductor:   ['proveedor','sarlaft','dotacion','registro','actaCompromisos','evaluacion','actaVial'],
+            'conductor':           ['proveedor','sarlaft','dotacion','registro','actaCompromisos','evaluacion','actaVial'],
+            'propietario:natural': ['proveedor','sarlaft','contrato'],
+            'propietario:empresa': ['proveedorEmpresa','sarlaftEmpresa','contratoEmpresa'],
         };
+        const flowKey = (tipo, persona) => tipo === 'conductor' ? 'conductor' : `propietario:${persona}`;
         const REVISION = '__revision__';
 
         // =====================================================================
         //  ESTADO Y RENDER
         // =====================================================================
         const $ = (id) => document.getElementById(id);
-        let state = { tipo:null, docs:[], steps:[], current:0, prev:null, session:{} };
+        let state = { tipo:null, persona:'natural', docs:[], steps:[], current:0, prev:null, session:{} };
 
         const todayISO = () => new Date().toISOString().slice(0,10);
         const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -631,7 +783,7 @@
             } else {
                 const val = f.default === 'today' ? todayISO() : (f.default || '');
                 const ac = AC_MAP[sync] || (f.type==='email'?'email':(f.type==='tel'?'tel':'off'));
-                inner = `<input type="${f.type}" class="field-input" name="${name}" data-field data-doc="${doc}" data-fname="${f.name}"${syncAttr} autocomplete="${ac}" inputmode="${f.type==='tel'?'tel':(f.type==='email'?'email':'text')}" placeholder="${esc(f.placeholder||'')}" value="${esc(val)}" ${f.required?'data-required="1"':''}>`;
+                inner = `<input type="${f.type}" class="field-input" name="${name}" data-field data-doc="${doc}" data-fname="${f.name}"${syncAttr}${f.lookup?' data-lookup="1"':''} autocomplete="${ac}" inputmode="${f.type==='tel'?'tel':(f.type==='email'?'email':'text')}" placeholder="${esc(f.placeholder||'')}" value="${esc(val)}" ${f.required?'data-required="1"':''}>`;
             }
             return `<div id="${id}" class="${colClass}"><label class="field-label">${esc(f.label)} ${req}</label>${inner}</div>`;
         }
@@ -653,9 +805,10 @@
             </div>`;
         }
 
-        function buildWizard(tipo){
+        function buildWizard(tipo, persona){
             state.tipo = tipo;
-            state.docs = FLOWS[tipo];
+            state.persona = persona || 'natural';
+            state.docs = FLOWS[flowKey(tipo, state.persona)];
             state.steps = [...state.docs, REVISION];
             state.current = 0;
             state.prev = null;
@@ -699,6 +852,10 @@
                 const upd = ()=>{ if (inp.value) state.session[inp.dataset.sync] = inp.value; };
                 inp.addEventListener('input', upd);
                 inp.addEventListener('change', upd);
+            });
+            // Autorrellenado AUTOMÁTICO al escribir la cédula / NIT (primer campo).
+            c.querySelectorAll('[data-lookup]').forEach(inp=>{
+                inp.addEventListener('change', ()=>{ if ((inp.value||'').trim().length >= 5) doLookup(); });
             });
             const ba = $('btn-autofill'); if (ba) ba.addEventListener('click', doLookup);
         }
@@ -774,25 +931,27 @@
         // Consulta el último envío por cédula + placa (edge function con service role).
         async function doLookup(){
             const status = $('autofill-status');
-            const src = collectDoc('proveedor');
-            const cedula = (src.cedula || '').trim();
+            const provDoc = state.docs[0]; // 'proveedor' o 'proveedorEmpresa'
+            const src = collectDoc(provDoc);
+            const key = (src.cedula || src.nit || '').trim();
             const placa = (src.placa || '').trim();
+            const esEmpresa = state.persona === 'empresa';
             if (!status) return;
-            if (cedula.length < 4 || placa.length < 3) { status.textContent = 'Escriba primero su cédula y placa.'; status.className = 'text-xs font-semibold text-amber-600'; return; }
+            if (key.length < 4) { status.textContent = esEmpresa ? 'Escriba el NIT de la empresa.' : 'Escriba su número de cédula.'; status.className = 'text-xs font-semibold text-amber-600'; return; }
             status.textContent = 'Buscando...'; status.className = 'text-xs font-semibold text-gray-500';
             const btn = $('btn-autofill'); if (btn) btn.disabled = true;
             try {
-                const { data, error } = await supabase.functions.invoke('documental-lookup', { body: { cedula, placa } });
+                const { data, error } = await supabase.functions.invoke('documental-lookup', { body: { cedula:key, placa } });
                 if (error) throw error;
                 if (data && data.found && data.autofill) {
                     state.prev = data.autofill;
                     seedSessionFromPrev();
-                    applySession('proveedor');
-                    applyPrev('proveedor');
+                    applySession(provDoc);
+                    applyPrev(provDoc);
                     status.textContent = '✓ Datos encontrados. Se autorrellenarán sus formularios.'; status.className = 'text-xs font-bold text-emerald-600';
                 } else {
                     state.prev = null;
-                    status.textContent = 'No hay registros previos con esa cédula y placa.'; status.className = 'text-xs font-semibold text-gray-500';
+                    status.textContent = esEmpresa ? 'No hay registros previos con ese NIT.' : 'No hay registros previos con esa cédula.'; status.className = 'text-xs font-semibold text-gray-500';
                 }
             } catch(e) {
                 console.error(e);
@@ -956,7 +1115,8 @@
                 }
             }
 
-            const prov = collectDoc('proveedor');
+            const prov = collectDoc(state.docs[0]);
+            const esEmpresa = state.persona === 'empresa';
             const documentos = {};
             const autofill = {};
             state.docs.forEach(d => {
@@ -973,10 +1133,10 @@
 
             const payload = {
                 tipo_proveedor: state.tipo,
-                nombre: prov.nombre || null,
-                cedula: prov.cedula || null,
+                nombre: (esEmpresa ? prov.razon_social : prov.nombre) || null,
+                cedula: (esEmpresa ? prov.nit : prov.cedula) || null,
                 placa: (prov.placa || '').toUpperCase() || null,
-                datos: { documentos, autofill, meta: { enviado_en:new Date().toISOString(), user_agent:navigator.userAgent, flujo:state.docs } }
+                datos: { documentos, autofill, meta: { enviado_en:new Date().toISOString(), persona:state.persona, user_agent:navigator.userAgent, flujo:state.docs } }
             };
 
             $('submit-overlay').style.display = 'flex';
@@ -996,7 +1156,7 @@
 
         // ── UI helpers ──
         function showScreen(name){
-            ['selector','wizard','success'].forEach(s=>$(`screen-${s}`).classList.toggle('step-hidden', s!==name));
+            ['selector','subtipo','wizard','success'].forEach(s=>$(`screen-${s}`).classList.toggle('step-hidden', s!==name));
         }
         let toastT;
         function toast(msg){
@@ -1007,7 +1167,12 @@
         }
 
         // ── Eventos ──
-        document.querySelectorAll('.tipo-card').forEach(b=>b.addEventListener('click', ()=>buildWizard(b.dataset.tipo)));
+        document.querySelectorAll('.tipo-card').forEach(b=>b.addEventListener('click', ()=>{
+            if (b.dataset.tipo === 'propietario') showScreen('subtipo');
+            else buildWizard('conductor', 'natural');
+        }));
+        document.querySelectorAll('.persona-card').forEach(b=>b.addEventListener('click', ()=>buildWizard('propietario', b.dataset.persona)));
+        $('btn-back-selector').addEventListener('click', ()=>showScreen('selector'));
         $('btn-next').addEventListener('click', onNext);
         $('btn-prev').addEventListener('click', ()=>goToStep(state.current-1));
         $('btn-submit').addEventListener('click', submitAll);
