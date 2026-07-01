@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Documentación de Proveedores — TRANSHICOL S.A.S</title>
     <link rel="icon" href="https://i.postimg.cc/VNSN6KgD/LOGO-OK.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,24 +11,25 @@
         html { scroll-behavior:smooth; }
         body { background:#f1f5f9; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 
-        .field-label { display:block; font-size:.78rem; font-weight:600; color:#374151; margin-bottom:.25rem; }
+        .field-label { display:block; font-size:.8rem; font-weight:600; color:#374151; margin-bottom:.3rem; }
         .field-input {
-            width:100%; padding:.55rem .7rem; border:1px solid #d1d5db; border-radius:.6rem;
-            background:#fff; font-size:.9rem; transition:border-color .15s, box-shadow .15s; color:#111827;
-            text-transform:uppercase; /* todo lo escrito se ve en MAYUSCULA */
+            width:100%; padding:.7rem .8rem; border:1px solid #d1d5db; border-radius:.7rem;
+            background:#fff; font-size:16px; /* 16px evita el zoom automático en iOS */
+            transition:border-color .15s, box-shadow .15s; color:#111827;
+            text-transform:uppercase; /* todo lo escrito se ve en MAYÚSCULA */
         }
-        /* Las fechas (date) no necesitan mayuscula y el placeholder puede ir normal */
         .field-input[type="date"] { text-transform:none; }
         .field-input:focus { outline:none; border-color:var(--th-yellow); box-shadow:0 0 0 3px rgba(255,210,46,.25); }
-        select.field-input { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .6rem center; background-size:1.15em; padding-right:2rem; }
+        select.field-input { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .7rem center; background-size:1.2em; padding-right:2.2rem; }
         textarea.field-input { min-height:5rem; resize:vertical; }
 
-        .opt-pill { border:1px solid #d1d5db; border-radius:.6rem; padding:.5rem .75rem; cursor:pointer; transition:all .12s; display:flex; align-items:center; gap:.5rem; font-size:.85rem; background:#fff; }
+        .opt-pill { border:1px solid #d1d5db; border-radius:.7rem; padding:.65rem .85rem; cursor:pointer; transition:all .12s; display:flex; align-items:center; gap:.55rem; font-size:.9rem; background:#fff; min-height:46px; }
         .opt-pill:hover { border-color:#9ca3af; background:#f9fafb; }
-        .opt-pill input { accent-color:var(--th-dark); width:1.05rem; height:1.05rem; flex-shrink:0; }
+        .opt-pill:active { transform:scale(.98); }
+        .opt-pill input { accent-color:var(--th-dark); width:1.15rem; height:1.15rem; flex-shrink:0; }
         .opt-pill.checked { border-color:var(--th-yellow); background:#fffdf3; box-shadow:0 0 0 2px rgba(255,210,46,.2); }
 
-        .legal-box { max-height:340px; overflow-y:auto; border:1px solid #e5e7eb; border-radius:.75rem; padding:1rem 1.15rem; background:#fafafa; font-size:.82rem; line-height:1.5; color:#374151; }
+        .legal-box { max-height:300px; overflow-y:auto; border:1px solid #e5e7eb; border-radius:.75rem; padding:1rem 1.15rem; background:#fafafa; font-size:.84rem; line-height:1.55; color:#374151; -webkit-overflow-scrolling:touch; }
         .legal-box h4 { font-weight:800; text-transform:uppercase; margin:.9rem 0 .35rem; color:#111827; font-size:.82rem; }
         .legal-box p { margin-bottom:.55rem; text-align:justify; }
         .legal-box ol, .legal-box ul { padding-left:1.25rem; margin-bottom:.55rem; }
@@ -37,17 +38,27 @@
         .legal-box th, .legal-box td { border:1px solid #d1d5db; padding:.25rem .4rem; text-align:left; }
         .legal-box thead { background:#f3f4f6; }
 
-        .accept-box { display:flex; gap:.65rem; align-items:flex-start; border:1px solid #e5e7eb; border-radius:.75rem; padding:.85rem 1rem; background:#fff; cursor:pointer; transition:all .12s; }
+        .accept-box { display:flex; gap:.7rem; align-items:flex-start; border:1px solid #e5e7eb; border-radius:.75rem; padding:1rem; background:#fff; cursor:pointer; transition:all .12s; }
+        .accept-box:active { transform:scale(.995); }
         .accept-box.checked { border-color:#10b981; background:#f0fdf4; }
-        .accept-box input { accent-color:#10b981; width:1.2rem; height:1.2rem; margin-top:.1rem; flex-shrink:0; }
+        .accept-box input { accent-color:#10b981; width:1.3rem; height:1.3rem; margin-top:.1rem; flex-shrink:0; }
 
         .step-hidden { display:none !important; }
         .invalid { border-color:#ef4444 !important; box-shadow:0 0 0 3px rgba(239,68,68,.18) !important; }
-        .custom-scroll::-webkit-scrollbar { width:8px; }
+        .custom-scroll::-webkit-scrollbar { width:8px; height:8px; }
         .custom-scroll::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+        .chips-scroll { scrollbar-width:none; }
+        .chips-scroll::-webkit-scrollbar { display:none; }
 
         @keyframes fadeUp { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:none;} }
         .fade-up { animation:fadeUp .3s ease; }
+        @keyframes pop { 0% { transform:scale(.6); opacity:0;} 60% { transform:scale(1.08);} 100% { transform:scale(1); opacity:1;} }
+        .pop { animation:pop .5s cubic-bezier(.2,.8,.2,1); }
+
+        /* Ajustes de celular */
+        @media (max-width: 767px) {
+            .card-pad { padding:1.1rem !important; }
+        }
 
         @media print {
             .no-print { display:none !important; }
@@ -59,23 +70,23 @@
 
     <!-- ============ HEADER ============ -->
     <header class="bg-[#181818] text-white sticky top-0 z-30 shadow-lg no-print">
-        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
-            <img src="https://i.postimg.cc/VNSN6KgD/LOGO-OK.png" alt="Transhicol" class="h-9 bg-white rounded-md p-1">
+        <div class="max-w-4xl mx-auto px-4 py-2.5 flex items-center gap-3">
+            <img src="https://i.postimg.cc/VNSN6KgD/LOGO-OK.png" alt="Transhicol" class="h-8 bg-white rounded-md p-1">
             <div class="leading-tight">
-                <h1 class="font-black text-[15px] tracking-tight">Documentación de Proveedores</h1>
-                <p class="text-[11px] text-[#FFD22E] font-semibold">TRANSHICOL S.A.S</p>
+                <h1 class="font-black text-[14px] md:text-[15px] tracking-tight">Documentación de Proveedores</h1>
+                <p class="text-[10px] md:text-[11px] text-[#FFD22E] font-semibold">TRANSHICOL S.A.S</p>
             </div>
         </div>
     </header>
 
     <!-- ============ PANTALLA 1: SELECTOR ============ -->
-    <section id="screen-selector" class="max-w-4xl mx-auto px-4 py-10 fade-up">
-        <div class="text-center mb-8">
+    <section id="screen-selector" class="max-w-4xl mx-auto px-4 py-8 md:py-10 fade-up">
+        <div class="text-center mb-7">
             <h2 class="text-2xl md:text-3xl font-black text-gray-800 tracking-tight">Bienvenido</h2>
             <p class="text-gray-500 mt-2 max-w-xl mx-auto text-sm md:text-base">Con este único enlace diligencia toda su documentación con TRANSHICOL S.A.S. Para comenzar, indique su tipo de vinculación.</p>
         </div>
-        <div class="grid md:grid-cols-2 gap-5">
-            <button data-tipo="propietario" class="tipo-card group text-left bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-xl hover:border-[#FFD22E] transition-all">
+        <div class="grid md:grid-cols-2 gap-4 md:gap-5">
+            <button data-tipo="propietario" class="tipo-card group text-left bg-white rounded-2xl border-2 border-gray-100 p-5 md:p-6 shadow-sm hover:shadow-xl hover:border-[#FFD22E] active:scale-[.99] transition-all">
                 <div class="w-12 h-12 rounded-xl bg-[#181818] text-[#FFD22E] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14v-5l-2-5H7l-2 5v5z"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>
                 </div>
@@ -88,7 +99,7 @@
                 <span class="inline-flex items-center gap-1 mt-5 text-sm font-bold text-[#181818]">Comenzar &rarr;</span>
             </button>
 
-            <button data-tipo="conductor" class="tipo-card group text-left bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-xl hover:border-[#FFD22E] transition-all">
+            <button data-tipo="conductor" class="tipo-card group text-left bg-white rounded-2xl border-2 border-gray-100 p-5 md:p-6 shadow-sm hover:shadow-xl hover:border-[#FFD22E] active:scale-[.99] transition-all">
                 <div class="w-12 h-12 rounded-xl bg-[#181818] text-[#FFD22E] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
                 </div>
@@ -105,9 +116,9 @@
     </section>
 
     <!-- ============ PANTALLA 2: WIZARD ============ -->
-    <section id="screen-wizard" class="max-w-4xl mx-auto px-4 py-6 step-hidden">
+    <section id="screen-wizard" class="max-w-4xl mx-auto px-4 py-5 step-hidden">
         <!-- Barra de progreso -->
-        <div class="no-print mb-5">
+        <div class="no-print mb-4">
             <div class="flex items-center justify-between mb-2">
                 <button id="btn-restart" class="text-xs font-semibold text-gray-400 hover:text-gray-700 flex items-center gap-1">&larr; Cambiar tipo</button>
                 <span id="step-counter" class="text-xs font-bold text-gray-500"></span>
@@ -115,27 +126,32 @@
             <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
                 <div id="progress-bar" class="h-full bg-gradient-to-r from-[#FFD22E] to-[#f5c400] transition-all duration-300" style="width:0%"></div>
             </div>
-            <div id="step-chips" class="flex flex-wrap gap-1.5 mt-3"></div>
+            <div id="step-chips" class="flex gap-1.5 mt-3 overflow-x-auto chips-scroll pb-1"></div>
         </div>
 
         <!-- Contenedor de pasos -->
-        <div id="steps-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-7"></div>
+        <div id="steps-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-7 card-pad"></div>
 
-        <!-- Navegación -->
-        <div class="no-print flex items-center justify-between mt-5 gap-3">
-            <button id="btn-prev" class="px-5 py-2.5 rounded-xl font-bold text-sm text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">Anterior</button>
-            <button id="btn-next" class="px-6 py-2.5 rounded-xl font-bold text-sm text-[#181818] bg-[#FFD22E] hover:brightness-95 shadow-sm">Siguiente</button>
-            <button id="btn-submit" class="step-hidden px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm">Enviar documentación</button>
+        <!-- Navegación (barra inferior fija en celular) -->
+        <div id="nav-bar" class="no-print sticky bottom-0 z-20 bg-white/95 backdrop-blur border-t border-gray-100 mt-4 -mx-4 px-4 flex items-center gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]" style="padding-top:.7rem; padding-bottom:calc(.7rem + env(safe-area-inset-bottom));">
+            <button id="btn-prev" class="px-4 py-3 rounded-xl font-bold text-sm text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">Anterior</button>
+            <div class="flex-1"></div>
+            <button id="btn-next" class="px-5 py-3 rounded-xl font-black text-sm text-[#181818] bg-[#FFD22E] hover:brightness-95 shadow-sm">Guardar y continuar →</button>
+            <button id="btn-submit" class="step-hidden px-5 py-3 rounded-xl font-black text-sm text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">Enviar documentación</button>
         </div>
     </section>
 
-    <!-- ============ PANTALLA 3: ÉXITO ============ -->
-    <section id="screen-success" class="max-w-2xl mx-auto px-4 py-16 text-center step-hidden fade-up">
-        <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    <!-- ============ PANTALLA 3: ÉXITO (100%) ============ -->
+    <section id="screen-success" class="max-w-2xl mx-auto px-4 py-14 text-center step-hidden fade-up">
+        <div class="relative w-40 h-40 mx-auto mb-6 pop">
+            <div class="w-40 h-40 rounded-full" style="background:conic-gradient(#10b981 100%, #e5e7eb 0);"></div>
+            <div class="absolute inset-[10px] bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                <span class="text-emerald-600 font-black text-lg mt-1">100%</span>
+            </div>
         </div>
-        <h2 class="text-2xl font-black text-gray-800">¡Documentación enviada!</h2>
-        <p class="text-gray-500 mt-2">Recibimos correctamente su información. TRANSHICOL S.A.S la revisará.</p>
+        <h2 class="text-2xl font-black text-gray-800">¡Documentación completa al 100%!</h2>
+        <p class="text-gray-500 mt-2">Todos los formularios quedaron diligenciados y enviados correctamente. TRANSHICOL S.A.S los revisará.</p>
         <div id="success-code" class="mt-4 inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-xs font-mono"></div>
         <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <button id="btn-new" class="px-5 py-2.5 rounded-xl font-bold text-sm text-[#181818] bg-[#FFD22E] hover:brightness-95">Diligenciar otro</button>
@@ -264,18 +280,34 @@
         const SINONA = [{v:'SI',l:'SI'},{v:'NO',l:'NO'},{v:'N/A',l:'N/A'}];
         const VF = [{v:'V',l:'Verdadero'},{v:'F',l:'Falso'}];
 
+        // Campos que representan el MISMO dato en distintos documentos → se
+        // autocompletan entre sí (por nombre de campo). Clave: nombre de campo.
+        const SYNC_MAP = {
+            nombre:'NOMBRE', nombres:'NOMBRE', nombre_apellidos:'NOMBRE', contratista_nombre:'NOMBRE',
+            firma_declarante:'NOMBRE', firma_contratista:'NOMBRE', firma_nombre:'NOMBRE', firma_empleado:'NOMBRE', firma_conductor:'NOMBRE',
+            cedula:'CEDULA', numero_identificacion:'CEDULA', num_id:'CEDULA', firma_cedula:'CEDULA', firma_identificacion:'CEDULA', firma_cc:'CEDULA',
+            tipoId:'TIPOID', tipo_identificacion:'TIPOID', tipo_id:'TIPOID',
+            telefono:'TEL', movil:'TEL',
+            correo:'EMAIL', email:'EMAIL',
+            placa:'PLACA', veh_placas:'PLACA', contrato_no:'PLACA',
+            lugar_expedicion:'LUGAREXP',
+            cargo:'CARGO',
+            veh_tipo:'VEHTIPO', tipo_vehiculo:'VEHTIPO',
+            ciudad:'CIUDAD', ciudad_residencia:'CIUDAD',
+            direccion:'DIRECCION', direccion_residencia:'DIRECCION',
+        };
+        const AC_MAP = { NOMBRE:'name', TEL:'tel', EMAIL:'email', DIRECCION:'street-address', CIUDAD:'address-level2' };
+
         // =====================================================================
         //  DEFINICIÓN DE DOCUMENTOS (config-driven)
-        //  tipos de campo: text,date,email,tel,select,radio,checkgroup,textarea,
-        //                  heading,note,legal,accept
-        //  prefill: 'nombre'|'cedula'|'tipoId'|'telefono'|'correo'|'placa'
-        //  showIf: { field:'x', in:['Sí'] }  (dependiente dentro del mismo doc)
+        //  tipos: text,date,email,tel,select,radio,checkgroup,textarea,heading,note,legal,accept,autofill
+        //  showIf: { field:'x', in:['Sí'] } ; el autocompletado usa SYNC_MAP por nombre de campo
         // =====================================================================
         const DOCS = {
             proveedor: {
                 title: 'Datos del proveedor', code: '',
                 fields: [
-                    { type:'note', text:'Estos datos identifican su registro y se usan para prellenar los formularios. Podrá ajustarlos en cada documento.' },
+                    { type:'note', text:'Estos datos identifican su registro y se autocompletan en los demás formularios. Podrá ajustarlos en cada documento.' },
                     { name:'nombre', label:'Nombre completo', type:'text', required:true, col:2 },
                     { name:'tipoId', label:'Tipo de identificación', type:'select', options:['Cédula de ciudadanía','Cédula de extranjería','Pasaporte','PEP'], required:true, default:'Cédula de ciudadanía' },
                     { name:'cedula', label:'Número de identificación', type:'text', required:true },
@@ -295,16 +327,16 @@
                     { name:'compania', label:'Compañía para la cual será contratado', type:'text', default:'TRANSHICOL S.A.S' },
 
                     { type:'heading', text:'1. Datos generales' },
-                    { name:'nombre_apellidos', label:'Nombre y apellidos', type:'text', required:true, prefill:'nombre', col:2 },
-                    { name:'tipo_identificacion', label:'Tipo de identificación', type:'text', prefill:'tipoId' },
-                    { name:'numero_identificacion', label:'Número de identificación', type:'text', required:true, prefill:'cedula' },
+                    { name:'nombre_apellidos', label:'Nombre y apellidos', type:'text', required:true, col:2 },
+                    { name:'tipo_identificacion', label:'Tipo de identificación', type:'text' },
+                    { name:'numero_identificacion', label:'Número de identificación', type:'text', required:true },
                     { name:'fecha_nacimiento', label:'Fecha de nacimiento', type:'date' },
                     { name:'lugar_nacimiento', label:'Lugar de nacimiento (País - Ciudad)', type:'text' },
                     { name:'ciudad_residencia', label:'Ciudad de residencia', type:'text' },
                     { name:'direccion_residencia', label:'Dirección de residencia', type:'text', col:2 },
                     { name:'ocupacion', label:'Ocupación, oficio o profesión', type:'text' },
-                    { name:'correo', label:'Correo electrónico', type:'email', prefill:'correo' },
-                    { name:'movil', label:'Móvil / celular', type:'tel', prefill:'telefono' },
+                    { name:'correo', label:'Correo electrónico', type:'email' },
+                    { name:'movil', label:'Móvil / celular', type:'tel' },
                     { name:'forma_contacto', label:'¿En qué forma se contactó con la empresa?', type:'text' },
 
                     { type:'heading', text:'1.1 En los últimos dos años y/o actualmente' },
@@ -332,27 +364,27 @@
                     { name:'acepta_declaracion', type:'accept', label:'Declaro bajo la gravedad de juramento que la información es veraz y que mis recursos provienen de actividades lícitas.', required:true },
 
                     { type:'heading', text:'Firma del declarante' },
-                    { name:'firma_declarante', label:'Nombre del declarante (equivale a su firma)', type:'text', required:true, prefill:'nombre', col:2 },
+                    { name:'firma_declarante', label:'Nombre del declarante (equivale a su firma)', type:'text', required:true, col:2 },
                 ]
             },
 
             contrato: {
                 title: 'Contrato de prestación de servicios', code:'Orden de prestación de servicios',
                 fields: [
-                    { name:'contrato_no', label:'N° de contrato (placa del vehículo)', type:'text', prefill:'placa', required:true },
+                    { name:'contrato_no', label:'N° de contrato (placa del vehículo)', type:'text', required:true },
                     { type:'heading', text:'Datos del contratista' },
-                    { name:'contratista_nombre', label:'Nombre completo del contratista', type:'text', required:true, prefill:'nombre', col:2 },
-                    { name:'tipo_id', label:'Tipo de identificación', type:'text', prefill:'tipoId' },
-                    { name:'num_id', label:'Número de identificación', type:'text', required:true, prefill:'cedula' },
+                    { name:'contratista_nombre', label:'Nombre completo del contratista', type:'text', required:true, col:2 },
+                    { name:'tipo_id', label:'Tipo de identificación', type:'text' },
+                    { name:'num_id', label:'Número de identificación', type:'text', required:true },
                     { name:'lugar_expedicion', label:'Lugar de expedición', type:'text' },
                     { name:'direccion', label:'Dirección de domicilio', type:'text', col:2 },
                     { name:'ciudad', label:'Ciudad', type:'text' },
-                    { name:'telefono', label:'Teléfono móvil', type:'tel', prefill:'telefono' },
-                    { name:'email', label:'Email', type:'email', prefill:'correo' },
+                    { name:'telefono', label:'Teléfono móvil', type:'tel' },
+                    { name:'email', label:'Email', type:'email' },
 
                     { type:'heading', text:'Individualización del vehículo' },
                     { name:'veh_tipo', label:'Tipo', type:'text', placeholder:'Ej: Tractocamión' },
-                    { name:'veh_placas', label:'Placas', type:'text', prefill:'placa' },
+                    { name:'veh_placas', label:'Placas', type:'text' },
                     { name:'veh_marca', label:'Marca', type:'text' },
                     { name:'veh_color', label:'Color', type:'text' },
                     { name:'veh_linea', label:'Línea', type:'text' },
@@ -369,18 +401,18 @@
 
                     { type:'heading', text:'Firma' },
                     { name:'fecha_firma', label:'Fecha de firma', type:'date', default:'today' },
-                    { name:'firma_contratista', label:'Nombre del contratista (firma)', type:'text', required:true, prefill:'nombre' },
-                    { name:'firma_cc', label:'C.C. N°', type:'text', prefill:'cedula' },
+                    { name:'firma_contratista', label:'Nombre del contratista (firma)', type:'text', required:true },
+                    { name:'firma_cc', label:'C.C. N°', type:'text' },
                 ]
             },
 
             dotacion: {
                 title: 'Constancia de dotación y EPP', code:'Constancia',
                 fields: [
-                    { name:'nombre', label:'Nombre completo', type:'text', required:true, prefill:'nombre', col:2 },
-                    { name:'cedula', label:'Cédula N°', type:'text', required:true, prefill:'cedula' },
+                    { name:'nombre', label:'Nombre completo', type:'text', required:true, col:2 },
+                    { name:'cedula', label:'Cédula N°', type:'text', required:true },
                     { name:'lugar_expedicion', label:'Lugar de expedición', type:'text' },
-                    { name:'placa', label:'Placa o interno del vehículo', type:'text', prefill:'placa' },
+                    { name:'placa', label:'Placa o interno del vehículo', type:'text' },
                     { type:'heading', text:'Elementos de protección y dotación' },
                     { type:'note', text:'Marque los elementos con los que cuenta actualmente:' },
                     { name:'epp', type:'checkgroup', label:'', options:['Casco de seguridad + barbuquejo','Camisa jean (2)','Pantalón jean (2)','Gafas de seguridad','Guantes de vaqueta','Bota de seguridad','Tapaoídos (1 par)'] },
@@ -388,15 +420,15 @@
                     { type:'heading', text:'Constancia' },
                     { name:'ciudad', label:'Ciudad', type:'text' },
                     { name:'fecha', label:'Fecha', type:'date', default:'today' },
-                    { name:'firma_nombre', label:'Nombre (firma)', type:'text', required:true, prefill:'nombre' },
-                    { name:'firma_cedula', label:'Cédula', type:'text', prefill:'cedula' },
+                    { name:'firma_nombre', label:'Nombre (firma)', type:'text', required:true },
+                    { name:'firma_cedula', label:'Cédula', type:'text' },
                 ]
             },
 
             registro: {
                 title: 'Registro de inducción y reinducción', code:'F-GH-007',
                 fields: [
-                    { name:'nombres', label:'Nombres y apellidos', type:'text', required:true, prefill:'nombre', col:2 },
+                    { name:'nombres', label:'Nombres y apellidos', type:'text', required:true, col:2 },
                     { name:'cargo', label:'Cargo', type:'text', default:'Conductor' },
                     { name:'fecha', label:'Fecha', type:'date', default:'today' },
                     { name:'tipo', label:'Tipo', type:'checkgroup', options:['Inducción','Reinducción','Tiempo','Cambio sitio de trabajo','Cambio de cargo'] },
@@ -439,8 +471,8 @@
             actaCompromisos: {
                 title: 'Acta de compromiso (empleados y contratistas)', code:'F-GH-40',
                 fields: [
-                    { name:'nombre', label:'Nombre completo', type:'text', required:true, prefill:'nombre', col:2 },
-                    { name:'cedula', label:'Cédula de ciudadanía N°', type:'text', required:true, prefill:'cedula' },
+                    { name:'nombre', label:'Nombre completo', type:'text', required:true, col:2 },
+                    { name:'cedula', label:'Cédula de ciudadanía N°', type:'text', required:true },
                     { name:'lugar_expedicion', label:'Expedida en', type:'text' },
                     { type:'heading', text:'Inducción recibida y compromisos' },
                     { type:'legal', html:LEGAL_ACTA_COMP },
@@ -453,15 +485,15 @@
                     { name:'acepta_alcohol', type:'accept', label:'Otorgo mi consentimiento para la práctica de exámenes de drogas y/o alcohol.', required:true },
                     { type:'heading', text:'Firma' },
                     { name:'fecha', label:'Fecha de firma (Yopal - Casanare)', type:'date', default:'today' },
-                    { name:'firma_nombre', label:'Nombre (firma)', type:'text', required:true, prefill:'nombre' },
-                    { name:'firma_identificacion', label:'Identificación', type:'text', prefill:'cedula' },
+                    { name:'firma_nombre', label:'Nombre (firma)', type:'text', required:true },
+                    { name:'firma_identificacion', label:'Identificación', type:'text' },
                 ]
             },
 
             evaluacion: {
                 title: 'Evaluación de inducción / reinducción', code:'F-HSEQ-07',
                 fields: [
-                    { name:'nombre', label:'Nombre empleado', type:'text', required:true, prefill:'nombre', col:2 },
+                    { name:'nombre', label:'Nombre empleado', type:'text', required:true, col:2 },
                     { name:'cargo', label:'Cargo', type:'text', default:'Conductor' },
                     { name:'fecha', label:'Fecha', type:'date', default:'today' },
                     { type:'heading', text:'Selección múltiple (única respuesta)' },
@@ -491,7 +523,7 @@
                         {v:'d',l:'Gestión de apoyo'},{v:'e',l:'Gestión contable y administrativa'},{v:'f',l:'Gestión humana'},{v:'g',l:'Gestión operativa'} ], required:true },
                     { name:'q10', label:'10. El objetivo general del plan de emergencia es disminuir las consecuencias negativas', type:'radio', options:VF, required:true },
                     { type:'heading', text:'Firmas y calificación' },
-                    { name:'firma_empleado', label:'Firma empleado (nombre)', type:'text', prefill:'nombre' },
+                    { name:'firma_empleado', label:'Firma empleado (nombre)', type:'text' },
                     { name:'firma_inductor', label:'Firma de quien imparte la inducción', type:'text' },
                     { name:'calificacion', label:'Calificación del evaluado', type:'text' },
                 ]
@@ -500,13 +532,13 @@
             actaVial: {
                 title: 'Acta de compromiso de seguridad vial', code:'F-HSEQ-122',
                 fields: [
-                    { name:'nombre', label:'Nombre', type:'text', required:true, prefill:'nombre', col:2 },
-                    { name:'cedula', label:'Cédula', type:'text', required:true, prefill:'cedula' },
+                    { name:'nombre', label:'Nombre', type:'text', required:true, col:2 },
+                    { name:'cedula', label:'Cédula', type:'text', required:true },
                     { name:'licencia', label:'N° de licencia', type:'text' },
                     { name:'categoria', label:'Categoría', type:'text' },
                     { name:'vencimiento', label:'Vencimiento licencia', type:'date' },
                     { name:'cargo', label:'Cargo', type:'text', default:'Conductor' },
-                    { name:'tipo_vehiculo', label:'Tipo de vehículo', type:'text', prefill:'placa' },
+                    { name:'tipo_vehiculo', label:'Tipo de vehículo', type:'text' },
                     { name:'experiencia', label:'Experiencia', type:'text' },
                     { name:'verifica_th', label:'Nombre de quien verifica T.H.', type:'text' },
                     { name:'observaciones', label:'Observaciones', type:'text', col:2 },
@@ -517,7 +549,7 @@
                     { name:'motivo', label:'Motivo del acta', type:'textarea' },
                     { name:'compromiso', label:'Compromiso del conductor', type:'textarea' },
                     { type:'heading', text:'Firmas' },
-                    { name:'firma_conductor', label:'Firma del conductor (nombre)', type:'text', required:true, prefill:'nombre' },
+                    { name:'firma_conductor', label:'Firma del conductor (nombre)', type:'text', required:true },
                     { name:'firma_verificador', label:'Firma del verificador T.H.', type:'text' },
                 ]
             },
@@ -528,16 +560,16 @@
             propietario: ['proveedor','sarlaft','contrato'],
             conductor:   ['proveedor','sarlaft','dotacion','registro','actaCompromisos','evaluacion','actaVial'],
         };
+        const REVISION = '__revision__';
 
         // =====================================================================
         //  ESTADO Y RENDER
         // =====================================================================
         const $ = (id) => document.getElementById(id);
-        let state = { tipo:null, steps:[], current:0, prev:null };
+        let state = { tipo:null, docs:[], steps:[], current:0, prev:null, session:{} };
 
         const todayISO = () => new Date().toISOString().slice(0,10);
         const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
         const wrapId = (doc, field) => `wrap-${doc}-${field}`;
         const inputName = (doc, field) => `${doc}__${field}`;
 
@@ -551,7 +583,7 @@
             if (f.type === 'autofill')
                 return `<div class="md:col-span-2 rounded-xl border border-dashed border-[#F5C400] bg-[#fffdf3] p-3.5">
                     <div class="flex flex-wrap items-center gap-3">
-                        <button type="button" id="btn-autofill" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black bg-[#181818] text-[#FFD22E] hover:bg-black transition">
+                        <button type="button" id="btn-autofill" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black bg-[#181818] text-[#FFD22E] hover:bg-black transition">
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
                             Autorrellenar con mis datos anteriores
                         </button>
@@ -564,6 +596,8 @@
             const req = f.required ? '<span class="text-red-500">*</span>' : '';
             const colClass = (f.col === 2 || f.type === 'radio' || f.type === 'checkgroup' || f.type === 'accept' || f.type === 'textarea') ? 'md:col-span-2' : '';
             const id = wrapId(doc, f.name);
+            const sync = SYNC_MAP[f.name];
+            const syncAttr = sync ? ` data-sync="${sync}"` : '';
 
             if (f.type === 'accept') {
                 return `<div id="${id}" class="${colClass}"><label class="accept-box" data-accept-wrap>
@@ -591,17 +625,20 @@
             let inner = '';
             if (f.type === 'select') {
                 const opts = ['<option value="">Seleccione...</option>'].concat(f.options.map(o=>`<option value="${esc(o)}" ${f.default===o?'selected':''}>${esc(o)}</option>`)).join('');
-                inner = `<select class="field-input" name="${name}" data-field data-doc="${doc}" data-fname="${f.name}" ${f.required?'data-required="1"':''}>${opts}</select>`;
+                inner = `<select class="field-input" name="${name}" data-field data-doc="${doc}" data-fname="${f.name}"${syncAttr} autocomplete="off" ${f.required?'data-required="1"':''}>${opts}</select>`;
             } else if (f.type === 'textarea') {
-                inner = `<textarea class="field-input" name="${name}" data-field data-doc="${doc}" data-fname="${f.name}" placeholder="${esc(f.placeholder||'')}" ${f.required?'data-required="1"':''}></textarea>`;
+                inner = `<textarea class="field-input" name="${name}" data-field data-doc="${doc}" data-fname="${f.name}"${syncAttr} placeholder="${esc(f.placeholder||'')}" ${f.required?'data-required="1"':''}></textarea>`;
             } else {
                 const val = f.default === 'today' ? todayISO() : (f.default || '');
-                inner = `<input type="${f.type}" class="field-input" name="${name}" data-field data-doc="${doc}" data-fname="${f.name}" placeholder="${esc(f.placeholder||'')}" value="${esc(val)}" ${f.prefill?`data-prefill="${f.prefill}"`:''} ${f.required?'data-required="1"':''}>`;
+                const ac = AC_MAP[sync] || (f.type==='email'?'email':(f.type==='tel'?'tel':'off'));
+                inner = `<input type="${f.type}" class="field-input" name="${name}" data-field data-doc="${doc}" data-fname="${f.name}"${syncAttr} autocomplete="${ac}" inputmode="${f.type==='tel'?'tel':(f.type==='email'?'email':'text')}" placeholder="${esc(f.placeholder||'')}" value="${esc(val)}" ${f.required?'data-required="1"':''}>`;
             }
             return `<div id="${id}" class="${colClass}"><label class="field-label">${esc(f.label)} ${req}</label>${inner}</div>`;
         }
 
         function renderStep(docKey, idx){
+            if (docKey === REVISION)
+                return `<div class="doc-step step-hidden" data-step="${idx}" data-doc="${REVISION}"><div id="review-body"></div></div>`;
             const doc = DOCS[docKey];
             const fieldsHtml = doc.fields.map(f => renderField(docKey, f)).join('');
             return `<div class="doc-step ${idx===0?'':'step-hidden'}" data-step="${idx}" data-doc="${docKey}">
@@ -612,27 +649,39 @@
                         ${doc.code?`<p class="text-xs text-gray-400 font-semibold">${esc(doc.code)}</p>`:''}
                     </div>
                 </div>
-                <div class="grid md:grid-cols-2 gap-x-5 gap-y-3.5">${fieldsHtml}</div>
+                <div class="grid md:grid-cols-2 gap-x-5 gap-y-4">${fieldsHtml}</div>
             </div>`;
         }
 
         function buildWizard(tipo){
             state.tipo = tipo;
-            state.steps = FLOWS[tipo];
+            state.docs = FLOWS[tipo];
+            state.steps = [...state.docs, REVISION];
             state.current = 0;
+            state.prev = null;
+            state.session = {};
             $('steps-container').innerHTML = state.steps.map((d,i)=>renderStep(d,i)).join('');
-            $('step-chips').innerHTML = state.steps.map((d,i)=>
-                `<span class="chip text-[10px] font-bold px-2 py-1 rounded-full border" data-chip="${i}">${esc(DOCS[d].title)}</span>`).join('');
+            $('step-chips').innerHTML = state.steps.map((d,i)=>{
+                const title = d===REVISION ? 'Revisión' : DOCS[d].title;
+                return `<span class="chip" data-chip="${i}" data-title="${esc(title)}"></span>`;
+            }).join('');
             wireInteractions();
+            // Sembrar la sesión con los valores por defecto (p. ej. tipo de identificación,
+            // cargo) para que se autocompleten aunque el usuario no los toque.
+            $('steps-container').querySelectorAll('[data-field][data-sync]').forEach(inp=>{
+                const k = inp.dataset.sync;
+                if (inp.value && state.session[k] == null) state.session[k] = inp.value;
+            });
             showScreen('wizard');
             goToStep(0);
         }
 
         function wireInteractions(){
-            $('steps-container').querySelectorAll('[data-opt] input, [data-accept-wrap] input').forEach(inp=>{
+            const c = $('steps-container');
+            c.querySelectorAll('[data-opt] input, [data-accept-wrap] input').forEach(inp=>{
                 const sync = () => {
                     if (inp.type === 'radio') {
-                        $('steps-container').querySelectorAll(`input[name="${inp.name}"]`).forEach(r=>{
+                        c.querySelectorAll(`input[name="${inp.name}"]`).forEach(r=>{
                             r.closest('[data-opt]')?.classList.toggle('checked', r.checked);
                         });
                     } else {
@@ -642,13 +691,20 @@
                 inp.addEventListener('change', sync);
                 sync();
             });
-            $('steps-container').querySelectorAll('input[data-field], select[data-field]').forEach(inp=>{
+            c.querySelectorAll('input[data-field], select[data-field]').forEach(inp=>{
                 inp.addEventListener('change', ()=>applyConditionals(inp.dataset.doc));
+            });
+            // Autocompletado entre documentos: guarda el dato en la sesión.
+            c.querySelectorAll('[data-field][data-sync]').forEach(inp=>{
+                const upd = ()=>{ if (inp.value) state.session[inp.dataset.sync] = inp.value; };
+                inp.addEventListener('input', upd);
+                inp.addEventListener('change', upd);
             });
             const ba = $('btn-autofill'); if (ba) ba.addEventListener('click', doLookup);
         }
 
         function applyConditionals(docKey){
+            if (docKey === REVISION) return;
             DOCS[docKey].fields.forEach(f=>{
                 if (!f.showIf) return;
                 const ctrlName = inputName(docKey, f.showIf.field);
@@ -660,11 +716,30 @@
             });
         }
 
-        function prefillStep(docKey){
-            const src = collectDoc('proveedor');
-            const map = { nombre:src.nombre, cedula:src.cedula, tipoId:src.tipoId, telefono:src.telefono, correo:src.correo, placa:src.placa };
-            $('steps-container').querySelectorAll(`.doc-step[data-doc="${docKey}"] input[data-prefill]`).forEach(inp=>{
-                if (!inp.value) { const v = map[inp.dataset.prefill]; if (v) inp.value = v; }
+        // Autocompleta los campos vacíos con lo ya escrito en otros documentos (sesión).
+        function applySession(docKey){
+            const container = $('steps-container');
+            DOCS[docKey].fields.forEach(f=>{
+                const sync = SYNC_MAP[f.name];
+                if (!sync) return;
+                const v = state.session[sync];
+                if (v == null || v === '') return;
+                const el = container.querySelector(`.doc-step[data-doc="${docKey}"] [name="${inputName(docKey,f.name)}"]`);
+                if (el && !el.value) el.value = v;
+            });
+        }
+
+        // Vuelca los datos sincronizables del último envío a la sesión (sin pisar lo actual).
+        function seedSessionFromPrev(){
+            if (!state.prev) return;
+            Object.keys(state.prev).forEach(doc=>{
+                if (!DOCS[doc]) return;
+                DOCS[doc].fields.forEach(f=>{
+                    const sync = SYNC_MAP[f.name];
+                    if (!sync) return;
+                    const v = state.prev[doc][f.name];
+                    if (v != null && v !== '' && state.session[sync] == null) state.session[sync] = v;
+                });
             });
         }
 
@@ -711,6 +786,8 @@
                 if (error) throw error;
                 if (data && data.found && data.autofill) {
                     state.prev = data.autofill;
+                    seedSessionFromPrev();
+                    applySession('proveedor');
                     applyPrev('proveedor');
                     status.textContent = '✓ Datos encontrados. Se autorrellenarán sus formularios.'; status.className = 'text-xs font-bold text-emerald-600';
                 } else {
@@ -737,14 +814,13 @@
             return out;
         }
 
-        // Construye la estructura auto-descriptiva que se guarda y muestra el admin:
-        // { titulo, codigo, campos:[{label, value}] } — con opciones resueltas a texto.
+        // Estructura auto-descriptiva para el admin: { titulo, codigo, campos:[{label, value}] }.
         function buildLabeled(docKey){
             const doc = DOCS[docKey];
             const raw = collectDoc(docKey);
             const campos = [];
             doc.fields.forEach(f=>{
-                if (!f.name) return; // heading/note/legal
+                if (!f.name) return;
                 let v = raw[f.name];
                 if (v === undefined || v === null || v === '') return;
                 if (f.type === 'radio') { const o = f.options.find(o=>o.v===v); v = o ? o.l : v; }
@@ -756,36 +832,93 @@
             return { titulo: doc.title, codigo: doc.code || '', campos };
         }
 
+        // ¿Están completos los campos obligatorios (visibles) del documento?
+        function isDocComplete(docKey){
+            const container = $('steps-container');
+            let ok = true;
+            container.querySelectorAll(`.doc-step[data-doc="${docKey}"] [data-required]`).forEach(inp=>{
+                if (!ok) return;
+                const wrap = document.getElementById(wrapId(docKey, inp.dataset.fname));
+                if (wrap && wrap.style.display === 'none') return;
+                if (inp.type === 'radio') { if (!container.querySelector(`input[name="${inp.name}"]:checked`)) ok = false; }
+                else if (inp.type === 'checkbox' && inp.closest('[data-accept-wrap]')) { if (!inp.checked) ok = false; }
+                else { if (!(inp.value||'').trim()) ok = false; }
+            });
+            return ok;
+        }
+
+        // ── Revisión final ──
+        function renderReview(){
+            const items = state.docs.map((d,idx)=>({ key:d, idx, title:DOCS[d].title, code:DOCS[d].code, done:isDocComplete(d) }));
+            const doneCount = items.filter(i=>i.done).length;
+            const pct = Math.round(doneCount / state.docs.length * 100);
+            const all = doneCount === state.docs.length;
+            const ringColor = all ? '#10b981' : '#FFD22E';
+            const list = items.map(it=>`
+                <div class="flex items-center justify-between gap-3 p-3 rounded-xl border ${it.done?'border-emerald-200 bg-emerald-50/60':'border-amber-200 bg-amber-50/60'}">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <span class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-white text-sm font-black ${it.done?'bg-emerald-500':'bg-amber-400'}">${it.done?'✓':'!'}</span>
+                        <div class="min-w-0">
+                            <p class="font-bold text-sm text-gray-800 truncate">${esc(it.title)}</p>
+                            <p class="text-[11px] font-bold ${it.done?'text-emerald-600':'text-amber-600'}">${it.done?'Completo':'Falta diligenciar'}</p>
+                        </div>
+                    </div>
+                    <button type="button" data-goto="${it.idx}" class="text-xs font-bold text-[#181818] bg-white border border-gray-200 rounded-lg px-3 py-2 hover:bg-gray-50 shrink-0">${it.done?'Revisar':'Completar'}</button>
+                </div>`).join('');
+
+            $('review-body').innerHTML = `
+                <div class="text-center mb-6">
+                    <div class="relative w-32 h-32 mx-auto ${all?'pop':''}">
+                        <div class="w-32 h-32 rounded-full" style="background:conic-gradient(${ringColor} ${pct}%, #e5e7eb ${pct}%);"></div>
+                        <div class="absolute inset-[9px] bg-white rounded-full flex flex-col items-center justify-center">
+                            <span class="text-3xl font-black ${all?'text-emerald-600':'text-gray-800'}">${pct}%</span>
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Completado</span>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-black text-gray-800 mt-4">${all?'¡Todo listo para enviar!':'Revisión final'}</h3>
+                    <p class="text-sm text-gray-500 mt-1 max-w-md mx-auto">${all?'Todos los formularios quedaron diligenciados. Presione «Enviar documentación» para finalizar.':'Aún faltan formularios por completar. Toque «Completar» para terminarlos; el envío se habilita al llegar al 100%.'}</p>
+                </div>
+                <div class="space-y-2 max-w-xl mx-auto">${list}</div>`;
+
+            $('review-body').querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click', ()=>goToStep(parseInt(b.dataset.goto,10))));
+            $('btn-submit').disabled = !all;
+        }
+
+        function updateChips(current){
+            document.querySelectorAll('.chip').forEach((c,idx)=>{
+                const key = state.steps[idx];
+                const active = idx === current;
+                const done = key !== REVISION && isDocComplete(key);
+                c.className = `chip text-[10px] font-bold px-2.5 py-1 rounded-full border inline-flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${active ? 'bg-[#181818] text-[#FFD22E] border-[#181818]' : (done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-gray-50 text-gray-500 border-gray-200')}`;
+                c.innerHTML = `${done && !active ? '✓ ' : ''}${esc(c.dataset.title || '')}`;
+            });
+        }
+
         // ── Navegación ──
         function goToStep(i){
             state.current = i;
             $('steps-container').querySelectorAll('.doc-step').forEach((s,idx)=>s.classList.toggle('step-hidden', idx!==i));
             const docKey = state.steps[i];
-            prefillStep(docKey);
-            applyPrev(docKey);
-            applyConditionals(docKey);
+            if (docKey === REVISION) {
+                renderReview();
+            } else {
+                applySession(docKey);
+                applyPrev(docKey);
+                applyConditionals(docKey);
+            }
             const total = state.steps.length;
             $('progress-bar').style.width = `${Math.round((i/(total-1))*100)}%`;
             $('step-counter').textContent = `Paso ${i+1} de ${total}`;
-            document.querySelectorAll('.chip').forEach((c,idx)=>{
-                const active = idx===i;
-                c.classList.toggle('bg-[#181818]', active);
-                c.classList.toggle('text-[#FFD22E]', active);
-                c.classList.toggle('border-[#181818]', active);
-                c.classList.toggle('bg-gray-50', !active);
-                c.classList.toggle('text-gray-500', !active);
-                c.classList.toggle('border-gray-200', !active);
-                c.classList.toggle('opacity-60', idx>i);
-            });
+            updateChips(i);
             $('btn-prev').disabled = i===0;
-            const last = i===total-1;
-            $('btn-next').classList.toggle('step-hidden', last);
-            $('btn-submit').classList.toggle('step-hidden', !last);
+            const isRev = docKey === REVISION;
+            $('btn-next').classList.toggle('step-hidden', isRev);
+            $('btn-submit').classList.toggle('step-hidden', !isRev);
+            $('btn-next').textContent = (state.steps[i+1] === REVISION) ? 'Ir a revisión →' : 'Guardar y continuar →';
             window.scrollTo({top:0, behavior:'smooth'});
         }
 
-        function validateStep(i){
-            const docKey = state.steps[i];
+        function validateStep(docKey){
             let ok = true, firstBad = null;
             $('steps-container').querySelectorAll(`.doc-step[data-doc="${docKey}"] [data-required]`).forEach(inp=>{
                 const wrap = document.getElementById(wrapId(docKey, inp.dataset.fname));
@@ -805,17 +938,29 @@
             return ok;
         }
 
-        // ── Submit ──
+        function onNext(){
+            const docKey = state.steps[state.current];
+            if (docKey === REVISION) return;
+            if (validateStep(docKey)) goToStep(state.current + 1);
+            else toast('Complete los campos obligatorios (marcados en rojo).');
+        }
+
+        // ── Envío final: solo cuando TODOS los formularios están al 100% ──
         async function submitAll(){
-            for (let i=0;i<state.steps.length;i++){ if(!validateStep(i)){ goToStep(i); toast('Revise los campos obligatorios marcados.'); return; } }
+            for (const d of state.docs) {
+                if (!isDocComplete(d)) {
+                    const idx = state.steps.indexOf(d);
+                    goToStep(idx); validateStep(d);
+                    toast('Complete este formulario para poder enviar.');
+                    return;
+                }
+            }
 
             const prov = collectDoc('proveedor');
             const documentos = {};
             const autofill = {};
-            state.steps.forEach(d => {
+            state.docs.forEach(d => {
                 documentos[d] = buildLabeled(d);
-                // Mapa crudo (clave→valor) para el autorrellenado futuro. Sin
-                // aceptaciones (deben re-aceptarse) ni fechas (van a hoy).
                 const raw = collectDoc(d);
                 const clean = {};
                 DOCS[d].fields.forEach(f=>{
@@ -831,7 +976,7 @@
                 nombre: prov.nombre || null,
                 cedula: prov.cedula || null,
                 placa: (prov.placa || '').toUpperCase() || null,
-                datos: { documentos, autofill, meta: { enviado_en:new Date().toISOString(), user_agent:navigator.userAgent, flujo:state.steps } }
+                datos: { documentos, autofill, meta: { enviado_en:new Date().toISOString(), user_agent:navigator.userAgent, flujo:state.docs } }
             };
 
             $('submit-overlay').style.display = 'flex';
@@ -856,14 +1001,14 @@
         let toastT;
         function toast(msg){
             let el = $('toast');
-            if (!el){ el = document.createElement('div'); el.id='toast'; el.className='fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] bg-[#181818] text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow-lg no-print transition-opacity'; document.body.appendChild(el); }
+            if (!el){ el = document.createElement('div'); el.id='toast'; el.className='fixed bottom-24 left-1/2 -translate-x-1/2 z-[70] bg-[#181818] text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow-lg no-print transition-opacity max-w-[90%] text-center'; document.body.appendChild(el); }
             el.textContent = msg; el.style.opacity='1';
             clearTimeout(toastT); toastT = setTimeout(()=>el.style.opacity='0', 3200);
         }
 
         // ── Eventos ──
         document.querySelectorAll('.tipo-card').forEach(b=>b.addEventListener('click', ()=>buildWizard(b.dataset.tipo)));
-        $('btn-next').addEventListener('click', ()=>{ if(validateStep(state.current)) goToStep(state.current+1); else toast('Complete los campos obligatorios (marcados en rojo).'); });
+        $('btn-next').addEventListener('click', onNext);
         $('btn-prev').addEventListener('click', ()=>goToStep(state.current-1));
         $('btn-submit').addEventListener('click', submitAll);
         $('btn-restart').addEventListener('click', ()=>{ if(confirm('¿Cambiar el tipo de vinculación? Se perderá lo diligenciado.')) location.reload(); });
