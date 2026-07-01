@@ -722,6 +722,9 @@
 
         const todayISO = () => new Date().toISOString().slice(0,10);
         const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        // Id del comprobante generado en el cliente: evita tener que LEER la fila
+        // tras insertar (anon no tiene permiso SELECT por RLS).
+        const genId = () => { try { return crypto.randomUUID(); } catch(e){ return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c=>{ const r=Math.random()*16|0; return (c==='x'?r:(r&0x3|0x8)).toString(16); }); } };
         const wrapId = (doc, field) => `wrap-${doc}-${field}`;
         const inputName = (doc, field) => `${doc}__${field}`;
 
@@ -1132,6 +1135,7 @@
             });
 
             const payload = {
+                id: genId(),
                 tipo_proveedor: state.tipo,
                 nombre: (esEmpresa ? prov.razon_social : prov.nombre) || null,
                 cedula: (esEmpresa ? prov.nit : prov.cedula) || null,
@@ -1141,10 +1145,12 @@
 
             $('submit-overlay').style.display = 'flex';
             try {
-                const { data, error } = await supabase.from('documental_envios').insert(payload).select('id').single();
+                // Sin .select(): anon puede INSERT pero no SELECT (RLS). Pedir la fila
+                // de vuelta rompía el envío con error 42501. El id ya lo generamos arriba.
+                const { error } = await supabase.from('documental_envios').insert(payload);
                 if (error) throw error;
                 $('submit-overlay').style.display = 'none';
-                $('success-code').textContent = 'Comprobante: ' + (data?.id ? data.id.slice(0,8).toUpperCase() : '—');
+                $('success-code').textContent = 'Comprobante: ' + payload.id.slice(0,8).toUpperCase();
                 showScreen('success');
                 window.scrollTo({top:0});
             } catch(e) {
