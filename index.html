@@ -3,503 +3,783 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contrato de Orden de Prestación de Servicos</title>
-    <!-- Incluyendo Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <title>Documentación de Proveedores — TRANSHICOL S.A.S</title>
+    <link rel="icon" href="https://i.postimg.cc/VNSN6KgD/LOGO-OK.png">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Estilos para los campos de rellenar (inline) - AHORA contenteditable */
-        .fill-in {
-            display: inline-block;
-            border: none;
-            border-bottom: 1px solid #333;
-            padding: 0 4px;
-            margin: 0 4px;
-            min-width: 150px;
-            background-color: transparent;
-            font-family: inherit;
-            font-size: inherit;
-            cursor: text; /* Añadido */
-        }
-        .fill-in:focus {
-            outline: none;
-            border-bottom: 2px solid #3b82f6;
-        }
-        .fill-in-long {
-            min-width: 300px;
-        }
-        .fill-in-short {
-            min-width: 80px;
-        }
+        :root { --th-yellow:#FFD22E; --th-dark:#181818; }
+        html { scroll-behavior:smooth; }
+        body { background:#f1f5f9; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 
-        /* Estilos para campos de formulario estándar */
-        .form-input, .form-select {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #D1D5DB; /* gray-300 */
-            border-radius: 0.375rem; /* rounded-md */
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
-            background-color: white;
+        .field-label { display:block; font-size:.78rem; font-weight:600; color:#374151; margin-bottom:.25rem; }
+        .field-input {
+            width:100%; padding:.55rem .7rem; border:1px solid #d1d5db; border-radius:.6rem;
+            background:#fff; font-size:.9rem; transition:border-color .15s, box-shadow .15s; color:#111827;
         }
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: #3B82F6; /* blue-500 */
-            box-shadow: 0 0 0 1px #3B82F6; /* ring-blue-500 */
-        }
-        
-        /* --- INICIO DE NUEVOS ESTILOS --- */
-        
-        /* Ajuste para que los campos de formulario sean editables y crezcan */
-        .form-input[contenteditable="true"] {
-            min-height: 2.5rem; /* Asegura altura mínima igual al input */
-            cursor: text;
-        }
+        .field-input:focus { outline:none; border-color:var(--th-yellow); box-shadow:0 0 0 3px rgba(255,210,46,.25); }
+        select.field-input { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .6rem center; background-size:1.15em; padding-right:2rem; }
+        textarea.field-input { min-height:5rem; resize:vertical; }
 
-        /* Estilos para simular 'placeholder' en elementos contenteditable */
-        [contenteditable="true"]:empty:before {
-            content: attr(data-placeholder);
-            color: #9CA3AF; /* Tailwind gray-400 */
-            font-style: italic;
-            pointer-events: none; /* Permite hacer clic "a través" del placeholder */
-            display: inline-block;
-        }
+        .opt-pill { border:1px solid #d1d5db; border-radius:.6rem; padding:.5rem .75rem; cursor:pointer; transition:all .12s; display:flex; align-items:center; gap:.5rem; font-size:.85rem; background:#fff; }
+        .opt-pill:hover { border-color:#9ca3af; background:#f9fafb; }
+        .opt-pill input { accent-color:var(--th-dark); width:1.05rem; height:1.05rem; flex-shrink:0; }
+        .opt-pill.checked { border-color:var(--th-yellow); background:#fffdf3; box-shadow:0 0 0 2px rgba(255,210,46,.2); }
 
-        /* Estilo para los placeholders con texto pequeño */
-        .placeholder-text-xs:empty:before {
-            font-size: 0.75rem; /* text-xs */
-        }
-        
-        /* --- FIN DE NUEVOS ESTILOS --- */
-        
-        .form-label {
-            display: block;
-            margin-bottom: 0.25rem;
-            font-size: 0.875rem; /* text-sm */
-            font-weight: 500; /* font-medium */
-            color: #374151; /* gray-700 */
-        }
+        .legal-box { max-height:340px; overflow-y:auto; border:1px solid #e5e7eb; border-radius:.75rem; padding:1rem 1.15rem; background:#fafafa; font-size:.82rem; line-height:1.5; color:#374151; }
+        .legal-box h4 { font-weight:800; text-transform:uppercase; margin:.9rem 0 .35rem; color:#111827; font-size:.82rem; }
+        .legal-box p { margin-bottom:.55rem; text-align:justify; }
+        .legal-box ol, .legal-box ul { padding-left:1.25rem; margin-bottom:.55rem; }
+        .legal-box li { margin-bottom:.3rem; text-align:justify; }
+        .legal-box table { width:100%; border-collapse:collapse; margin:.5rem 0; font-size:.78rem; }
+        .legal-box th, .legal-box td { border:1px solid #d1d5db; padding:.25rem .4rem; text-align:left; }
+        .legal-box thead { background:#f3f4f6; }
 
-        /* Estilos de impresión */
+        .accept-box { display:flex; gap:.65rem; align-items:flex-start; border:1px solid #e5e7eb; border-radius:.75rem; padding:.85rem 1rem; background:#fff; cursor:pointer; transition:all .12s; }
+        .accept-box.checked { border-color:#10b981; background:#f0fdf4; }
+        .accept-box input { accent-color:#10b981; width:1.2rem; height:1.2rem; margin-top:.1rem; flex-shrink:0; }
+
+        .step-hidden { display:none !important; }
+        .invalid { border-color:#ef4444 !important; box-shadow:0 0 0 3px rgba(239,68,68,.18) !important; }
+        .custom-scroll::-webkit-scrollbar { width:8px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+
+        @keyframes fadeUp { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:none;} }
+        .fade-up { animation:fadeUp .3s ease; }
+
         @media print {
-            .no-print {
-                display: none !important;
-            }
-            body {
-                background-color: #fff;
-                margin: 0;
-                padding: 0;
-            }
-            .page-container {
-                box-shadow: none !important;
-                margin: 0 !important;
-                border: none !important;
-                max-width: 100% !important;
-            }
-            /* Evitar saltos de página dentro de secciones clave */
-            .no-break {
-                page-break-inside: avoid;
-            }
-
-            /* Asegura que los campos editables se vean bien al imprimir */
-            [contenteditable="true"] {
-                border-color: #D1D5DB !important; /* Mantiene bordes */
-            }
-            .fill-in[contenteditable="true"] {
-                border-bottom: 1px solid #333 !important; /* Mantiene la línea inferior */
-            }
-            .form-input[contenteditable="true"] {
-                border: 1px solid #D1D5DB !important; /* Mantiene el borde en .form-input */
-            }
-        }
-
-        /* Estilos para el contrato */
-        .clausula-titulo {
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-top: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        .clausula-contenido {
-            margin-bottom: 1rem;
-            text-align: justify;
-        }
-        ol.lista-alpha li {
-            margin-bottom: 0.5rem;
-            text-align: justify;
+            .no-print { display:none !important; }
+            body { background:#fff; }
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="min-h-screen">
 
-    <div class="page-container container mx-auto max-w-4xl bg-white shadow-lg rounded-lg my-10 p-10">
-        
-        <!-- Encabezado -->
-        <div class="flex items-start justify-between gap-4 mb-4 pb-4 border-b border-gray-300">
-            <div class="flex-shrink-0">
-                <img src="https://i.postimg.cc/VNSN6KgD/LOGO-OK.png" alt="LOGO-OK" class="h-20">
-            </div>
-            <div class="text-center flex-grow">
-                <h1 class="text-lg font-bold text-gray-800">TRANSPORTES DE HIDROCARBUROS DE COLOMBIA SAS</h1>
-                <h2 class="text-lg font-medium text-gray-700">CONTRATO DE ORDEN DE PRESTACIÓN DE SERVICIOS</h2>
-            </div>
-            <div class="flex-shrink-0">
-                <label class="form-label text-sm">CONTRATO N°</label>
-                <!-- CAMBIO: de <input> a <div> contenteditable -->
-                <div contenteditable="true" class="form-input placeholder-text-xs" data-placeholder="DIGITA PLACA DE VEHÍCULO"></div>
+    <!-- ============ HEADER ============ -->
+    <header class="bg-[#181818] text-white sticky top-0 z-30 shadow-lg no-print">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
+            <img src="https://i.postimg.cc/VNSN6KgD/LOGO-OK.png" alt="Transhicol" class="h-9 bg-white rounded-md p-1">
+            <div class="leading-tight">
+                <h1 class="font-black text-[15px] tracking-tight">Documentación de Proveedores</h1>
+                <p class="text-[11px] text-[#FFD22E] font-semibold">TRANSHICOL S.A.S</p>
             </div>
         </div>
-        
-        <p class="text-sm font-bold text-center mb-6">
-            CELEBRADO ENTRE TRANSHICOL S.A.S CON NÚMERO DE IDENTIFICACIÓN TRIBUTARIA 900.454.872-9 Y, 
-            <!-- CAMBIO: de <input> a <span> contenteditable y se añadió la clase 'contratista-nombre' -->
-            <span contenteditable="true" class="fill-in fill-in-long contratista-nombre" data-placeholder="Nombre completo del contratista"></span>
-            PARA LA PRESTACIÓN DE SERVICIO DE TRANSPORTE DE CARGA TERRESTRE
-        </p>
+    </header>
 
-        <!-- Disposiciones Generales -->
-        <section class="mb-6 no-break">
-            <h3 class="clausula-titulo text-center">DISPOSICIONES GENERALES</h3>
-            <p class="clausula-contenido">
-                <strong>TRANSHICOL S.A.S, NIT 900.454.872-9</strong>, representada legalmente por-: <strong>SANTOS VELANDIA MENDIVELSO</strong>, Identificado con cedula de ciudadanía <strong>N°4.255.924 de Socotá (Boyacá)</strong>, y de otro lado 
-                <!-- CAMBIO: de <input> a <span> contenteditable y se añadió la clase 'contratista-nombre' -->
-                <span contenteditable="true" class="fill-in contratista-nombre" data-placeholder="Nombre completo contratista"></span>, identificado con 
-                <span contenteditable="true" class="fill-in" data-placeholder="Tipo de ID" style="min-width: 80px;"></span>
-                N° <span contenteditable="true" class="fill-in" data-placeholder="No. de identificación"></span> de 
-                <span contenteditable="true" class="fill-in" data-placeholder="Lugar de expedición"></span> y domiciliado en 
-                <span contenteditable="true" class="fill-in fill-in-long" data-placeholder="Dirección completa"></span> en 
-                <span contenteditable="true" class="fill-in" data-placeholder="Ciudad"></span>; teléfono móvil 
-                <span contenteditable="true" class="fill-in" data-placeholder="Teléfono"></span> email: 
-                <span contenteditable="true" class="fill-in" data-placeholder="Email del contratista"></span>, 
-                actuando en nombre propio, Se reconocen los reunidos con la capacidad civil necesaria para contratar y obligarse y, en especial, para otorgar el presente documento y a tal efecto, actuando ambos en su propio nombre y derecho, de su concorde voluntad, dicen, pactan y se regirán por las siguientes:
-            </p>
-        </section>
+    <!-- ============ PANTALLA 1: SELECTOR ============ -->
+    <section id="screen-selector" class="max-w-4xl mx-auto px-4 py-10 fade-up">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl md:text-3xl font-black text-gray-800 tracking-tight">Bienvenido</h2>
+            <p class="text-gray-500 mt-2 max-w-xl mx-auto text-sm md:text-base">Con este único enlace diligencia toda su documentación con TRANSHICOL S.A.S. Para comenzar, indique su tipo de vinculación.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-5">
+            <button data-tipo="propietario" class="tipo-card group text-left bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-xl hover:border-[#FFD22E] transition-all">
+                <div class="w-12 h-12 rounded-xl bg-[#181818] text-[#FFD22E] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14v-5l-2-5H7l-2 5v5z"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>
+                </div>
+                <h3 class="text-lg font-black text-gray-800">Soy Propietario</h3>
+                <p class="text-sm text-gray-500 mt-1">Propietario / tenedor del vehículo que presta el servicio.</p>
+                <ul class="mt-4 space-y-1.5 text-[13px] text-gray-600">
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> Formato SARLAFT</li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> Contrato de prestación de servicios</li>
+                </ul>
+                <span class="inline-flex items-center gap-1 mt-5 text-sm font-bold text-[#181818]">Comenzar &rarr;</span>
+            </button>
 
-        <!-- Consideraciones -->
-        <section class="mb-6 no-break">
-            <h3 class="clausula-titulo text-center">CONSIDERACIONES</h3>
-            <p class="clausula-contenido">
-                <strong>Primero.</strong> TRANSHICOL S.A.S, Tiene como actividad principal las actividades de transporte terrestres de carga, en su calidad requiere de los SERVICIOS que son prestados por EL (LA) CONTRATISTA.
-            </p>
-            <p class="clausula-contenido">
-                <strong>Segundo.</strong> EL (LA) CONTRATISTA conoce y acepta las condiciones y especificaciones de las actividades jurídicas y de lo que su objeto social se deriva y se encuentra en capacidad de prestar y ejecutar los SERVICIOS previstos en el CONTRATO.
-            </p>
-            <p class="clausula-contenido">
-                <strong>Tercero.</strong> Este contrato es de naturaleza comercial en los términos del art 981 y s.s. del C. Comercio e increpa el fundamento legal de indemnidad para efectos de terceros.
-            </p>
-        </section>
+            <button data-tipo="conductor" class="tipo-card group text-left bg-white rounded-2xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-xl hover:border-[#FFD22E] transition-all">
+                <div class="w-12 h-12 rounded-xl bg-[#181818] text-[#FFD22E] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+                </div>
+                <h3 class="text-lg font-black text-gray-800">Soy Conductor</h3>
+                <p class="text-sm text-gray-500 mt-1">Conductor que opera el vehículo en las rutas asignadas.</p>
+                <ul class="mt-4 space-y-1.5 text-[13px] text-gray-600">
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> SARLAFT · Dotación y EPP · Registro de inducción</li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> Actas de compromiso · Evaluación de inducción</li>
+                </ul>
+                <span class="inline-flex items-center gap-1 mt-5 text-sm font-bold text-[#181818]">Comenzar &rarr;</span>
+            </button>
+        </div>
+        <p class="text-center text-[11px] text-gray-400 mt-8">Sus datos se tratan conforme a la Política de Tratamiento de Datos Personales de TRANSHICOL S.A.S.</p>
+    </section>
 
-        <!-- Términos y Condiciones -->
-        <section class="mb-6 no-break">
-            <h3 class="clausula-titulo text-center">TÉRMINOS Y CONDICIONES DEL CONTRATO</h3>
-            <p class="clausula-titulo">Objeto:</p>
-            <p class="clausula-contenido">
-                EL CONTRATISTA en su calidad de Independiente, se obliga para con EL CONTRATANTE a ejecutar las responsabilidades y demás actividades propias del servicio contratado, el cual debe realizar de conformidad con las condiciones y Cláusulas del presente documento y que consistirá en el transporte de carga terrestre junto con el íntegro cumplimiento de las condiciones, calidad, seguridad y trasparencia según la asignación de la ruta indicada por el CONTRATANTE.
-            </p>
-            
-            <p class="clausula-titulo">Primero. EN GENERAL:</p>
-            <p class="clausula-contenido">
-                garantizar la prestación del servicio con calidad, eficiencia reunión condiciones personales optimas y características humanas sobresalientes en cuanto a relaciones interpersonales, responsabilidad seriedad, criterio, honorabilidad, presentación personal, capacidad de manejo, conocimiento y utilización de los elementos puestos a su servicio para la ejecución de su labor.
-                <br><br>
-                <em class="text-sm">El transporte es un contrato por medio del cual una de las partes se obliga para con la otra, a cambio de un precio, a conducir de un lugar a otro, por determinado medio y en el plazo fijado, personas o cosas y entregar éstas al destinatario.</em>
-            </p>
-
-            <p class="clausula-titulo">Segundo. Individualización del vehículo:</p>
-            <p class="clausula-contenido">
-                La individualización detallada del vehículo con cuyo rodante se llevará a cabo la ejecución del presente contrato, se describe así:
-            </p>
-            <!-- Formulario del Vehículo -->
-            <div class="grid grid-cols-2 gap-x-6 gap-y-4 p-4 border rounded-lg bg-gray-50 no-break">
-                <div>
-                    <label class="form-label font-semibold">TIPO</label>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input" data-placeholder="Ej: TRACTOCAMION"></div>
-                </div>
-                <div>
-                    <label class="form-label font-semibold">PLACAS</label>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input" data-placeholder="DIGITA PLACA"></div>
-                </div>
-                <div>
-                    <label class="form-label font-semibold">MARCA</label>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input" data-placeholder="Ej: KENWORTH"></div>
-                </div>
-                <div>
-                    <label class="form-label font-semibold">COLOR</label>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input" data-placeholder="Ej: ORO VERDE"></div>
-                </div>
-                <div>
-                    <label class="form-label font-semibold">LINEA</label>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input" data-placeholder="Ej: T800"></div>
-                </div>
-                <div>
-                    <label class="form-label font-semibold">MODELO</label>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input" data-placeholder="Ej: 2014"></div>
-                </div>
-                <div>
-                    <label class="form-label font-semibold">N° MOTOR</label>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input" data-placeholder="Ej: 79652318"></div>
-                </div>
-                <div>
-                    <label class="form-label font-semibold">N° CHASIS</label>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input" data-placeholder="Ej: 717898"></div>
-                </div>
-                <div class="col-span-2 mt-2 border-t pt-2">
-                    <label class="form-label font-semibold">MARCA TRAILER</label>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input" data-placeholder="Ej: AMERICAN TRUCKS SAS"></div>
-                </div>
-                <div>
-                    <label class="form-label font-semibold">PLACA DEL TRAILER</label>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input" data-placeholder="Ej: S76733"></div>
-                </div>
-                <div>
-                    <label class="form-label font-semibold">COLOR DEL TRAILER</label>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input" data-placeholder="Ej: PLATEADO"></div>
-                </div>
+    <!-- ============ PANTALLA 2: WIZARD ============ -->
+    <section id="screen-wizard" class="max-w-4xl mx-auto px-4 py-6 step-hidden">
+        <!-- Barra de progreso -->
+        <div class="no-print mb-5">
+            <div class="flex items-center justify-between mb-2">
+                <button id="btn-restart" class="text-xs font-semibold text-gray-400 hover:text-gray-700 flex items-center gap-1">&larr; Cambiar tipo</button>
+                <span id="step-counter" class="text-xs font-bold text-gray-500"></span>
             </div>
-            
-            <p class="clausula-titulo">Tercero. Propiedad del vehículo:</p>
-            <p class="clausula-contenido">
-                el CONTRATISTA exhibe la tarjeta de propiedad del rodante en igual modo se entiende de buena fe, que el vehículo automotor se encuentra en posesión y/o tenencia de este, manifestando con la suscripción de este contrato ser pacifica e interrumpida y que es autónomo para contraer obligaciones.
-            </p>
+            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div id="progress-bar" class="h-full bg-gradient-to-r from-[#FFD22E] to-[#f5c400] transition-all duration-300" style="width:0%"></div>
+            </div>
+            <div id="step-chips" class="flex flex-wrap gap-1.5 mt-3"></div>
+        </div>
 
-            <p class="clausula-titulo">Cuarto. Valor del Contrato y Forma de pago:</p>
-            <p class="clausula-contenido">
-                Este se fija conforme a los valores consignado en el manifiesto de carga según la ruta estipulada, el 1% en la retención en la fuente; el $10*1000$ en ICA; 1.5% en gastos administrativos y otros, para el pago de los impuestos derivados de la ejecución del presente contrato. El precio comprende todo los costos directos e indirectos derivados de la ejecución del contrato y que hacen parte del objeto contractual, incluye entre otros, los equipos, las herramientas, materiales e impuestos a cargo del CONTRATISTA, las deducciones a que haya lugar y en general todo costoso soportados en que incurra el CONTRATISTA para la normal ejecución contractual. 
-                <strong>Parágrafo:</strong> el CONTRATISTA podrá solicitar anticipos sobre el servicio prestado (valor manifiesto de carga), que en ninguna caso será superior al cincuenta por ciento (50%) del (valor manifiesto de carga) el saldo final que quede al favor del CONTRATISTA, será cancelado dentro de los siguientes noventa días (90) calendario, a la posterior entrega del destinatario, previa satisfacción de las partes, no sin antes verificar por él CONTRATANTE la vigencia del pago de la seguridad social del conductor que designe él CONTRATISTA así como aquellos emolumentos de carácter laboral a que haya lugar.
-            </p>
+        <!-- Contenedor de pasos -->
+        <div id="steps-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-7"></div>
 
-            <p class="clausula-titulo">Quinto. Duración o Plazo:</p>
-            <p class="clausula-contenido">
-                este contrato tiene vigencia de acuerdo a obra labor contratada según prestación del servicio solicitado.
-            </p>
+        <!-- Navegación -->
+        <div class="no-print flex items-center justify-between mt-5 gap-3">
+            <button id="btn-prev" class="px-5 py-2.5 rounded-xl font-bold text-sm text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">Anterior</button>
+            <button id="btn-next" class="px-6 py-2.5 rounded-xl font-bold text-sm text-[#181818] bg-[#FFD22E] hover:brightness-95 shadow-sm">Siguiente</button>
+            <button id="btn-submit" class="step-hidden px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm">Enviar documentación</button>
+        </div>
+    </section>
 
-            <p class="clausula-titulo">Sexto. Obligaciones del CONTRATISTA:</p>
-            <p class="clausula-contenido">
-                A cumplir de forma eficiente, oportuna y de buena fe el objeto contractual estipulado y aquellas obligaciones que se deriven del mismo de acuerdo with la naturaleza y la actividad comercial pura y simple del CONTRATANTE y de las que aquí se preceptúan, así:
-            </p>
-            <ol class="list-decimal list-inside space-y-2 text-sm pl-4">
-                <li>evitar dilaciones y/o aplazamientos que puedan afectar directa o indirectamente el desarrollo normal del contrato.</li>
-                <li>Elaborar y rendir informes que sean requeridos.</li>
-                <li>Acatar las recomendaciones que le sean impartidas para el cabal cumplimiento contractual.</li>
-                <li>prohibido utilizar la información para sí o para interpuesta persona y/o tercero en beneficio u provecho que por la naturaleza propia de la ejecución contractual lleve a sus manos o pueda ser percibida por los sentidos.</li>
-                <li>mantener bajo absoluta reserva la información que sea de exclusiva propiedad del CONTRATANTE o sus designatarios, así como los de las Operadoras y/o clientes del CONTRATANTE.</li>
-                <li>Cumplir inequívocamente con los derechos laborales que se deriven con sus conductores que designe entre tanto se aclara que las afiliaciones al régimen de seguridad social integral de los conductores que designe deberé ser coherente con el transporte terrestre de hidrocarburos o similares.</li>
-                <li>A mantener un buen trato al personal en general que esté a cargo o represente a él CONTRATANTE.</li>
-                <li>A cumplir integralmente con los E.P.P. acorde con las exigencias propias del cliente del CONTRATANTE y de este último también, ya sea para sí o para el personal que dote para el cabal cumplimiento del objeto contractual.</li>
-                <li>cumplir cabalmente con la ruta y durante el período indicado.</li>
-                <li>Acatar de manera inequívoca con los protocolos de Higiene y seguridad, así como los horarios previstos por los clientes del CONTRATANTE y de este último también.</li>
-                <li>Acatar de manera inequívoca con los pre operacionales, los A.S.T. y todos aquellos exigidos por el cliente del CONTRATANTE y de este último también.</li>
-                <li>garantizar que el vehículo este en las condiciones óptimas e idóneas para la plena ejecución contractual, en llantas, extintores, equipo de carretera, licencias, permisos, etc.</li>
-                <li>se obliga a recibir, conducir y entregar a su destinatario el bien o servicio que el CONTRATANTE le encargue en las mismas condiciones en que las recibió en los lugares y tiempos determinados por el CONTRATANTE o los clientes de este último.</li>
-                <li>si por alguna eventualidad se extraviara el manifiesto de carga y/o guía de transporte o similar, deberá informar a la autoridad competente (por medio denuncia) y una vez agotado lo anterior informar a él CONTRATANTE.</li>
-                <li>A tener registrado el vehículo automotor de carga ante el Ministerio de Transporte donde tenga el domicilio principal, portar en todo momento y lugar la correspondiente tarjeta de registro.</li>
-                <li>A estar debida registrado ante el RUNT.</li>
-                <li>A informar de manera inmediata en el término de la distancia y las posibilidades de los acontecimientos, siniestros viales y/o cualquier novedad que afecte la seguridad, bienes e integridad física y patrimonial de las partes suscribientes.</li>
-                <li>Acatar de manera inequívoca las legislación, reglamentación y señales tránsito.</li>
-                <li>A tomar rutas alternas o su arbitrio.</li>
-                <li>A cumplir a cabalidad con los puestos de control que disponga el CONTRATANTE de acreditarse operativos de alerta ente el incumplimiento injustificado esta novedad dará lugar a descuentos Autorizados de los valores incurridos en el operativo citado, que le serán deducidos de la liquidación conforme al valor del manifiesto de carga.</li>
-                <li>A contar con aparatos y/o medios de comunicación y ubicación (G.P.S) idóneos exigidos por los clientes del CONTRATANTE y de este último también.</li>
-                <li>Acatar de manera inequívoca el peso máximo permitido, así como las dimensiones de la mercancía (carga) si fuera el caso y el CONTATISTA fuera objeto de multas y/o sanciones conforme a lo establecido en el marco normativos- Leyes 105/1993, 336/1996, Resoluciones 4100/2014 y 1787/2009 del Mintransporte el CONTRATANTE repetirá civilmente en las sumas que equivalgan las multas, y el CONTRATISTA autoriza el descuento de la liquidación final del contrato, empero, y si el saldo no fuera suficiente para cubrir los valores objeto de multa este repetirá en la jurisdicción civil para cobrar dicha sumas.</li>
-                <li>A hacerse responsable inexorablemente y en todo contexto de la carga una vez sale del sitio de cargue hasta el remitente o destino final.</li>
-                <li>A no incurrí en abondo de la carga y en caso de siniestro acudir a las autoridades de carretera para evitar dilapidación o hurto de los fluidos peligrosos.</li>
-                <li>A Gestionar y/o facilitar en todo momento y lugar el transbordo del producto en caso de que el vehículo se vea comprometido en su rodamiento o funcionamiento, así como asumir los gastos que de esta novedad sobrevenga.</li>
-                <li>a tomar los seguros de accidente personales, para los trayectos (rutas) contratados, autorizando al CONTRATANTE para descontar contra el pago del servicio contratado los correspondientes valores por las primas respectivas.</li>
-                <li>Acepta y conviene en caso de que el bien o servicio (producto) refleje faltantes, averías, daños, saqueos, pérdida total o parcial u otro, autoriza a Descontar de la liquidación conforme al valor del manifiesto de carga.</li>
-                <li>A entregar un listado con los talleres autorizados para la revisión y mantenimiento correctivo y preventivo del vehículo (s).</li>
-                <li>asumir el costo de todos los impuestos, tasas y contribuciones que se deriven de la ejecución del presente contrato.</li>
-                <li>A mantener vigente las pólizas de responsabilidad civil contractual y extracontractual, manejo de hidrocarburos y demás que se requieran para el cabal cumplimiento inherente al objeto contractual.</li>
-                <li>Aportar la certificación vigente de disposición final de residuos derivados del bien o servicio transportado conforme a las políticas ambientales para la gestión integral de residuos o desechos peligrosos.</li>
+    <!-- ============ PANTALLA 3: ÉXITO ============ -->
+    <section id="screen-success" class="max-w-2xl mx-auto px-4 py-16 text-center step-hidden fade-up">
+        <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h2 class="text-2xl font-black text-gray-800">¡Documentación enviada!</h2>
+        <p class="text-gray-500 mt-2">Recibimos correctamente su información. TRANSHICOL S.A.S la revisará.</p>
+        <div id="success-code" class="mt-4 inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-xs font-mono"></div>
+        <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <button id="btn-new" class="px-5 py-2.5 rounded-xl font-bold text-sm text-[#181818] bg-[#FFD22E] hover:brightness-95">Diligenciar otro</button>
+        </div>
+    </section>
+
+    <div id="submit-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 items-center justify-center flex-col gap-4 text-white" style="display:none">
+        <div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+        <p class="font-bold">Enviando...</p>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+        // ── Supabase: MISMO proyecto que la app interna. Solo INSERT (anon). ──
+        const SUPABASE_URL = 'https://fogwynnmbnipsvuxacxw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvZ3d5bm5tYm5pcHN2dXhhY3h3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwNDMwNDAsImV4cCI6MjA4OTYxOTA0MH0.RRUuljAe18p7FVE4SAjejMCv-4K2s5Dt31aZnnW6d6Y';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // =====================================================================
+        //  TEXTOS LEGALES
+        // =====================================================================
+        const LEGAL_CONTRATO = `
+            <p>Celebrado entre <strong>TRANSHICOL S.A.S</strong>, NIT 900.454.872-9, representada legalmente por <strong>SANTOS VELANDIA MENDIVELSO</strong>, identificado con cédula de ciudadanía N° 4.255.924 de Socotá (Boyacá), en calidad de CONTRATANTE; y el CONTRATISTA identificado en los campos anteriores, para la prestación del servicio de transporte de carga terrestre.</p>
+            <h4>Objeto</h4>
+            <p>El CONTRATISTA, en su calidad de independiente, se obliga a ejecutar el transporte de carga terrestre junto con el íntegro cumplimiento de las condiciones de calidad, seguridad y transparencia según la asignación de la ruta indicada por el CONTRATANTE.</p>
+            <h4>Valor y forma de pago</h4>
+            <p>Se fija conforme a los valores consignados en el manifiesto de carga según la ruta estipulada: 1% de retención en la fuente; ICA; 1.5% en gastos administrativos y otros. El CONTRATISTA podrá solicitar anticipos que en ningún caso serán superiores al 50% del valor del manifiesto de carga; el saldo final se cancela dentro de los noventa (90) días calendario siguientes a la entrega, previa verificación de la vigencia del pago de seguridad social del conductor designado.</p>
+            <h4>Duración</h4>
+            <p>Este contrato tiene vigencia de acuerdo a la obra o labor contratada según la prestación del servicio solicitado.</p>
+            <h4>Obligaciones del CONTRATISTA (resumen)</h4>
+            <ol>
+                <li>Cumplir de forma eficiente, oportuna y de buena fe el objeto contractual.</li>
+                <li>Mantener bajo reserva la información del CONTRATANTE, sus operadoras y clientes.</li>
+                <li>Cumplir con los derechos laborales y la afiliación a seguridad social de los conductores que designe, coherente con el transporte de hidrocarburos.</li>
+                <li>Cumplir con los E.P.P., pre-operacionales, A.S.T. y protocolos de higiene y seguridad exigidos por el cliente y el CONTRATANTE.</li>
+                <li>Garantizar que el vehículo esté en condiciones óptimas (llantas, extintores, equipo de carretera, licencias y permisos).</li>
+                <li>Recibir, conducir y entregar la carga en las mismas condiciones en que la recibió, en los lugares y tiempos determinados.</li>
+                <li>Tener el vehículo registrado ante el Ministerio de Transporte y el RUNT.</li>
+                <li>Informar de inmediato siniestros viales o cualquier novedad que afecte la seguridad de bienes y personas.</li>
+                <li>Acatar el peso máximo permitido y las normas de tránsito (Leyes 105/1993, 336/1996; Resoluciones 4100/2014 y 1787/2009).</li>
+                <li>Responsabilizarse de la carga desde el cargue hasta el destino final; mantener vigentes las pólizas de responsabilidad civil contractual y extracontractual y de manejo de hidrocarburos.</li>
             </ol>
-            <p class="clausula-contenido mt-2">
-                <strong>Parágrafo Primero: Diligenciamiento de Remesas y Cumplidos:</strong> el CONTRATISTA se obliga a diligenciar en forma adecuada las planillas y reportes como son los reportes de entrega, diligenciando clara e inequívocamente los nombres, teléfonos, razón social del cliente al que se le presto el servicio, dicha Omisión acarreará la retención del pago contractual hasta tanto no se cumpla con este ítem.
-            </p>
-            <p class="clausula-contenido">
-                <strong>Parágrafo Segundo: prohibiciones especiales:</strong> 
-                1).-_transportar personas, sustancias, productos, bien o servicios distinto al esgrimido en la guía de transporte y a los esbozados en el objeto contractual.
-                2).-conducir el vehículo en estado de alicoramiento o bajo alguna sustancia sicoactiva catalogada por la legislación colombiana como ilegal, o en incapacidad física o mental ya sea relativa.
-                3).- ceder el vehículo a persona distinta sin la autorización debida. 
-                4).- sustraerse de portar (todos) los documentos debidos y concernientes al transporte de carga de hidrocarburos o sus derivados.
-                5).- vulnerar los marcos normativos contenidos en los decreto o resoluciones- D/to 2685/1999, D/to 333/1991, Ley 769/2002 y demás normas concordantes y análogas.
-                6).- transitar en horarios y rutas no establecidas.
-                7).- transportar pasajeros, en la parte posterior o cabina excepcionando el escolta asignados siempre que esté debidamente autorizado.
-            </p>
+            <h4>Prohibiciones especiales</h4>
+            <p>Transportar personas o productos distintos a los de la guía; conducir en estado de alicoramiento o bajo sustancias psicoactivas; ceder el vehículo sin autorización; transitar en horarios y rutas no establecidas.</p>
+            <h4>Independencia y exclusión de relación laboral</h4>
+            <p>El CONTRATISTA actúa por su cuenta y riesgo, con autonomía y sin relación laboral ni subordinación con el CONTRATANTE. El presente contrato no genera relación laboral alguna.</p>
+            <h4>Cláusula penal</h4>
+            <p>El incumplimiento del CONTRATISTA hará efectiva una sanción pecuniaria equivalente al diez por ciento (10%) del valor del contrato, sin perjuicio de los demás derechos del CONTRATANTE.</p>
+            <h4>Legislación y domicilio</h4>
+            <p>El contrato se rige por las leyes de la República de Colombia y se entiende perfeccionado con la firma de las partes. Domicilio contractual: Municipio de Yopal, Casanare.</p>`;
 
-            <p class="clausula-titulo">Séptimo. Autorizaciones especiales del CONTRATISTA:</p>
-            <ol class="list-decimal list-inside space-y-2 text-sm pl-4">
-                <li>contar con un seguro para cubrir los riesgos derivados de la ejecución de la actividad.</li>
-                <li>que él CONTRATANTE a tratamiento de manejo de datos personales tanto del conductor designado como del CONTRATISTA.</li>
-                <li>a descontar sumas económicas por concepto de multas, comparendos, sanciones, perdida o avería del producto bien o servicio transportado, gastos de recuperación del salvamento, transbordo de faltantes y demás gastos que se generen asumiendo así la obligación económica y legal de dicho incumplimiento.</li>
-                <li>a que en cualquier momento y lugar se pueda realizar auditorías en la ejecución del cumplimiento contractual tanto al conductor designado por el CONTRATISTA como a este último.</li>
-                <li>A que cuando el CONTRATANTE lo considere llevar a cabo pruebas invasivas de alcoholimetría o de polígrafo u otras análogas relacionadas con al ejecución del objeto contractual.</li>
-                <li>a que se le descuente los valores por perjuicios materiales que resulten en la mora y/o retraso injustificado en la entrega del producto bien o servicio.</li>
-                <li>que se retenga o descuente a título de garantía del seis por ciento (6%) de los pagos que se le adeuden hasta tanto se verifique el cumplimento total de las acreencias laborales (salarios, prestaciones sociales y seguridad social) que hubiera lugar para con él o (los) conductor(es) a cargo de este.</li>
+        const LEGAL_ACTA_COMP = `
+            <p>Me comprometo a prestar mis servicios como empleado, contratista y/o sub-contratista en las rutas que TRANSHICOL S.A.S requiera, cumpliendo con las normas de tránsito y las políticas de seguridad vial de la empresa y del cliente. Manifiesto que he recibido inducción y comprendido los siguientes temas:</p>
+            <ul>
+                <li>Decreto 1609 de 2002 (transporte terrestre de mercancías peligrosas).</li>
+                <li>Ley 769 de 2002 (Código Nacional de Tránsito).</li>
+                <li>Ley 1028 de 2006 (apoderamiento de hidrocarburos y derivados).</li>
+                <li>Políticas HSEQ de TRANSHICOL S.A.S y de los clientes.</li>
+                <li>Manejo preventivo, de emergencias y contingencias.</li>
+                <li>Uso y cuidado de los Elementos de Protección Personal (EPP).</li>
+                <li>Inducción en SG-SSTA y en Seguridad Física.</li>
+                <li>Reporte de incidentes; derechos humanos (ONU); trabajo en alturas.</li>
+                <li>Programas ambientales; operaciones, rutas y puntos críticos.</li>
+                <li>SIPLAFT (prevención de lavado de activos y financiación del terrorismo).</li>
+            </ul>
+            <p>Adicionalmente me comprometo a: no tomar riesgos innecesarios; portar los certificados de inducción y capacitación; inspeccionar el vehículo, la unidad y los documentos legales antes de iniciar; transitar en los horarios autorizados (05:00 a 20:00) sin superar 8 horas de conducción; reportarme en los puestos de control y descansar 15 minutos cada 3 horas; no ingerir bebidas embriagantes 24 horas antes de la orden de carga ni durante la operación; no usar el celular conduciendo; reportar toda novedad a tráfico y a coordinación HSEQ; cumplir el ciclo de macros; no transportar mercancías ilícitas; mantener los precintos de seguridad; y cumplir el manual de funciones M-GH-01.</p>
+            <p>Manifiesto estar enterado y con la capacitación suficiente de los anteriores puntos y de las sanciones que acarrea su incumplimiento.</p>`;
+
+        const LEGAL_ACTA_DATOS = `
+            <h4>Autorización para el tratamiento de datos personales</h4>
+            <p>Con la firma de este documento manifiesto que he sido informado por TRANSHICOL S.A.S de que la Compañía actuará como responsable del tratamiento de mis datos personales, los cuales podrá recolectar, usar y tratar.</p>
+            <p>Mis derechos como titular son los previstos en la Constitución y la ley, especialmente conocer, actualizar, rectificar y suprimir mi información, así como revocar el consentimiento. La Compañía garantizará la confidencialidad, seguridad y circulación restringida de mis datos.</p>
+            <p>Autorizo de manera voluntaria, previa, explícita, informada e inequívoca a la Compañía para tratar mis datos personales conforme a su Política de Tratamiento de Datos Personales y para los fines relacionados con su objeto social. La información suministrada es veraz y voluntaria.</p>`;
+
+        const LEGAL_ACTA_ALCOHOL = `
+            <h4>Consentimiento para examen de drogas y/o alcohol</h4>
+            <p>Otorgo mi consentimiento para que TRANSHICOL S.A.S, a través del profesional requerido, me practique y tome las muestras necesarias para determinar si me encuentro bajo los efectos del alcohol y/o una sustancia ilegal.</p>
+            <p>Libero a TRANSHICOL S.A.S de cualquier reclamo o responsabilidad relacionada con la prueba, ya que voluntariamente me someto a los exámenes, y doy mi consentimiento para que conozca el resultado de cualquier examen que me sea practicado.</p>
+            <p>Certifico que he leído el presente consentimiento, comprendo su contenido y me declaro totalmente de acuerdo.</p>`;
+
+        const LEGAL_ACTA_VIAL = `
+            <p>Como conductor de TRANSHICOL S.A.S me comprometo a:</p>
+            <ol>
+                <li>Respetar a peatones, motociclistas y demás usuarios de la vía, y las señales de tránsito.</li>
+                <li>Realizar pausas activas por lo menos cada 3 horas y mantener una actitud defensiva.</li>
+                <li>Realizar la inspección pre-operacional del vehículo diariamente y reportar novedades.</li>
+                <li>Usar el cinturón de seguridad y asegurar que los pasajeros también lo usen.</li>
+                <li>No ingerir bebidas alcohólicas y permitir la prueba de alcoholimetría cuando se requiera.</li>
+                <li>No exceder los límites de velocidad establecidos por el Gobierno Nacional ni los de los campos de operación:</li>
             </ol>
-            
-            <p class="clausula-titulo">Octavo. Derechos del CONTRATISTA:</p>
-            <p class="clausula-contenido">
-                la operación de cargue y descargue la realiza el remitente y/o destinario en su orden., en ningún caso estos eventos correrán por cuenta del conductor y/o propietario del Vehículo, o estarán incluidos en el contrato, salvo acuerdo escrito en contrario.
-            </p>
+            <table>
+                <thead><tr><th>Tipo de vía</th><th>Vacío</th><th>Cargado</th></tr></thead>
+                <tbody>
+                    <tr><td>Vías nacionales pavimentadas</td><td>73 km/h</td><td>63 km/h</td></tr>
+                    <tr><td>Vías secundarias pavimentadas</td><td>60 km/h</td><td>40 km/h</td></tr>
+                    <tr><td>Zonas urbanas</td><td>25 km/h</td><td>25 km/h</td></tr>
+                    <tr><td>Veredas, caseríos y escuelas</td><td>25 km/h</td><td>25 km/h</td></tr>
+                    <tr><td>Vías destapadas</td><td>25 km/h</td><td>25 km/h</td></tr>
+                    <tr><td>Dentro de áreas operativas</td><td>10 km/h</td><td>10 km/h</td></tr>
+                </tbody>
+            </table>
+            <ol start="7">
+                <li>No hablar por radioteléfono o celular mientras conduce; transitar con luces encendidas.</li>
+                <li>Hacer buen uso de las áreas de parqueo y parquear siempre en reversa.</li>
+                <li>Abstenerse de conducir cansado, trasnochado o bajo efectos de medicamentos que produzcan somnolencia.</li>
+                <li>No tanquear con el vehículo encendido; no transportar combustibles ni elementos sueltos en la cabina.</li>
+                <li>No transportar pasajeros en la cabina o en el espacio de carga.</li>
+                <li>Reportar todo incidente y condición peligrosa; no mover el vehículo tras un incidente hasta recoger evidencias.</li>
+                <li>Recibir instrucciones (inducciones, charlas, campañas) para prevenir accidentes.</li>
+                <li>No usar el vehículo para diligencias personales ni transitar en horarios no permitidos sin autorización.</li>
+            </ol>`;
 
-            <p class="clausula-titulo">Noveno. Obligaciones del CONTRATANTE:</p>
-            <ol class="list-decimal list-inside space-y-2 text-sm pl-4">
-                <li>A pagar en la forma estipulada el valor del contrato dentro de los términos esgrimidos.</li>
-                <li>suministrar al contratista antes del despacho, los informes y documentación necesaria para el cabal cumplimiento del transporte del producto, al igual que las formalidades propias de policía, aduana, sanidad, y condiciones de consumo.</li>
-                <li>Elevar denuncias de carácter penal ante la novedad de pérdida del producto y/o del vehículo automotor propiamente dicho o ante cualquier irregularidad que adecua una querella penal.</li>
-                <li>A prestar apoyo oportunamente a él CONTRATISTA ante novedades como atascamiento(s), avería(s), volcamiento(s), problemas mecánicos severo(s) siempre que se encuentre en la ejecución de un recorrido.</li>
-                <li>diligenciar los reportes requeridos por la UIAF, ROS, SARLAFT y demás respetivos y requeridos.</li>
-                <li>supervisar por sí o por interpuesta persona la plena y correcta ejecución del contrato.</li>
-                <li>A realizar auditorías y/o inspección de HSEQ a los vehículos previo a generar la orden de cargue del producto o cuando se considere pertinente.</li>
-                <li>A levantar pliego de incumplimiento contractual siempre que se acredite la causal.</li>
-            </ol>
+        const SARLAFT_DECLARACION = `
+            <p>Obrando a nombre propio, manifiesto bajo la gravedad del juramento que:</p>
+            <ol style="list-style:lower-alpha; padding-left:1.4rem;">
+                <li>Mis recursos proceden de actividades lícitas y están vinculados al giro normal de mis actividades; no proceden de ninguna actividad ilícita contemplada en la legislación penal colombiana.</li>
+                <li>No he efectuado operaciones en las que se haya visto involucrada la ejecución de actividades ilícitas, ni en mi provecho ni de terceros.</li>
+                <li>Durante la relación con TRANSHICOL S.A.S no tendré relación con terceros cuyos recursos provengan de actividades ilícitas.</li>
+                <li>Si llego a tener conocimiento de alguna de las situaciones anteriores, me comprometo a comunicarlo de inmediato a la empresa.</li>
+                <li>TRANSHICOL S.A.S está facultada para efectuar las verificaciones que considere pertinentes para efectos del SARLAFT.</li>
+            </ol>`;
 
-            <p class="clausula-titulo">Décimo. Supervisión:</p>
-            <p class="clausula-contenido">
-                EL CONTRATANTE o sus delegados podrá supervisar y/o auditar la correcta ejecución del contrato y podrá formular las observaciones y correcciones del caso, para ser analizadas conjuntamente con EL CONTRATISTA.
-            </p>
+        // Opciones reutilizables
+        const SI_NO = [{v:'Sí',l:'Sí'},{v:'No',l:'No'}];
+        const SINONA = [{v:'SI',l:'SI'},{v:'NO',l:'NO'},{v:'N/A',l:'N/A'}];
+        const VF = [{v:'V',l:'Verdadero'},{v:'F',l:'Falso'}];
 
-            <p class="clausula-titulo">Undécimo. Independencia:</p>
-            <p class="clausula-contenido">
-                EL CONTRATISTA actuará inexorablemente por su cuenta y riesgo, con autonomía y sin que exista relación laboral, y por consiguiente tampoco subordinación con EL CONTRATANTE. Sus derechos se limitarán por la naturaleza propia del CONTRATO a exigir el cumplimiento de las obligations del CONTRATANTE y el pago oportuno del pago fijado en la cláusula tercera fijada en este documento.
-            </p>
+        // =====================================================================
+        //  DEFINICIÓN DE DOCUMENTOS (config-driven)
+        //  tipos de campo: text,date,email,tel,select,radio,checkgroup,textarea,
+        //                  heading,note,legal,accept
+        //  prefill: 'nombre'|'cedula'|'tipoId'|'telefono'|'correo'|'placa'
+        //  showIf: { field:'x', in:['Sí'] }  (dependiente dentro del mismo doc)
+        // =====================================================================
+        const DOCS = {
+            proveedor: {
+                title: 'Datos del proveedor', code: '',
+                fields: [
+                    { type:'note', text:'Estos datos identifican su registro y se usan para prellenar los formularios. Podrá ajustarlos en cada documento.' },
+                    { name:'nombre', label:'Nombre completo', type:'text', required:true, col:2 },
+                    { name:'tipoId', label:'Tipo de identificación', type:'select', options:['Cédula de ciudadanía','Cédula de extranjería','Pasaporte','PEP'], required:true, default:'Cédula de ciudadanía' },
+                    { name:'cedula', label:'Número de identificación', type:'text', required:true },
+                    { name:'telefono', label:'Teléfono / celular', type:'tel', required:true },
+                    { name:'correo', label:'Correo electrónico', type:'email' },
+                    { name:'placa', label:'Placa del vehículo', type:'text', required:true },
+                ]
+            },
 
-            <p class="clausula-titulo">Cuarto. Exclusión de la relación laboral:</p> <!-- Nota: El PDF repite "Cuarto" -->
-            <p class="clausula-contenido">
-                el presente contrato no genera relación laboral alguna con EL CONTRATISTA en consecuencia tampoco el pago de prestaciones sociales y de ningún tipo de emolumentos distintos al valor acordado en la cláusula cuarta., De otro lado, EL CONTRATISTA se compromete a garantizar los derechos mínimos laborales del personal que contrate para la plena y correcta ejecución del contrato, Es una obligación inherente del CONTRATISTA mantener los salarios del personal asignado al contrato sean cancelados oportunamente EL CONTRATISTA acreditará el pago de la seguridad social integral de sus delegatarios, así como los comprobantes de nómina respectivos, en caso de mora en el pago de prestaciones sociales y/o salarios, se aplicara la cláusula sexta atinente al caso.
-            </p>
+            sarlaft: {
+                title: 'Formato SARLAFT', code:'Debida diligencia — Personas Naturales',
+                fields: [
+                    { type:'heading', text:'Diligenciamiento' },
+                    { name:'fecha_diligencia', label:'Fecha en que se diligencia', type:'date', required:true, default:'today' },
+                    { name:'motivo', label:'Motivo', type:'radio', options:[{v:'Vinculación inicial',l:'Vinculación inicial'},{v:'Actualización periódica',l:'Actualización periódica'},{v:'Novedad por hecho relevante',l:'Novedad por hecho relevante'}], required:true, default:'Vinculación inicial' },
+                    { name:'compania', label:'Compañía para la cual será contratado', type:'text', default:'TRANSHICOL S.A.S' },
 
-            <p class="clausula-titulo">Quinto. Indemnidad DEL CONTRATANTE:</p> <!-- Nota: El PDF repite "Quinto" -->
-            <p class="clausula-contenido">
-                EL CONTRATISTA mantendrá indemne al CONTRATANTE con todo reclamo, demanda, acción legal (laboral, penal, administrativa, disciplinaria, policiva y demás) y/o costos que pueda causar o surgir por daños o lesiones a personas o bienes ocasionados por el CONTRATISTA durante la ejecución del objeto y obligaciones del contrato, si como a terceros reclamantes.
-                <strong>Parágrafo Primero:</strong> en caso de que se formule reclamo, demanda o acción legal contra ÉL CONTRATANTE por asuntos, que según el contrato sean de responsabilidad del CONTRATISTA se le correrá traslado de tal situación para que por su cuenta adopte oportunamente las medidas previstas por la Ley para mantener indemne ÉL CONTRATANTE y adelante los trámites para llegar a un arreglo del conflicto.
-            </p>
+                    { type:'heading', text:'1. Datos generales' },
+                    { name:'nombre_apellidos', label:'Nombre y apellidos', type:'text', required:true, prefill:'nombre', col:2 },
+                    { name:'tipo_identificacion', label:'Tipo de identificación', type:'text', prefill:'tipoId' },
+                    { name:'numero_identificacion', label:'Número de identificación', type:'text', required:true, prefill:'cedula' },
+                    { name:'fecha_nacimiento', label:'Fecha de nacimiento', type:'date' },
+                    { name:'lugar_nacimiento', label:'Lugar de nacimiento (País - Ciudad)', type:'text' },
+                    { name:'ciudad_residencia', label:'Ciudad de residencia', type:'text' },
+                    { name:'direccion_residencia', label:'Dirección de residencia', type:'text', col:2 },
+                    { name:'ocupacion', label:'Ocupación, oficio o profesión', type:'text' },
+                    { name:'correo', label:'Correo electrónico', type:'email', prefill:'correo' },
+                    { name:'movil', label:'Móvil / celular', type:'tel', prefill:'telefono' },
+                    { name:'forma_contacto', label:'¿En qué forma se contactó con la empresa?', type:'text' },
 
-            <p class="clausula-titulo">Duodécimo. Suspensión:</p>
-            <p class="clausula-contenido">
-                La suspensión del contrato podrá ser total o parcialmente por las siguientes razones: (i) solicitud de autoridad competente; (ii) por TRANSHICOL SAS mediante notificación escrita con por lo menos tres (3) días de antelación a la fecha que se requiera dicha suspensión; (iii) por FUERZA MAYOR, CASO FORTUITO y HECHOS DE TERCEROS. Sin que las anteriores generen lugar a indemnización alguna.
-            </p>
+                    { type:'heading', text:'1.1 En los últimos dos años y/o actualmente' },
+                    { name:'recursos_publicos', label:'¿Ha manejado recursos públicos?', type:'radio', options:SI_NO, default:'No' },
+                    { name:'recursos_publicos_tiempo', label:'Especifique el tiempo', type:'text', showIf:{ field:'recursos_publicos', in:['Sí'] } },
+                    { name:'poder_publico', label:'¿Ha ostentado algún grado de poder público?', type:'radio', options:SI_NO, default:'No' },
+                    { name:'poder_publico_tiempo', label:'Especifique el tiempo', type:'text', showIf:{ field:'poder_publico', in:['Sí'] } },
+                    { name:'servidor_publico', label:'¿Es o fue servidor público?', type:'radio', options:SI_NO, default:'No' },
+                    { name:'servidor_entidad', label:'Entidad en la que labora o laboró', type:'text', showIf:{ field:'servidor_publico', in:['Sí'] } },
+                    { name:'servidor_cargo', label:'Cargo que ocupa u ocupó', type:'text', showIf:{ field:'servidor_publico', in:['Sí'] } },
+                    { name:'pep', label:'¿Es o fue PEP (Persona Expuesta Políticamente)?', type:'radio', options:SI_NO, default:'No' },
+                    { name:'pep_detalle', label:'Categoría / cargo y fechas de vinculación', type:'text', showIf:{ field:'pep', in:['Sí'] }, col:2 },
+                    { name:'cuenta_internacional', label:'¿Tiene firma sobre alguna cuenta bancaria internacional?', type:'radio', options:SI_NO, default:'No' },
+                    { name:'cuenta_pais', label:'Indique el país', type:'text', showIf:{ field:'cuenta_internacional', in:['Sí'] } },
 
-            <p class="clausula-titulo">Sexto. Terminación del contrato:</p> <!-- Nota: El PDF repite "Sexto" -->
-            <p class="clausula-contenido">
-                las partes podrán dar por terminado el CONTRATO antes del vencimiento por las siguientes razones:
-                <ol class="list-alpha list-inside pl-4">
-                    <li>Por mutuo acuerdo.</li>
-                    <li>Por liquidación, cesación de pagos, disolución, o por notoria insolvencia.</li>
-                    <li>Cuando se presente un notorio incumplimiento a las cláusulas esgrimidas por parte del CONTRATISTA sin que pueda reclamar indemnización alguna por parte del incumplido.</li>
-                    <li>Por el solo hecho acreditado de incumplimiento de cualquiera de las obligaciones previstas en el CONTRATO.</li>
-                </ol>
-            </p>
-            
-            <p class="clausula-titulo">Decimotercero. Cesión:</p>
-            <p class="clausula-contenido">
-                EL CONTRATISTA no podrá ceder parcial ni totalmente la ejecución del presente contrato a un tercero, sin la previa, expresa y escrita autorización de EL CONTRATANTE.
-            </p>
+                    { type:'heading', text:'1.2 Preguntas adicionales' },
+                    { name:'origen_recursos', label:'Origen de los recursos con que financia su actividad', type:'select', options:['Salario','Honorarios','Actividad comercial','Rentas','Otros'] },
+                    { name:'origen_otros', label:'Si eligió "Otros", indique cuál', type:'text', showIf:{ field:'origen_recursos', in:['Otros'] } },
+                    { name:'operaciones_intl', label:'¿Realiza operaciones internacionales? (marque las que apliquen)', type:'checkgroup', options:['Importaciones','Exportaciones','Giros','Inversiones','Transferencias','Pago de servicios','Préstamos','Otras'] },
+                    { name:'parentesco', label:'¿Tiene parentesco o amistad cercana con colaboradores de la compañía?', type:'radio', options:SI_NO, default:'No' },
+                    { name:'parentesco_detalle', label:'Indique tipo de relación y con quién (nombre y cargo)', type:'text', showIf:{ field:'parentesco', in:['Sí'] }, col:2 },
 
-            <p class="clausula-titulo">Decimocuarto. Cláusula Penal:</p>
-            <p class="clausula-contenido">
-                si ÉL CONTRATISTA dejare de incumplir con las obligaciones contraídas derivadas del objeto del contrato o se declare la caducidad del mismo EL CONTRATANTE hará efectiva una sanción pecuniaria por una suma equivalente al diez por ciento (10%) del valor del contrato, por los posibles perjuicios que en razón al incumplimiento puedan causar a la Empresa, con forme al procedimiento establecido por la ley. Y este pacto contractual, que serán exigidos con la sola presentación de la acción judicial (civil) pertinente. 
-                <strong>Parágrafo Primero:</strong> Dichas sumas serán canceladas dentro de los treinta (30) días siguientes al incumplimiento declarado EL CONTRATANTE, para lo cual ÉL CONTRATISTA autoriza al CONTRATANTE a cobrar dichas sumas por la vía ejecutiva, en razón a que este contrato presta merito ejecutivo de conformidad con el art 422 y siguientes del C.G.P.
-                <strong>Parágrafo Segundo:</strong> ÉL CONTRATISTA renuncia expresamente a todo requerimiento para efectos de constitución en mora, reservándose el derecho a cobrar perjuicios adicionales por encima del monto pactado, siempre que los mismo de acrediten.
-            </p>
+                    { type:'heading', text:'2. Declaración voluntaria de origen de fondos' },
+                    { type:'legal', html:SARLAFT_DECLARACION },
+                    { name:'acepta_declaracion', type:'accept', label:'Declaro bajo la gravedad de juramento que la información es veraz y que mis recursos provienen de actividades lícitas.', required:true },
 
-            <p class="clausula-titulo">Decimoquinto. Integridad y Divisibilidad:</p>
-            <p class="clausula-contenido">
-                los encabezados en el texto de este CONTRATO solo sirven como referencia y no podrán ser tenidos en cuenta para fines de interpretar y hacer cumplir este contrato. 
-                <strong>PARÁGRAFO:</strong> si cualquier disposición del CONTRATO fuese declaro ineficaz, nula o inexistente o no pudiera hacerse exigible de conformidad con las leyes de la República de Colombia las disposiciones restantes no se entenderán invalidas a menos, que el CONTRATO no se pueda ejecutar sin la disposición ineficaz, nula o inexistente o inexigible.
-            </p>
+                    { type:'heading', text:'Firma del declarante' },
+                    { name:'firma_declarante', label:'Nombre del declarante (equivale a su firma)', type:'text', required:true, prefill:'nombre', col:2 },
+                ]
+            },
 
-            <p class="clausula-titulo">Decimosexto. Anexos:</p>
-            <p class="clausula-contenido">
-                ÉL CONTRATSITA declara que se le divulgó en debida forma y tiene pleno convencimiento y conocimiento de los anexos adjuntos.
-            </p>
+            contrato: {
+                title: 'Contrato de prestación de servicios', code:'Orden de prestación de servicios',
+                fields: [
+                    { name:'contrato_no', label:'N° de contrato (placa del vehículo)', type:'text', prefill:'placa', required:true },
+                    { type:'heading', text:'Datos del contratista' },
+                    { name:'contratista_nombre', label:'Nombre completo del contratista', type:'text', required:true, prefill:'nombre', col:2 },
+                    { name:'tipo_id', label:'Tipo de identificación', type:'text', prefill:'tipoId' },
+                    { name:'num_id', label:'Número de identificación', type:'text', required:true, prefill:'cedula' },
+                    { name:'lugar_expedicion', label:'Lugar de expedición', type:'text' },
+                    { name:'direccion', label:'Dirección de domicilio', type:'text', col:2 },
+                    { name:'ciudad', label:'Ciudad', type:'text' },
+                    { name:'telefono', label:'Teléfono móvil', type:'tel', prefill:'telefono' },
+                    { name:'email', label:'Email', type:'email', prefill:'correo' },
 
-            <p class="clausula-titulo">Decimoséptimo. Legislación aplicable y Perfeccionamiento:</p>
-            <p class="clausula-contenido">
-                EL CONTRATO se regirá y será interpretado conforme a las leyes de la república de colombiana., y se entiende perfeccionado con la firma de las partes.
-            </p>
+                    { type:'heading', text:'Individualización del vehículo' },
+                    { name:'veh_tipo', label:'Tipo', type:'text', placeholder:'Ej: Tractocamión' },
+                    { name:'veh_placas', label:'Placas', type:'text', prefill:'placa' },
+                    { name:'veh_marca', label:'Marca', type:'text' },
+                    { name:'veh_color', label:'Color', type:'text' },
+                    { name:'veh_linea', label:'Línea', type:'text' },
+                    { name:'veh_modelo', label:'Modelo', type:'text' },
+                    { name:'veh_motor', label:'N° de motor', type:'text' },
+                    { name:'veh_chasis', label:'N° de chasis', type:'text' },
+                    { name:'trailer_marca', label:'Marca del tráiler', type:'text' },
+                    { name:'trailer_placa', label:'Placa del tráiler', type:'text' },
+                    { name:'trailer_color', label:'Color del tráiler', type:'text' },
 
-            <p class="clausula-titulo">Decimoctavo. Domicilio:</p>
-            <p class="clausula-contenido">
-                para todos los efectos legales y fiscales las partes acuerdan como domicilio contractual el Municipio de Yopal Casanare, donde para constancia se firma a los
-                <!-- CAMBIO: de <input> a <span> contenteditable -->
-                <span contenteditable="true" class="fill-in fill-in-short" data-placeholder="Día (ej: 04)"></span> días del mes
-                <span contenteditable="true" class="fill-in fill-in-short" data-placeholder="Mes (ej: 11)"></span> del año
-                <span contenteditable="true" class="fill-in fill-in-short" data-placeholder="Año (ej: 2025)"></span>
-            </p>
-        </section>
+                    { type:'heading', text:'Términos y condiciones del contrato' },
+                    { type:'legal', html:LEGAL_CONTRATO },
+                    { name:'acepta_contrato', type:'accept', label:'He leído y acepto íntegramente los términos y condiciones del contrato de prestación de servicios.', required:true },
 
-        <!-- Firmas -->
-        <section class="mt-16 pt-10 border-t no-break">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-                <!-- Contratante (Fijo) -->
-                <div class="text-center">
-                    <p class="font-bold mb-2">EL (LA) CONTRATANTE;</p>
-                    <img src="https://i.postimg.cc/k24cf0mD/FIRMA-DON-SANTOS.png" alt="Firma Santos Velandia" class="h-24 mx-auto border-b border-gray-400 pb-2">
-                    <p class="font-semibold mt-2">SANTOS VELANDIA MENDIVELSO</p>
-                    <p class="text-sm">C.C No. 4.255.924 de Socotá (Boyacá)</p>
-                    <p class="text-sm">Representante Legal de TRANSHICOL S.A.S</p>
-                </div>
+                    { type:'heading', text:'Firma' },
+                    { name:'fecha_firma', label:'Fecha de firma', type:'date', default:'today' },
+                    { name:'firma_contratista', label:'Nombre del contratista (firma)', type:'text', required:true, prefill:'nombre' },
+                    { name:'firma_cc', label:'C.C. N°', type:'text', prefill:'cedula' },
+                ]
+            },
 
-                <!-- Contratista (Variable) -->
-                <div class="text-center">
-                    <p class="font-bold mb-2">EL (LA) CONTRATISTA;</p>
-                    <div class="border-b border-gray-400 mt-24" style="padding-bottom: 2.5rem;">
-                         <!-- Espacio para firma manuscrita -->
+            dotacion: {
+                title: 'Constancia de dotación y EPP', code:'Constancia',
+                fields: [
+                    { name:'nombre', label:'Nombre completo', type:'text', required:true, prefill:'nombre', col:2 },
+                    { name:'cedula', label:'Cédula N°', type:'text', required:true, prefill:'cedula' },
+                    { name:'lugar_expedicion', label:'Lugar de expedición', type:'text' },
+                    { name:'placa', label:'Placa o interno del vehículo', type:'text', prefill:'placa' },
+                    { type:'heading', text:'Elementos de protección y dotación' },
+                    { type:'note', text:'Marque los elementos con los que cuenta actualmente:' },
+                    { name:'epp', type:'checkgroup', label:'', options:['Casco de seguridad + barbuquejo','Camisa jean (2)','Pantalón jean (2)','Gafas de seguridad','Guantes de vaqueta','Bota de seguridad','Tapaoídos (1 par)'] },
+                    { name:'acepta_dotacion', type:'accept', label:'Certifico que cuento con los elementos de protección personal y la dotación requerida para la ejecución de mis actividades.', required:true },
+                    { type:'heading', text:'Constancia' },
+                    { name:'ciudad', label:'Ciudad', type:'text' },
+                    { name:'fecha', label:'Fecha', type:'date', default:'today' },
+                    { name:'firma_nombre', label:'Nombre (firma)', type:'text', required:true, prefill:'nombre' },
+                    { name:'firma_cedula', label:'Cédula', type:'text', prefill:'cedula' },
+                ]
+            },
+
+            registro: {
+                title: 'Registro de inducción y reinducción', code:'F-GH-007',
+                fields: [
+                    { name:'nombres', label:'Nombres y apellidos', type:'text', required:true, prefill:'nombre', col:2 },
+                    { name:'cargo', label:'Cargo', type:'text', default:'Conductor' },
+                    { name:'fecha', label:'Fecha', type:'date', default:'today' },
+                    { name:'tipo', label:'Tipo', type:'checkgroup', options:['Inducción','Reinducción','Tiempo','Cambio sitio de trabajo','Cambio de cargo'] },
+
+                    { type:'heading', text:'1. Inducción general' },
+                    { name:'t_1_1', label:'1.1 Misión y visión de la empresa', type:'radio', options:SINONA },
+                    { name:'t_1_2', label:'1.2 Historia de la empresa', type:'radio', options:SINONA },
+                    { name:'t_1_3', label:'1.3 Estructura organizacional', type:'radio', options:SINONA },
+                    { name:'t_1_4', label:'1.4 Valores corporativos', type:'radio', options:SINONA },
+
+                    { type:'heading', text:'2. Inducción SST' },
+                    { name:'t_2_1', label:'2.1 Reglamento de higiene y seguridad industrial', type:'radio', options:SINONA },
+                    { name:'t_2_2', label:'2.2 COPASST', type:'radio', options:SINONA },
+                    { name:'t_2_3', label:'2.3 Políticas HSEQ, seguridad vial, no alcohol/drogas, calidad, transparencia, seguridad física', type:'radio', options:SINONA },
+                    { name:'t_2_4', label:'2.4 Reporte de incidentes de trabajo', type:'radio', options:SINONA },
+                    { name:'t_2_5', label:'2.5 Programa del sistema de seguridad y salud en el trabajo', type:'radio', options:SINONA },
+                    { name:'t_2_6', label:'2.6 Procedimientos seguros para el desarrollo de la tarea', type:'radio', options:SINONA },
+                    { name:'t_2_7', label:'2.7 Hojas de seguridad de productos químicos a manipular', type:'radio', options:SINONA },
+                    { name:'t_2_8', label:'2.8 Plan de emergencias y Medevac', type:'radio', options:SINONA },
+                    { name:'t_2_9', label:'2.9 Factores de riesgo, aspectos e impactos ambientales', type:'radio', options:SINONA },
+                    { name:'t_2_9_1', label:'2.9.1 Primeros auxilios, control de incendios, evacuación', type:'radio', options:SINONA },
+                    { name:'t_2_9_2', label:'2.9.2 Manejo defensivo y seguridad vial', type:'radio', options:SINONA },
+                    { name:'t_2_9_3', label:'2.9.3 Legislación aplicable al cargo', type:'radio', options:SINONA },
+
+                    { type:'heading', text:'3. Inducción gestión humana' },
+                    { name:'t_3_1', label:'3.1 Manual de funciones y responsabilidades', type:'radio', options:SINONA },
+                    { name:'t_3_2', label:'3.2 Reglamento interno de trabajo', type:'radio', options:SINONA },
+                    { name:'t_3_3', label:'3.3 Matriz de sanciones', type:'radio', options:SINONA },
+                    { name:'t_3_4', label:'3.4 Derechos y deberes del sistema de riesgos laborales', type:'radio', options:SINONA },
+
+                    { type:'heading', text:'4. Entrega documentación de contratación' },
+                    { name:'t_4_1', label:'4.1 Copia de contrato laboral', type:'radio', options:SINONA },
+                    { name:'t_4_2', label:'4.2 Copia de manual de funciones', type:'radio', options:SINONA },
+                    { name:'t_4_3', label:'4.3 Carnet de identificación interno', type:'radio', options:SINONA },
+                    { name:'t_4_4', label:'4.4 Carnet de afiliación a la ARL', type:'radio', options:SINONA },
+                    { name:'t_4_5', label:'4.5 Copia de afiliación al SGSSS', type:'radio', options:SINONA },
+                ]
+            },
+
+            actaCompromisos: {
+                title: 'Acta de compromiso (empleados y contratistas)', code:'F-GH-40',
+                fields: [
+                    { name:'nombre', label:'Nombre completo', type:'text', required:true, prefill:'nombre', col:2 },
+                    { name:'cedula', label:'Cédula de ciudadanía N°', type:'text', required:true, prefill:'cedula' },
+                    { name:'lugar_expedicion', label:'Expedida en', type:'text' },
+                    { type:'heading', text:'Inducción recibida y compromisos' },
+                    { type:'legal', html:LEGAL_ACTA_COMP },
+                    { name:'acepta_compromiso', type:'accept', label:'Manifiesto estar enterado y capacitado en los temas anteriores, y me comprometo a cumplirlos.', required:true },
+                    { type:'heading', text:'Autorización de tratamiento de datos personales' },
+                    { type:'legal', html:LEGAL_ACTA_DATOS },
+                    { name:'acepta_datos', type:'accept', label:'Autorizo el tratamiento de mis datos personales conforme a la política de TRANSHICOL S.A.S.', required:true },
+                    { type:'heading', text:'Consentimiento para examen de drogas y/o alcohol' },
+                    { type:'legal', html:LEGAL_ACTA_ALCOHOL },
+                    { name:'acepta_alcohol', type:'accept', label:'Otorgo mi consentimiento para la práctica de exámenes de drogas y/o alcohol.', required:true },
+                    { type:'heading', text:'Firma' },
+                    { name:'fecha', label:'Fecha de firma (Yopal - Casanare)', type:'date', default:'today' },
+                    { name:'firma_nombre', label:'Nombre (firma)', type:'text', required:true, prefill:'nombre' },
+                    { name:'firma_identificacion', label:'Identificación', type:'text', prefill:'cedula' },
+                ]
+            },
+
+            evaluacion: {
+                title: 'Evaluación de inducción / reinducción', code:'F-HSEQ-07',
+                fields: [
+                    { name:'nombre', label:'Nombre empleado', type:'text', required:true, prefill:'nombre', col:2 },
+                    { name:'cargo', label:'Cargo', type:'text', default:'Conductor' },
+                    { name:'fecha', label:'Fecha', type:'date', default:'today' },
+                    { type:'heading', text:'Selección múltiple (única respuesta)' },
+                    { name:'q1', label:'1. ¿Cuáles son las políticas de nuestra empresa?', type:'radio', options:[
+                        {v:'a',l:'Seguridad y Salud en el Trabajo y Ambiente, Calidad y Mejora Continua, Acoso Laboral, Transparencia y Anticorrupción'},
+                        {v:'b',l:'No Alcohol, Drogas y Tabaquismo, Control y Seguridad Vial, Desconexión Laboral'},
+                        {v:'c',l:'Todas las anteriores'} ], required:true },
+                    { name:'q2', label:'2. ¿Responsabilidades relacionadas con HSEQ son?', type:'radio', options:[
+                        {v:'a',l:'Uso continuo y adecuado de EPP'},
+                        {v:'b',l:'Cuidado de equipos y herramientas'},
+                        {v:'c',l:'Todas las anteriores'} ], required:true },
+                    { name:'q5', label:'5. Programas ambientales de Transhicol', type:'radio', options:[
+                        {v:'1',l:'Uso eficiente y ahorro de agua'},
+                        {v:'2',l:'Uso eficiente y ahorro de energía'},
+                        {v:'3',l:'Manejo de residuos sólidos'},
+                        {v:'4',l:'Todas las anteriores'} ], required:true },
+                    { type:'note', text:'Escriba el tipo de residuo para cada color de caneca:' },
+                    { name:'caneca_verde', label:'Caneca VERDE', type:'text' },
+                    { name:'caneca_blanca', label:'Caneca BLANCA', type:'text' },
+                    { name:'caneca_negra', label:'Caneca NEGRA', type:'text' },
+                    { type:'heading', text:'Falso y verdadero' },
+                    { name:'q6', label:'6. Los derechos frente a la ARL en caso de AT o EL son la cobertura médica y económica', type:'radio', options:VF, required:true },
+                    { name:'q7', label:'7. Riesgos prioritarios (biomecánico, alturas, vial, mecánico, químico, tecnológico, orden público)', type:'radio', options:VF, required:true },
+                    { name:'q8', label:'8. Los EPP minimizan los riesgos, no los eliminan', type:'radio', options:VF, required:true },
+                    { name:'q9', label:'9. ¿Cuál NO hace parte del sistema de calidad de la empresa?', type:'radio', options:[
+                        {v:'a',l:'Gestión gerencial'},{v:'b',l:'Gestión HSEQ y aseguramiento'},{v:'c',l:'Gestión de mantenimiento'},
+                        {v:'d',l:'Gestión de apoyo'},{v:'e',l:'Gestión contable y administrativa'},{v:'f',l:'Gestión humana'},{v:'g',l:'Gestión operativa'} ], required:true },
+                    { name:'q10', label:'10. El objetivo general del plan de emergencia es disminuir las consecuencias negativas', type:'radio', options:VF, required:true },
+                    { type:'heading', text:'Firmas y calificación' },
+                    { name:'firma_empleado', label:'Firma empleado (nombre)', type:'text', prefill:'nombre' },
+                    { name:'firma_inductor', label:'Firma de quien imparte la inducción', type:'text' },
+                    { name:'calificacion', label:'Calificación del evaluado', type:'text' },
+                ]
+            },
+
+            actaVial: {
+                title: 'Acta de compromiso de seguridad vial', code:'F-HSEQ-122',
+                fields: [
+                    { name:'nombre', label:'Nombre', type:'text', required:true, prefill:'nombre', col:2 },
+                    { name:'cedula', label:'Cédula', type:'text', required:true, prefill:'cedula' },
+                    { name:'licencia', label:'N° de licencia', type:'text' },
+                    { name:'categoria', label:'Categoría', type:'text' },
+                    { name:'vencimiento', label:'Vencimiento licencia', type:'date' },
+                    { name:'cargo', label:'Cargo', type:'text', default:'Conductor' },
+                    { name:'tipo_vehiculo', label:'Tipo de vehículo', type:'text', prefill:'placa' },
+                    { name:'experiencia', label:'Experiencia', type:'text' },
+                    { name:'verifica_th', label:'Nombre de quien verifica T.H.', type:'text' },
+                    { name:'observaciones', label:'Observaciones', type:'text', col:2 },
+                    { type:'heading', text:'Acta de compromiso en seguridad vial' },
+                    { type:'legal', html:LEGAL_ACTA_VIAL },
+                    { name:'acepta_vial', type:'accept', label:'Me comprometo a cumplir todas las normas de seguridad vial descritas.', required:true },
+                    { type:'heading', text:'Motivo y compromiso' },
+                    { name:'motivo', label:'Motivo del acta', type:'textarea' },
+                    { name:'compromiso', label:'Compromiso del conductor', type:'textarea' },
+                    { type:'heading', text:'Firmas' },
+                    { name:'firma_conductor', label:'Firma del conductor (nombre)', type:'text', required:true, prefill:'nombre' },
+                    { name:'firma_verificador', label:'Firma del verificador T.H.', type:'text' },
+                ]
+            },
+        };
+
+        // Flujos por tipo de proveedor
+        const FLOWS = {
+            propietario: ['proveedor','sarlaft','contrato'],
+            conductor:   ['proveedor','sarlaft','dotacion','registro','actaCompromisos','evaluacion','actaVial'],
+        };
+
+        // =====================================================================
+        //  ESTADO Y RENDER
+        // =====================================================================
+        const $ = (id) => document.getElementById(id);
+        let state = { tipo:null, steps:[], current:0 };
+
+        const todayISO = () => new Date().toISOString().slice(0,10);
+        const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        const wrapId = (doc, field) => `wrap-${doc}-${field}`;
+        const inputName = (doc, field) => `${doc}__${field}`;
+
+        function renderField(doc, f){
+            if (f.type === 'heading')
+                return `<div class="md:col-span-2 mt-2 mb-1 pb-1.5 border-b border-gray-100"><h4 class="text-sm font-black text-[#181818] tracking-tight uppercase">${esc(f.text)}</h4></div>`;
+            if (f.type === 'note')
+                return `<div class="md:col-span-2"><p class="text-[13px] text-gray-500 bg-gray-50 rounded-lg px-3 py-2">${esc(f.text)}</p></div>`;
+            if (f.type === 'legal')
+                return `<div class="md:col-span-2"><div class="legal-box custom-scroll">${f.html}</div></div>`;
+
+            const name = inputName(doc, f.name);
+            const req = f.required ? '<span class="text-red-500">*</span>' : '';
+            const colClass = (f.col === 2 || f.type === 'radio' || f.type === 'checkgroup' || f.type === 'accept' || f.type === 'textarea') ? 'md:col-span-2' : '';
+            const id = wrapId(doc, f.name);
+
+            if (f.type === 'accept') {
+                return `<div id="${id}" class="${colClass}"><label class="accept-box" data-accept-wrap>
+                    <input type="checkbox" data-field name="${name}" data-doc="${doc}" data-fname="${f.name}" ${f.required?'data-required="1"':''}>
+                    <span class="text-[13px] text-gray-700 leading-snug">${esc(f.label)} ${req}</span></label></div>`;
+            }
+            if (f.type === 'radio') {
+                const opts = f.options.map(o => `
+                    <label class="opt-pill" data-opt>
+                        <input type="radio" name="${name}" value="${esc(o.v)}" data-field data-doc="${doc}" data-fname="${f.name}" ${f.required?'data-required="1"':''} ${f.default===o.v?'checked':''}>
+                        <span>${esc(o.l)}</span></label>`).join('');
+                return `<div id="${id}" class="${colClass}">
+                    <span class="field-label">${esc(f.label)} ${req}</span>
+                    <div class="flex flex-wrap gap-2">${opts}</div></div>`;
+            }
+            if (f.type === 'checkgroup') {
+                const opts = f.options.map(o => `
+                    <label class="opt-pill" data-opt>
+                        <input type="checkbox" name="${name}" value="${esc(o)}" data-field data-doc="${doc}" data-fname="${f.name}">
+                        <span>${esc(o)}</span></label>`).join('');
+                const lbl = f.label ? `<span class="field-label">${esc(f.label)} ${req}</span>` : '';
+                return `<div id="${id}" class="${colClass}">${lbl}<div class="flex flex-wrap gap-2">${opts}</div></div>`;
+            }
+
+            let inner = '';
+            if (f.type === 'select') {
+                const opts = ['<option value="">Seleccione...</option>'].concat(f.options.map(o=>`<option value="${esc(o)}" ${f.default===o?'selected':''}>${esc(o)}</option>`)).join('');
+                inner = `<select class="field-input" name="${name}" data-field data-doc="${doc}" data-fname="${f.name}" ${f.required?'data-required="1"':''}>${opts}</select>`;
+            } else if (f.type === 'textarea') {
+                inner = `<textarea class="field-input" name="${name}" data-field data-doc="${doc}" data-fname="${f.name}" placeholder="${esc(f.placeholder||'')}" ${f.required?'data-required="1"':''}></textarea>`;
+            } else {
+                const val = f.default === 'today' ? todayISO() : (f.default || '');
+                inner = `<input type="${f.type}" class="field-input" name="${name}" data-field data-doc="${doc}" data-fname="${f.name}" placeholder="${esc(f.placeholder||'')}" value="${esc(val)}" ${f.prefill?`data-prefill="${f.prefill}"`:''} ${f.required?'data-required="1"':''}>`;
+            }
+            return `<div id="${id}" class="${colClass}"><label class="field-label">${esc(f.label)} ${req}</label>${inner}</div>`;
+        }
+
+        function renderStep(docKey, idx){
+            const doc = DOCS[docKey];
+            const fieldsHtml = doc.fields.map(f => renderField(docKey, f)).join('');
+            return `<div class="doc-step ${idx===0?'':'step-hidden'}" data-step="${idx}" data-doc="${docKey}">
+                <div class="flex items-start gap-3 mb-5">
+                    <div class="w-9 h-9 rounded-xl bg-[#FFD22E] text-[#181818] font-black flex items-center justify-center text-sm shrink-0">${idx+1}</div>
+                    <div>
+                        <h3 class="text-lg font-black text-gray-800 tracking-tight leading-tight">${esc(doc.title)}</h3>
+                        ${doc.code?`<p class="text-xs text-gray-400 font-semibold">${esc(doc.code)}</p>`:''}
                     </div>
-                    <!-- CAMBIO: de <input> a <div> contenteditable y se añadió la clase 'contratista-nombre' -->
-                    <div contenteditable="true" class="form-input mt-2 contratista-nombre" data-placeholder="Nombre completo del Contratista"></div>
-                    <!-- CAMBIO: de <input> a <div> contenteditable -->
-                    <div contenteditable="true" class="form-input mt-2" data-placeholder="C.C No."></div>
                 </div>
-            </div>
-        </section>
+                <div class="grid md:grid-cols-2 gap-x-5 gap-y-3.5">${fieldsHtml}</div>
+            </div>`;
+        }
 
-    </div>
-    
-    <!-- Botón de Imprimir (global) -->
-    <div class="text-center my-10 no-print">
-        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 ease-in-out">
-            Imprimir o Guardar como PDF
-        </button>
-    </div>
+        function buildWizard(tipo){
+            state.tipo = tipo;
+            state.steps = FLOWS[tipo];
+            state.current = 0;
+            $('steps-container').innerHTML = state.steps.map((d,i)=>renderStep(d,i)).join('');
+            $('step-chips').innerHTML = state.steps.map((d,i)=>
+                `<span class="chip text-[10px] font-bold px-2 py-1 rounded-full border" data-chip="${i}">${esc(DOCS[d].title)}</span>`).join('');
+            wireInteractions();
+            showScreen('wizard');
+            goToStep(0);
+        }
 
-    <!-- INICIO: Script para sincronizar los campos de nombre -->
-    <script>
-    // Espera a que el documento esté completamente cargado
-    document.addEventListener('DOMContentLoaded', (event) => {
-        
-        // Selecciona todos los elementos que deben compartir el nombre del contratista
-        const nameFields = document.querySelectorAll('.contratista-nombre');
-
-        // Función para actualizar todos los campos
-        function updateNameFields(sourceElement) {
-            // Usa innerText para elementos contenteditable
-            const newName = sourceElement.innerText;
-            
-            nameFields.forEach(field => {
-                // Solo actualiza los otros campos, no el que se está editando
-                if (field !== sourceElement) {
-                    field.innerText = newName;
-                }
+        function wireInteractions(){
+            $('steps-container').querySelectorAll('[data-opt] input, [data-accept-wrap] input').forEach(inp=>{
+                const sync = () => {
+                    if (inp.type === 'radio') {
+                        $('steps-container').querySelectorAll(`input[name="${inp.name}"]`).forEach(r=>{
+                            r.closest('[data-opt]')?.classList.toggle('checked', r.checked);
+                        });
+                    } else {
+                        (inp.closest('[data-opt]') || inp.closest('[data-accept-wrap]'))?.classList.toggle('checked', inp.checked);
+                    }
+                };
+                inp.addEventListener('change', sync);
+                sync();
+            });
+            $('steps-container').querySelectorAll('input[data-field]').forEach(inp=>{
+                inp.addEventListener('change', ()=>applyConditionals(inp.dataset.doc));
             });
         }
 
-        // Añade un 'event listener' a cada campo
-        nameFields.forEach(field => {
-            field.addEventListener('input', (e) => {
-                updateNameFields(e.target);
+        function applyConditionals(docKey){
+            DOCS[docKey].fields.forEach(f=>{
+                if (!f.showIf) return;
+                const ctrlName = inputName(docKey, f.showIf.field);
+                const checked = $('steps-container').querySelector(`input[name="${ctrlName}"]:checked`);
+                const val = checked ? checked.value : '';
+                const el = document.getElementById(wrapId(docKey, f.name));
+                if (el) el.style.display = f.showIf.in.includes(val) ? '' : 'none';
             });
-        });
+        }
 
-    });
+        function prefillStep(docKey){
+            const src = collectDoc('proveedor');
+            const map = { nombre:src.nombre, cedula:src.cedula, tipoId:src.tipoId, telefono:src.telefono, correo:src.correo, placa:src.placa };
+            $('steps-container').querySelectorAll(`.doc-step[data-doc="${docKey}"] input[data-prefill]`).forEach(inp=>{
+                if (!inp.value) { const v = map[inp.dataset.prefill]; if (v) inp.value = v; }
+            });
+        }
+
+        function collectDoc(docKey){
+            const out = {};
+            $('steps-container').querySelectorAll(`.doc-step[data-doc="${docKey}"] [data-field]`).forEach(inp=>{
+                const k = inp.dataset.fname;
+                if (inp.type === 'checkbox' && inp.closest('[data-accept-wrap]')) { out[k] = inp.checked; }
+                else if (inp.type === 'checkbox') { if (inp.checked){ out[k] = out[k]||[]; out[k].push(inp.value); } }
+                else if (inp.type === 'radio') { if (inp.checked) out[k] = inp.value; }
+                else { const v = (inp.value||'').trim(); if (v) out[k] = v; }
+            });
+            return out;
+        }
+
+        // Construye la estructura auto-descriptiva que se guarda y muestra el admin:
+        // { titulo, codigo, campos:[{label, value}] } — con opciones resueltas a texto.
+        function buildLabeled(docKey){
+            const doc = DOCS[docKey];
+            const raw = collectDoc(docKey);
+            const campos = [];
+            doc.fields.forEach(f=>{
+                if (!f.name) return; // heading/note/legal
+                let v = raw[f.name];
+                if (v === undefined || v === null || v === '') return;
+                if (f.type === 'radio') { const o = f.options.find(o=>o.v===v); v = o ? o.l : v; }
+                else if (f.type === 'checkgroup') { v = Array.isArray(v) ? v.join(', ') : v; }
+                else if (f.type === 'accept') { if (v !== true) return; v = 'Aceptado'; }
+                if (v === '' || (Array.isArray(v) && v.length===0)) return;
+                campos.push({ label: f.label || f.name, value: String(v) });
+            });
+            return { titulo: doc.title, codigo: doc.code || '', campos };
+        }
+
+        // ── Navegación ──
+        function goToStep(i){
+            state.current = i;
+            $('steps-container').querySelectorAll('.doc-step').forEach((s,idx)=>s.classList.toggle('step-hidden', idx!==i));
+            const docKey = state.steps[i];
+            prefillStep(docKey);
+            applyConditionals(docKey);
+            const total = state.steps.length;
+            $('progress-bar').style.width = `${Math.round((i/(total-1))*100)}%`;
+            $('step-counter').textContent = `Paso ${i+1} de ${total}`;
+            document.querySelectorAll('.chip').forEach((c,idx)=>{
+                const active = idx===i;
+                c.classList.toggle('bg-[#181818]', active);
+                c.classList.toggle('text-[#FFD22E]', active);
+                c.classList.toggle('border-[#181818]', active);
+                c.classList.toggle('bg-gray-50', !active);
+                c.classList.toggle('text-gray-500', !active);
+                c.classList.toggle('border-gray-200', !active);
+                c.classList.toggle('opacity-60', idx>i);
+            });
+            $('btn-prev').disabled = i===0;
+            const last = i===total-1;
+            $('btn-next').classList.toggle('step-hidden', last);
+            $('btn-submit').classList.toggle('step-hidden', !last);
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+
+        function validateStep(i){
+            const docKey = state.steps[i];
+            let ok = true, firstBad = null;
+            $('steps-container').querySelectorAll(`.doc-step[data-doc="${docKey}"] [data-required]`).forEach(inp=>{
+                const wrap = document.getElementById(wrapId(docKey, inp.dataset.fname));
+                if (wrap && wrap.style.display === 'none') return;
+                let bad = false;
+                if (inp.type === 'radio') {
+                    bad = !$('steps-container').querySelector(`input[name="${inp.name}"]:checked`);
+                } else if (inp.type === 'checkbox' && inp.closest('[data-accept-wrap]')) {
+                    bad = !inp.checked; inp.closest('[data-accept-wrap]').classList.toggle('invalid', bad);
+                } else {
+                    bad = !(inp.value||'').trim(); inp.classList.toggle('invalid', bad);
+                }
+                if (bad && !firstBad) firstBad = inp;
+                if (bad) ok = false;
+            });
+            if (firstBad) (firstBad.closest('[id^="wrap-"]')||firstBad).scrollIntoView({behavior:'smooth', block:'center'});
+            return ok;
+        }
+
+        // ── Submit ──
+        async function submitAll(){
+            for (let i=0;i<state.steps.length;i++){ if(!validateStep(i)){ goToStep(i); toast('Revise los campos obligatorios marcados.'); return; } }
+
+            const prov = collectDoc('proveedor');
+            const documentos = {};
+            state.steps.forEach(d => { documentos[d] = buildLabeled(d); });
+
+            const payload = {
+                tipo_proveedor: state.tipo,
+                nombre: prov.nombre || null,
+                cedula: prov.cedula || null,
+                placa: (prov.placa || '').toUpperCase() || null,
+                datos: { documentos, meta: { enviado_en:new Date().toISOString(), user_agent:navigator.userAgent, flujo:state.steps } }
+            };
+
+            $('submit-overlay').style.display = 'flex';
+            try {
+                const { data, error } = await supabase.from('documental_envios').insert(payload).select('id').single();
+                if (error) throw error;
+                $('submit-overlay').style.display = 'none';
+                $('success-code').textContent = 'Comprobante: ' + (data?.id ? data.id.slice(0,8).toUpperCase() : '—');
+                showScreen('success');
+                window.scrollTo({top:0});
+            } catch(e) {
+                console.error(e);
+                $('submit-overlay').style.display = 'none';
+                toast('No se pudo enviar. Verifique su conexión e intente de nuevo.');
+            }
+        }
+
+        // ── UI helpers ──
+        function showScreen(name){
+            ['selector','wizard','success'].forEach(s=>$(`screen-${s}`).classList.toggle('step-hidden', s!==name));
+        }
+        let toastT;
+        function toast(msg){
+            let el = $('toast');
+            if (!el){ el = document.createElement('div'); el.id='toast'; el.className='fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] bg-[#181818] text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow-lg no-print transition-opacity'; document.body.appendChild(el); }
+            el.textContent = msg; el.style.opacity='1';
+            clearTimeout(toastT); toastT = setTimeout(()=>el.style.opacity='0', 3200);
+        }
+
+        // ── Eventos ──
+        document.querySelectorAll('.tipo-card').forEach(b=>b.addEventListener('click', ()=>buildWizard(b.dataset.tipo)));
+        $('btn-next').addEventListener('click', ()=>{ if(validateStep(state.current)) goToStep(state.current+1); else toast('Complete los campos obligatorios (marcados en rojo).'); });
+        $('btn-prev').addEventListener('click', ()=>goToStep(state.current-1));
+        $('btn-submit').addEventListener('click', submitAll);
+        $('btn-restart').addEventListener('click', ()=>{ if(confirm('¿Cambiar el tipo de vinculación? Se perderá lo diligenciado.')) location.reload(); });
+        $('btn-new').addEventListener('click', ()=>location.reload());
     </script>
-    <!-- FIN: Script -->
-
 </body>
 </html>
