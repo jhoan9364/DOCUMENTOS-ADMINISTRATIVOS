@@ -348,13 +348,13 @@
             proveedor: {
                 title: 'Datos del proveedor', code: '',
                 fields: [
-                    { type:'note', text:'Escriba primero su número de cédula: si ya diligenció antes, se autocompletarán sus datos. Todo se replica en los demás formularios.' },
-                    { name:'cedula', label:'Número de cédula', type:'text', required:true, lookup:true, col:2 },
-                    { name:'nombre', label:'Nombre completo', type:'text', required:true, col:2 },
+                    { type:'note', text:'Escriba su tipo y número de identificación: si ya diligenció antes, se autocompletarán sus datos. Todo se replica en los demás formularios.' },
                     { name:'tipoId', label:'Tipo de identificación', type:'select', options:['Cédula de ciudadanía','Cédula de extranjería','Pasaporte','PEP'], required:true, default:'Cédula de ciudadanía' },
+                    { name:'cedula', label:'Número de identificación', type:'text', required:true, lookup:true },
+                    { name:'nombre', label:'Nombre completo', type:'text', required:true, col:2 },
                     { name:'telefono', label:'Teléfono / celular', type:'tel', required:true },
                     { name:'correo', label:'Correo electrónico', type:'email' },
-                    { name:'placa', label:'Placa del vehículo', type:'text', required:true },
+                    { name:'placa', label:'Placa del vehículo', type:'text', required:true, col:2 },
                     { type:'autofill' },
                 ]
             },
@@ -599,13 +599,13 @@
             proveedorEmpresa: {
                 title: 'Datos de la empresa', code: '',
                 fields: [
-                    { type:'note', text:'La documentación la diligencia el REPRESENTANTE LEGAL en nombre de la empresa. Escriba primero el NIT: si ya diligenció antes, se autocompletarán los datos.' },
-                    { name:'nit', label:'NIT de la empresa', type:'text', required:true, lookup:true, col:2 },
-                    { name:'razon_social', label:'Razón social', type:'text', required:true, col:2 },
+                    { type:'note', text:'La documentación la diligencia el REPRESENTANTE LEGAL en nombre de la empresa. Escriba el NIT: si ya diligenció antes, se autocompletarán los datos.' },
+                    { name:'nit', label:'NIT de la empresa', type:'text', required:true, lookup:true },
                     { name:'tipo_sociedad', label:'Tipo de sociedad', type:'select', options:['S.A.S','S.A.','Ltda.','E.U.','En comandita','Persona natural comerciante','Otra'] },
+                    { name:'razon_social', label:'Razón social', type:'text', required:true, col:2 },
                     { name:'telefono', label:'Teléfono de la empresa', type:'tel', required:true },
                     { name:'correo', label:'Correo electrónico', type:'email' },
-                    { name:'placa', label:'Placa del vehículo', type:'text', required:true },
+                    { name:'placa', label:'Placa del vehículo', type:'text', required:true, col:2 },
                     { type:'heading', text:'Representante legal' },
                     { name:'rep_nombre', label:'Nombre del representante legal', type:'text', required:true, col:2 },
                     { name:'rep_cedula', label:'Cédula del representante legal', type:'text', required:true },
@@ -727,9 +727,9 @@
 
         function renderField(doc, f){
             if (f.type === 'heading')
-                return `<div class="md:col-span-2 mt-2 mb-1 pb-1.5 border-b border-gray-100"><h4 class="text-sm font-black text-[#181818] tracking-tight uppercase">${esc(f.text)}</h4></div>`;
+                return `<div class="md:col-span-2 mt-3 mb-1 flex items-center gap-2 pb-1.5 border-b border-gray-100"><span class="w-1.5 h-4 rounded-full bg-[#FFD22E] shrink-0"></span><h4 class="text-sm font-black text-[#181818] tracking-tight uppercase">${esc(f.text)}</h4></div>`;
             if (f.type === 'note')
-                return `<div class="md:col-span-2"><p class="text-[13px] text-gray-500 bg-gray-50 rounded-lg px-3 py-2">${esc(f.text)}</p></div>`;
+                return `<div class="md:col-span-2"><p class="text-[13px] text-gray-600 bg-[#fffdf3] border border-[#FFD22E]/30 rounded-xl px-3.5 py-2.5 leading-snug">${esc(f.text)}</p></div>`;
             if (f.type === 'legal')
                 return `<div class="md:col-span-2"><div class="legal-box custom-scroll">${f.html}</div></div>`;
             if (f.type === 'autofill')
