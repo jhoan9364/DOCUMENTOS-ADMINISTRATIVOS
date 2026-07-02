@@ -45,6 +45,11 @@
 
         .step-hidden { display:none !important; }
         .invalid { border-color:#ef4444 !important; box-shadow:0 0 0 3px rgba(239,68,68,.18) !important; }
+        .opt-pill.opt-invalid { border-color:#ef4444; background:#fef2f2; }
+        .field-err-note { color:#dc2626; font-size:.72rem; font-weight:700; margin-top:.3rem; display:flex; align-items:center; gap:.25rem; }
+        .missing-banner { border:1px solid #fecaca; background:#fef2f2; color:#b91c1c; border-radius:.8rem; padding:.75rem .95rem; margin-bottom:1.1rem; }
+        .missing-banner ul { list-style:disc; padding-left:1.2rem; margin-top:.25rem; }
+        .missing-banner li { margin-bottom:.1rem; font-size:.8rem; }
         .custom-scroll::-webkit-scrollbar { width:8px; height:8px; }
         .custom-scroll::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
         .chips-scroll { scrollbar-width:none; }
@@ -804,6 +809,7 @@
                         ${doc.code?`<p class="text-xs text-gray-400 font-semibold">${esc(doc.code)}</p>`:''}
                     </div>
                 </div>
+                <div class="missing-banner step-hidden" data-banner-doc="${docKey}"></div>
                 <div class="grid md:grid-cols-2 gap-x-5 gap-y-4">${fieldsHtml}</div>
             </div>`;
         }
@@ -861,6 +867,11 @@
                 inp.addEventListener('change', ()=>{ if ((inp.value||'').trim().length >= 5) doLookup(); });
             });
             const ba = $('btn-autofill'); if (ba) ba.addEventListener('click', doLookup);
+            // Limpia en vivo el rojo/banner cuando el usuario corrige un campo obligatorio.
+            c.querySelectorAll('[data-field][data-fname]').forEach(inp=>{
+                inp.addEventListener('input', ()=>liveClear(inp));
+                inp.addEventListener('change', ()=>liveClear(inp));
+            });
         }
 
         function applyConditionals(docKey){
@@ -994,19 +1005,50 @@
             return { titulo: doc.title, codigo: doc.code || '', campos };
         }
 
-        // ¿Están completos los campos obligatorios (visibles) del documento?
-        function isDocComplete(docKey){
-            const container = $('steps-container');
-            let ok = true;
-            container.querySelectorAll(`.doc-step[data-doc="${docKey}"] [data-required]`).forEach(inp=>{
-                if (!ok) return;
-                const wrap = document.getElementById(wrapId(docKey, inp.dataset.fname));
+        // Campos requeridos, visibles y vacíos de un documento → lista {name, label}.
+        function missingFields(docKey){
+            const c = $('steps-container');
+            const out = [];
+            DOCS[docKey].fields.forEach(f=>{
+                if (!f.required || !f.name) return;
+                const wrap = document.getElementById(wrapId(docKey, f.name));
                 if (wrap && wrap.style.display === 'none') return;
-                if (inp.type === 'radio') { if (!container.querySelector(`input[name="${inp.name}"]:checked`)) ok = false; }
-                else if (inp.type === 'checkbox' && inp.closest('[data-accept-wrap]')) { if (!inp.checked) ok = false; }
-                else { if (!(inp.value||'').trim()) ok = false; }
+                const name = inputName(docKey, f.name);
+                let empty;
+                if (f.type === 'radio') empty = !c.querySelector(`input[name="${name}"]:checked`);
+                else if (f.type === 'accept') { const el = c.querySelector(`input[name="${name}"]`); empty = !(el && el.checked); }
+                else { const el = c.querySelector(`[name="${name}"]`); empty = !(el && (el.value||'').trim()); }
+                if (empty) out.push({ name:f.name, label: f.type==='accept' ? ('Falta marcar: ' + String(f.label||'').slice(0,70)) : (f.label || f.name) });
             });
-            return ok;
+            return out;
+        }
+        function isDocComplete(docKey){ return missingFields(docKey).length === 0; }
+
+        // Marca o limpia el estado de error (borde rojo + nota) de un campo.
+        function setFieldError(docKey, f, bad){
+            const wrap = document.getElementById(wrapId(docKey, f.name));
+            if (!wrap) return;
+            const name = inputName(docKey, f.name);
+            if (f.type === 'radio' || f.type === 'checkgroup') {
+                wrap.querySelectorAll('.opt-pill').forEach(p=>p.classList.toggle('opt-invalid', bad));
+            } else if (f.type === 'accept') {
+                wrap.querySelector('.accept-box')?.classList.toggle('invalid', bad);
+            } else {
+                wrap.querySelector(`[name="${name}"]`)?.classList.toggle('invalid', bad);
+            }
+            let note = wrap.querySelector('.field-err-note');
+            if (bad) { if (!note){ note = document.createElement('p'); note.className='field-err-note'; note.textContent='⚠ Falta diligenciar'; wrap.appendChild(note); } }
+            else if (note) { note.remove(); }
+        }
+
+        // Muestra/oculta el banner rojo del paso con la lista de lo que falta.
+        function refreshBanner(docKey, missing){
+            const banner = $('steps-container').querySelector(`[data-banner-doc="${docKey}"]`);
+            if (!banner) return;
+            if (missing && missing.length){
+                banner.innerHTML = `<div class="font-black text-sm">⚠ Falta diligenciar ${missing.length} campo${missing.length===1?'':'s'} obligatorio${missing.length===1?'':'s'}:</div><ul>${missing.map(m=>`<li>${esc(m.label)}</li>`).join('')}</ul>`;
+                banner.classList.remove('step-hidden');
+            } else { banner.classList.add('step-hidden'); banner.innerHTML=''; }
         }
 
         // ── Revisión final ──
@@ -1042,7 +1084,13 @@
                 </div>
                 <div class="space-y-2 max-w-xl mx-auto">${list}</div>`;
 
-            $('review-body').querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click', ()=>goToStep(parseInt(b.dataset.goto,10))));
+            $('review-body').querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click', ()=>{
+                const idx = parseInt(b.dataset.goto,10);
+                goToStep(idx);
+                // Si el doc está incompleto, mostrar de inmediato en rojo qué falta.
+                const dk = state.steps[idx];
+                if (!isDocComplete(dk)) validateStep(dk);
+            }));
             $('btn-submit').disabled = !all;
         }
 
@@ -1081,23 +1129,27 @@
         }
 
         function validateStep(docKey){
-            let ok = true, firstBad = null;
-            $('steps-container').querySelectorAll(`.doc-step[data-doc="${docKey}"] [data-required]`).forEach(inp=>{
-                const wrap = document.getElementById(wrapId(docKey, inp.dataset.fname));
-                if (wrap && wrap.style.display === 'none') return;
-                let bad = false;
-                if (inp.type === 'radio') {
-                    bad = !$('steps-container').querySelector(`input[name="${inp.name}"]:checked`);
-                } else if (inp.type === 'checkbox' && inp.closest('[data-accept-wrap]')) {
-                    bad = !inp.checked; inp.closest('[data-accept-wrap]').classList.toggle('invalid', bad);
-                } else {
-                    bad = !(inp.value||'').trim(); inp.classList.toggle('invalid', bad);
-                }
-                if (bad && !firstBad) firstBad = inp;
-                if (bad) ok = false;
-            });
-            if (firstBad) (firstBad.closest('[id^="wrap-"]')||firstBad).scrollIntoView({behavior:'smooth', block:'center'});
-            return ok;
+            const missing = missingFields(docKey);
+            const missingSet = new Set(missing.map(m=>m.name));
+            DOCS[docKey].fields.forEach(f=>{ if (f.name && f.required) setFieldError(docKey, f, missingSet.has(f.name)); });
+            refreshBanner(docKey, missing);
+            if (missing.length){
+                const el = document.getElementById(wrapId(docKey, missing[0].name)) || $('steps-container').querySelector(`[data-banner-doc="${docKey}"]`);
+                el?.scrollIntoView({ behavior:'smooth', block:'center' });
+            }
+            return missing.length === 0;
+        }
+
+        // Limpia en vivo el error de un campo cuando el usuario lo diligencia.
+        function liveClear(inp){
+            const docKey = inp.dataset.doc, fname = inp.dataset.fname;
+            const f = DOCS[docKey] && DOCS[docKey].fields.find(x=>x.name===fname);
+            if (!f || !f.required) return;
+            const banner = $('steps-container').querySelector(`[data-banner-doc="${docKey}"]`);
+            if (!banner || banner.classList.contains('step-hidden')) return; // solo tras un intento fallido
+            const still = missingFields(docKey);
+            setFieldError(docKey, f, still.some(m=>m.name===fname));
+            refreshBanner(docKey, still);
         }
 
         function onNext(){
