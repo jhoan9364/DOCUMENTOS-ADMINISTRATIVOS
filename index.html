@@ -5,31 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Documentación de Proveedores — TRANSHICOL S.A.S</title>
     <link rel="icon" href="https://i.postimg.cc/VNSN6KgD/LOGO-OK.png">
+    <meta name="theme-color" content="#181818">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --th-yellow:#FFD22E; --th-dark:#181818; }
         html { scroll-behavior:smooth; }
-        body { background:#f1f5f9; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+        body {
+            background:
+                radial-gradient(1100px 480px at 85% -120px, rgba(255,210,46,.16), transparent 60%),
+                radial-gradient(900px 420px at -10% 35%, rgba(24,24,24,.05), transparent 55%),
+                #f2f4f8;
+            font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        }
 
-        .field-label { display:block; font-size:.8rem; font-weight:600; color:#374151; margin-bottom:.3rem; }
+        .field-label { display:block; font-size:.67rem; font-weight:800; color:#64748b; letter-spacing:.05em; text-transform:uppercase; margin-bottom:.35rem; }
         .field-input {
-            width:100%; padding:.7rem .8rem; border:1px solid #d1d5db; border-radius:.7rem;
-            background:#fff; font-size:16px; /* 16px evita el zoom automático en iOS */
-            transition:border-color .15s, box-shadow .15s; color:#111827;
+            width:100%; padding:.74rem .9rem; border:1.5px solid #e5e7eb; border-radius:.8rem;
+            background:#f9fafb; font-size:16px; /* 16px evita el zoom automático en iOS */
+            transition:border-color .15s, box-shadow .15s, background .15s; color:#111827; font-weight:600;
             text-transform:uppercase; /* todo lo escrito se ve en MAYÚSCULA */
         }
+        .field-input::placeholder { text-transform:none; color:#9ca3af; font-weight:500; }
+        .field-input:hover { border-color:#d1d5db; }
         .field-input[type="date"] { text-transform:none; }
-        .field-input:focus { outline:none; border-color:var(--th-yellow); box-shadow:0 0 0 3px rgba(255,210,46,.25); }
+        .field-input:focus { outline:none; background:#fff; border-color:var(--th-yellow); box-shadow:0 0 0 4px rgba(255,210,46,.20); }
         select.field-input { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right .7rem center; background-size:1.2em; padding-right:2.2rem; }
         textarea.field-input { min-height:5rem; resize:vertical; }
 
-        .opt-pill { border:1px solid #d1d5db; border-radius:.7rem; padding:.65rem .85rem; cursor:pointer; transition:all .12s; display:flex; align-items:center; gap:.55rem; font-size:.9rem; background:#fff; min-height:46px; }
-        .opt-pill:hover { border-color:#9ca3af; background:#f9fafb; }
-        .opt-pill:active { transform:scale(.98); }
+        .opt-pill { border:1.5px solid #e5e7eb; border-radius:.8rem; padding:.62rem .9rem; cursor:pointer; transition:all .13s; display:flex; align-items:center; gap:.6rem; font-size:.9rem; font-weight:600; color:#475569; background:#f9fafb; min-height:48px; }
+        .opt-pill:hover { border-color:#f5c400; background:#fffdf3; }
+        .opt-pill:active { transform:scale(.97); }
         .opt-pill input { accent-color:var(--th-dark); width:1.15rem; height:1.15rem; flex-shrink:0; }
-        .opt-pill.checked { border-color:var(--th-yellow); background:#fffdf3; box-shadow:0 0 0 2px rgba(255,210,46,.2); }
+        .opt-pill.checked { border-color:#f5c400; background:linear-gradient(180deg,#fff9e3,#fff3c4); color:#111827; font-weight:700; box-shadow:0 3px 10px rgba(245,196,0,.22); }
 
-        .legal-box { max-height:300px; overflow-y:auto; border:1px solid #e5e7eb; border-radius:.75rem; padding:1rem 1.15rem; background:#fafafa; font-size:.84rem; line-height:1.55; color:#374151; -webkit-overflow-scrolling:touch; }
+        .legal-box { max-height:300px; overflow-y:auto; border:1.5px solid #eef0f4; border-radius:.9rem; padding:1.05rem 1.2rem; background:#fbfcfd; font-size:.84rem; line-height:1.6; color:#475569; -webkit-overflow-scrolling:touch; box-shadow:inset 0 -14px 14px -14px rgba(2,6,23,.10); }
         .legal-box h4 { font-weight:800; text-transform:uppercase; margin:.9rem 0 .35rem; color:#111827; font-size:.82rem; }
         .legal-box p { margin-bottom:.55rem; text-align:justify; }
         .legal-box ol, .legal-box ul { padding-left:1.25rem; margin-bottom:.55rem; }
@@ -38,9 +50,10 @@
         .legal-box th, .legal-box td { border:1px solid #d1d5db; padding:.25rem .4rem; text-align:left; }
         .legal-box thead { background:#f3f4f6; }
 
-        .accept-box { display:flex; gap:.7rem; align-items:flex-start; border:1px solid #e5e7eb; border-radius:.75rem; padding:1rem; background:#fff; cursor:pointer; transition:all .12s; }
+        .accept-box { display:flex; gap:.7rem; align-items:flex-start; border:1.5px solid #e5e7eb; border-radius:.9rem; padding:1rem 1.05rem; background:#f9fafb; cursor:pointer; transition:all .13s; }
+        .accept-box:hover { border-color:#6ee7b7; background:#fff; }
         .accept-box:active { transform:scale(.995); }
-        .accept-box.checked { border-color:#10b981; background:#f0fdf4; }
+        .accept-box.checked { border-color:#34d399; background:linear-gradient(180deg,#f0fdf4,#ecfdf5); box-shadow:0 3px 12px rgba(16,185,129,.14); }
         .accept-box input { accent-color:#10b981; width:1.3rem; height:1.3rem; margin-top:.1rem; flex-shrink:0; }
 
         /* Chip "Todo SI" por sección (mismo patrón que Preoperacional/Plan de viaje) */
@@ -54,7 +67,8 @@
         .bulk-chip.bulk-done { border-style:solid; border-color:#10b981; color:#059669; background:#ecfdf5; }
 
         /* Pad de firma manuscrita (vectorial) */
-        .sig-wrap { position:relative; border:2px dashed #cbd5e1; border-radius:.9rem; background:#fff; touch-action:none; overflow:hidden; transition:border-color .15s; }
+        .sig-wrap { position:relative; border:2px dashed #cbd5e1; border-radius:.9rem; background:linear-gradient(180deg,#ffffff,#fbfcff); box-shadow:inset 0 2px 10px rgba(2,6,23,.04); touch-action:none; overflow:hidden; transition:border-color .15s; }
+        .sig-wrap:hover { border-color:#f5c400; }
         .sig-wrap canvas { display:block; width:100%; height:170px; cursor:crosshair; }
         .sig-hint { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:.4rem; color:#cbd5e1; font-size:.88rem; font-weight:700; pointer-events:none; user-select:none; }
         .sig-invalid { border-color:#ef4444 !important; box-shadow:0 0 0 3px rgba(239,68,68,.18); }
@@ -92,45 +106,53 @@
     <!-- ============ HEADER ============ -->
     <header class="bg-[#181818] text-white sticky top-0 z-30 shadow-lg no-print">
         <div class="max-w-4xl mx-auto px-4 py-2.5 flex items-center gap-3">
-            <img src="https://i.postimg.cc/VNSN6KgD/LOGO-OK.png" alt="Transhicol" class="h-8 bg-white rounded-md p-1">
-            <div class="leading-tight">
-                <h1 class="font-black text-[14px] md:text-[15px] tracking-tight">Documentación de Proveedores</h1>
-                <p class="text-[10px] md:text-[11px] text-[#FFD22E] font-semibold">TRANSHICOL S.A.S</p>
+            <img src="https://i.postimg.cc/VNSN6KgD/LOGO-OK.png" alt="Transhicol" class="h-9 bg-white rounded-lg p-1 shadow">
+            <div class="leading-tight flex-1 min-w-0">
+                <h1 class="font-extrabold text-[14px] md:text-[15px] tracking-tight truncate">Documentación de Proveedores</h1>
+                <p class="text-[10px] md:text-[11px] text-[#FFD22E] font-bold tracking-wide">TRANSHICOL S.A.S</p>
             </div>
+            <span class="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-bold text-white/70 border border-white/15 rounded-full px-3 py-1.5 bg-white/5 whitespace-nowrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Firma electrónica · Ley 527 de 1999
+            </span>
         </div>
+        <div class="h-[3px] bg-gradient-to-r from-[#FFD22E] via-[#f5c400] to-transparent"></div>
     </header>
 
     <!-- ============ PANTALLA 1: SELECTOR ============ -->
     <section id="screen-selector" class="max-w-4xl mx-auto px-4 py-8 md:py-10 fade-up">
         <div class="text-center mb-7">
-            <h2 class="text-2xl md:text-3xl font-black text-gray-800 tracking-tight">Bienvenido</h2>
+            <p class="text-[10.5px] font-extrabold tracking-[.2em] text-[#b48f00] uppercase mb-2">Transhicol S.A.S · Vinculación de proveedores</p>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">Bienvenido</h2>
             <p class="text-gray-500 mt-2 max-w-xl mx-auto text-sm md:text-base">Con este único enlace diligencia toda su documentación con TRANSHICOL S.A.S. Para comenzar, indique su tipo de vinculación.</p>
         </div>
         <div class="grid md:grid-cols-2 gap-4 md:gap-5">
-            <button data-tipo="propietario" class="tipo-card group text-left bg-white rounded-2xl border-2 border-gray-100 p-5 md:p-6 shadow-sm hover:shadow-xl hover:border-[#FFD22E] active:scale-[.99] transition-all">
-                <div class="w-12 h-12 rounded-xl bg-[#181818] text-[#FFD22E] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14v-5l-2-5H7l-2 5v5z"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>
+            <button data-tipo="propietario" class="tipo-card group relative text-left bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_6px_24px_rgba(2,6,23,.05)] hover:shadow-[0_16px_44px_rgba(2,6,23,.10)] hover:-translate-y-0.5 hover:border-[#FFD22E]/70 active:scale-[.99] transition-all">
+                <span class="absolute top-5 right-5 text-[10px] font-extrabold text-gray-400 bg-gray-50 border border-gray-100 rounded-full px-2.5 py-1">2–3 formatos</span>
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#181818] to-[#3d3d3d] text-[#FFD22E] flex items-center justify-center mb-4 shadow-[0_6px_16px_rgba(2,6,23,.25)] group-hover:scale-105 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14v-5l-2-5H7l-2 5v5z"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>
                 </div>
-                <h3 class="text-lg font-black text-gray-800">Soy Propietario</h3>
-                <p class="text-sm text-gray-500 mt-1">Propietario / tenedor del vehículo que presta el servicio.</p>
-                <ul class="mt-4 space-y-1.5 text-[13px] text-gray-600">
+                <h3 class="text-lg font-extrabold text-gray-800">Soy Propietario</h3>
+                <p class="text-sm text-gray-500 mt-1">Propietario / tenedor del vehículo que presta el servicio (persona natural o empresa).</p>
+                <ul class="mt-4 space-y-1.5 text-[13px] text-gray-600 font-medium">
                     <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> Formato SARLAFT</li>
                     <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> Contrato de prestación de servicios</li>
                 </ul>
-                <span class="inline-flex items-center gap-1 mt-5 text-sm font-bold text-[#181818]">Comenzar &rarr;</span>
+                <span class="inline-flex items-center gap-1.5 mt-5 text-sm font-extrabold text-[#181818] group-hover:gap-2.5 transition-all">Comenzar <span class="text-[#d9a900]">&rarr;</span></span>
             </button>
 
-            <button data-tipo="conductor" class="tipo-card group text-left bg-white rounded-2xl border-2 border-gray-100 p-5 md:p-6 shadow-sm hover:shadow-xl hover:border-[#FFD22E] active:scale-[.99] transition-all">
-                <div class="w-12 h-12 rounded-xl bg-[#181818] text-[#FFD22E] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+            <button data-tipo="conductor" class="tipo-card group relative text-left bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_6px_24px_rgba(2,6,23,.05)] hover:shadow-[0_16px_44px_rgba(2,6,23,.10)] hover:-translate-y-0.5 hover:border-[#FFD22E]/70 active:scale-[.99] transition-all">
+                <span class="absolute top-5 right-5 text-[10px] font-extrabold text-gray-400 bg-gray-50 border border-gray-100 rounded-full px-2.5 py-1">6 formatos</span>
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#181818] to-[#3d3d3d] text-[#FFD22E] flex items-center justify-center mb-4 shadow-[0_6px_16px_rgba(2,6,23,.25)] group-hover:scale-105 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
                 </div>
-                <h3 class="text-lg font-black text-gray-800">Soy Conductor</h3>
+                <h3 class="text-lg font-extrabold text-gray-800">Soy Conductor</h3>
                 <p class="text-sm text-gray-500 mt-1">Conductor que opera el vehículo en las rutas asignadas.</p>
-                <ul class="mt-4 space-y-1.5 text-[13px] text-gray-600">
+                <ul class="mt-4 space-y-1.5 text-[13px] text-gray-600 font-medium">
                     <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> SARLAFT · Dotación y EPP · Registro de inducción</li>
                     <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> Actas de compromiso · Evaluación de inducción</li>
                 </ul>
-                <span class="inline-flex items-center gap-1 mt-5 text-sm font-bold text-[#181818]">Comenzar &rarr;</span>
+                <span class="inline-flex items-center gap-1.5 mt-5 text-sm font-extrabold text-[#181818] group-hover:gap-2.5 transition-all">Comenzar <span class="text-[#d9a900]">&rarr;</span></span>
             </button>
         </div>
         <p class="text-center text-[11px] text-gray-400 mt-8">Sus datos se tratan conforme a la Política de Tratamiento de Datos Personales de TRANSHICOL S.A.S.</p>
@@ -144,18 +166,18 @@
             <p class="text-gray-500 mt-2 text-sm">Indique si el vehículo pertenece a una persona natural o a una empresa.</p>
         </div>
         <div class="grid sm:grid-cols-2 gap-4">
-            <button data-persona="natural" class="persona-card text-left bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:shadow-xl hover:border-[#FFD22E] active:scale-[.99] transition-all">
-                <div class="w-11 h-11 rounded-xl bg-[#181818] text-[#FFD22E] flex items-center justify-center mb-3">
+            <button data-persona="natural" class="persona-card group text-left bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_6px_24px_rgba(2,6,23,.05)] hover:shadow-[0_16px_44px_rgba(2,6,23,.10)] hover:-translate-y-0.5 hover:border-[#FFD22E]/70 active:scale-[.99] transition-all">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#181818] to-[#3d3d3d] text-[#FFD22E] flex items-center justify-center mb-3 shadow-[0_6px_16px_rgba(2,6,23,.25)] group-hover:scale-105 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
                 </div>
-                <h3 class="text-base font-black text-gray-800">Persona natural</h3>
+                <h3 class="text-base font-extrabold text-gray-800">Persona natural</h3>
                 <p class="text-sm text-gray-500 mt-1">El propietario es una persona (cédula). Diligencia el SARLAFT y el contrato a su nombre.</p>
             </button>
-            <button data-persona="empresa" class="persona-card text-left bg-white rounded-2xl border-2 border-gray-100 p-5 shadow-sm hover:shadow-xl hover:border-[#FFD22E] active:scale-[.99] transition-all">
-                <div class="w-11 h-11 rounded-xl bg-[#181818] text-[#FFD22E] flex items-center justify-center mb-3">
+            <button data-persona="empresa" class="persona-card group text-left bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_6px_24px_rgba(2,6,23,.05)] hover:shadow-[0_16px_44px_rgba(2,6,23,.10)] hover:-translate-y-0.5 hover:border-[#FFD22E]/70 active:scale-[.99] transition-all">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#181818] to-[#3d3d3d] text-[#FFD22E] flex items-center justify-center mb-3 shadow-[0_6px_16px_rgba(2,6,23,.25)] group-hover:scale-105 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h.01M9 12h.01M9 15h.01M9 18h.01"/></svg>
                 </div>
-                <h3 class="text-base font-black text-gray-800">Empresa (NIT)</h3>
+                <h3 class="text-base font-extrabold text-gray-800">Empresa (NIT)</h3>
                 <p class="text-sm text-gray-500 mt-1">El vehículo pertenece a una empresa. El <b>representante legal</b> diligencia el SARLAFT de personas jurídicas y el contrato.</p>
             </button>
         </div>
@@ -169,21 +191,21 @@
                 <button id="btn-restart" class="text-xs font-semibold text-gray-400 hover:text-gray-700 flex items-center gap-1">&larr; Cambiar tipo</button>
                 <span id="step-counter" class="text-xs font-bold text-gray-500"></span>
             </div>
-            <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div id="progress-bar" class="h-full bg-gradient-to-r from-[#FFD22E] to-[#f5c400] transition-all duration-300" style="width:0%"></div>
+            <div class="h-2.5 bg-gray-200/70 rounded-full overflow-hidden shadow-inner">
+                <div id="progress-bar" class="h-full rounded-full bg-gradient-to-r from-[#FFD22E] to-[#f0be00] transition-all duration-300" style="width:0%"></div>
             </div>
             <div id="step-chips" class="flex gap-1.5 mt-3 overflow-x-auto chips-scroll pb-1"></div>
         </div>
 
         <!-- Contenedor de pasos -->
-        <div id="steps-container" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-7 card-pad"></div>
+        <div id="steps-container" class="bg-white rounded-3xl shadow-[0_10px_40px_rgba(2,6,23,.06)] border border-gray-100 p-5 md:p-8 card-pad"></div>
 
-        <!-- Navegación (barra inferior fija en celular) -->
-        <div id="nav-bar" class="no-print sticky bottom-0 z-20 bg-white/95 backdrop-blur border-t border-gray-100 mt-4 -mx-4 px-4 flex items-center gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]" style="padding-top:.7rem; padding-bottom:calc(.7rem + env(safe-area-inset-bottom));">
-            <button id="btn-prev" class="px-4 py-3 rounded-xl font-bold text-sm text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed">Anterior</button>
+        <!-- Navegación (barra flotante, siempre al alcance del pulgar) -->
+        <div id="nav-bar" class="no-print sticky bottom-3 z-20 mt-5 rounded-2xl border border-gray-100 bg-white/95 backdrop-blur px-3 flex items-center gap-3 shadow-[0_12px_36px_rgba(2,6,23,.14)]" style="padding-top:.65rem; padding-bottom:calc(.65rem + env(safe-area-inset-bottom)/2);">
+            <button id="btn-prev" class="px-5 py-3 rounded-xl font-bold text-sm text-gray-600 bg-gray-50 border border-gray-200 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed transition">Anterior</button>
             <div class="flex-1"></div>
-            <button id="btn-next" class="px-5 py-3 rounded-xl font-black text-sm text-[#181818] bg-[#FFD22E] hover:brightness-95 shadow-sm">Guardar y continuar →</button>
-            <button id="btn-submit" class="step-hidden px-5 py-3 rounded-xl font-black text-sm text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">Enviar documentación</button>
+            <button id="btn-next" class="px-6 py-3 rounded-xl font-extrabold text-sm text-[#181818] bg-gradient-to-b from-[#FFD22E] to-[#F2BE00] shadow-[0_5px_16px_rgba(245,196,0,.40)] hover:brightness-105 active:scale-[.98] transition">Guardar y continuar →</button>
+            <button id="btn-submit" class="step-hidden px-6 py-3 rounded-xl font-extrabold text-sm text-white bg-gradient-to-b from-emerald-500 to-emerald-600 shadow-[0_5px_16px_rgba(16,185,129,.35)] hover:brightness-105 active:scale-[.98] transition disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none">Enviar documentación</button>
         </div>
     </section>
 
@@ -754,10 +776,10 @@
                 // Chip "Todo SI" por sección (como en Preoperacional/Plan de viaje):
                 // marca de una vez todas las opciones de la sección con f.bulk.
                 const chip = f.bulk ? `<button type="button" class="bulk-chip" data-bulk-doc="${doc}" data-bulk-idx="${fieldIdx}" data-bulk-val="${esc(f.bulk)}">✓✓ Todo ${esc(f.bulk)}</button>` : '';
-                return `<div class="md:col-span-2 mt-3 mb-1 flex items-center gap-2 pb-1.5 border-b border-gray-100"><span class="w-1.5 h-4 rounded-full bg-[#FFD22E] shrink-0"></span><h4 class="text-sm font-black text-[#181818] tracking-tight uppercase flex-1 min-w-0">${esc(f.text)}</h4>${chip}</div>`;
+                return `<div class="md:col-span-2 mt-4 mb-0.5 flex items-center gap-2.5 rounded-xl px-3 py-2 bg-gradient-to-r from-[#fff7d6] to-transparent border border-[#FFD22E]/25"><span class="w-1.5 h-4 rounded-full bg-[#FFD22E] shrink-0"></span><h4 class="text-[13px] font-extrabold text-[#181818] tracking-tight uppercase flex-1 min-w-0">${esc(f.text)}</h4>${chip}</div>`;
             }
             if (f.type === 'note')
-                return `<div class="md:col-span-2"><p class="text-[13px] text-gray-600 bg-[#fffdf3] border border-[#FFD22E]/30 rounded-xl px-3.5 py-2.5 leading-snug">${esc(f.text)}</p></div>`;
+                return `<div class="md:col-span-2"><p class="text-[13px] text-gray-600 bg-[#fffdf3] border border-[#FFD22E]/30 rounded-xl px-3.5 py-2.5 leading-snug font-medium">💡 ${esc(f.text)}</p></div>`;
             if (f.type === 'legal')
                 return `<div class="md:col-span-2"><div class="legal-box custom-scroll">${f.html}</div></div>`;
             if (f.type === 'autofill')
@@ -815,11 +837,12 @@
             const doc = DOCS[docKey];
             const fieldsHtml = doc.fields.map((f, i) => renderField(docKey, f, i)).join('');
             return `<div class="doc-step ${idx===0?'':'step-hidden'}" data-step="${idx}" data-doc="${docKey}">
-                <div class="flex items-start gap-3 mb-5">
-                    <div class="w-9 h-9 rounded-xl bg-[#FFD22E] text-[#181818] font-black flex items-center justify-center text-sm shrink-0">${idx+1}</div>
-                    <div>
-                        <h3 class="text-lg font-black text-gray-800 tracking-tight leading-tight">${esc(doc.title)}</h3>
-                        ${doc.code?`<p class="text-xs text-gray-400 font-semibold">${esc(doc.code)}</p>`:''}
+                <div class="flex items-start gap-3.5 mb-6">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#FFD22E] to-[#eebb00] text-[#181818] font-extrabold flex items-center justify-center text-base shrink-0 shadow-[0_5px_14px_rgba(245,196,0,.35)]">${idx+1}</div>
+                    <div class="min-w-0">
+                        <p class="text-[10px] font-extrabold uppercase tracking-[.16em] text-[#b48f00]">Formato ${idx+1} de ${state.docs.length}</p>
+                        <h3 class="text-lg md:text-xl font-extrabold text-gray-800 tracking-tight leading-tight">${esc(doc.title)}</h3>
+                        ${doc.code?`<p class="text-[11px] text-gray-400 font-bold">${esc(doc.code)}</p>`:''}
                     </div>
                 </div>
                 <div class="missing-banner step-hidden" data-banner-doc="${docKey}"></div>
@@ -1238,7 +1261,7 @@
                 const key = state.steps[idx];
                 const active = idx === current;
                 const done = key !== REVISION && isDocComplete(key);
-                c.className = `chip text-[10px] font-bold px-2.5 py-1 rounded-full border inline-flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${active ? 'bg-[#181818] text-[#FFD22E] border-[#181818]' : (done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-gray-50 text-gray-500 border-gray-200')}`;
+                c.className = `chip text-[10.5px] font-extrabold px-3 py-1.5 rounded-full border inline-flex items-center gap-1 whitespace-nowrap flex-shrink-0 transition-all ${active ? 'bg-[#181818] text-[#FFD22E] border-[#181818] shadow-[0_4px_12px_rgba(2,6,23,.25)]' : (done ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-white text-gray-400 border-gray-200')}`;
                 c.innerHTML = `${done && !active ? '✓ ' : ''}${esc(c.dataset.title || '')}`;
             });
         }
