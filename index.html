@@ -371,6 +371,9 @@
             lugar_expedicion:'LUGAREXP',
             cargo:'CARGO',
             veh_tipo:'VEHTIPO', tipo_vehiculo:'VEHTIPO',
+            veh_marca:'VEHMARCA', veh_color:'VEHCOLOR', veh_linea:'VEHLINEA', veh_modelo:'VEHMODELO',
+            veh_motor:'VEHMOTOR', veh_chasis:'VEHCHASIS',
+            trailer_marca:'TRAILERMARCA', trailer_placa:'TRAILERPLACA', trailer_color:'TRAILERCOLOR',
             ciudad:'CIUDAD', ciudad_residencia:'CIUDAD',
             direccion:'DIRECCION', direccion_residencia:'DIRECCION',
             // Empresa / representante legal
@@ -382,6 +385,12 @@
         };
         const AC_MAP = { NOMBRE:'name', TEL:'tel', EMAIL:'email', DIRECCION:'street-address', CIUDAD:'address-level2' };
 
+        // Correo con formato completo (evita arrastrar correos guardados a medias, ej. "JHOAN").
+        const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        // Campos que describen al VEHÍCULO: solo se autorrellenan desde envíos de la
+        // MISMA placa, para no mezclar datos de vehículos distintos de una misma persona.
+        const VEH_FIELDS = new Set(['placa','veh_placas','contrato_no','veh_tipo','tipo_vehiculo','veh_marca','veh_color','veh_linea','veh_modelo','veh_motor','veh_chasis','trailer_marca','trailer_placa','trailer_color']);
+
         // =====================================================================
         //  DEFINICIÓN DE DOCUMENTOS (config-driven)
         //  tipos: text,date,email,tel,select,radio,checkgroup,textarea,heading,note,legal,accept,autofill
@@ -391,13 +400,13 @@
             proveedor: {
                 title: 'Datos del proveedor', code: '',
                 fields: [
-                    { type:'note', text:'Escriba su tipo y número de identificación: si ya diligenció antes, se autocompletarán sus datos. Todo se replica en los demás formularios.' },
+                    { type:'note', text:'Escriba su número de identificación y la placa: si ya diligenció antes, se recuperará TODA la información de sus envíos anteriores. Todo se replica en los demás formularios.' },
                     { name:'tipoId', label:'Tipo de identificación', type:'select', options:['Cédula de ciudadanía','Cédula de extranjería','Pasaporte','PEP'], required:true, default:'Cédula de ciudadanía' },
                     { name:'cedula', label:'Número de identificación', type:'text', required:true, lookup:true },
                     { name:'nombre', label:'Nombre completo', type:'text', required:true, col:2 },
                     { name:'telefono', label:'Teléfono / celular', type:'tel', required:true },
                     { name:'correo', label:'Correo electrónico', type:'email' },
-                    { name:'placa', label:'Placa del vehículo', type:'text', required:true, col:2 },
+                    { name:'placa', label:'Placa del vehículo', type:'text', required:true, col:2, lookup:true },
                     { type:'autofill' },
                 ]
             },
@@ -642,13 +651,13 @@
             proveedorEmpresa: {
                 title: 'Datos de la empresa', code: '',
                 fields: [
-                    { type:'note', text:'La documentación la diligencia el REPRESENTANTE LEGAL en nombre de la empresa. Escriba el NIT: si ya diligenció antes, se autocompletarán los datos.' },
+                    { type:'note', text:'La documentación la diligencia el REPRESENTANTE LEGAL en nombre de la empresa. Escriba el NIT y la placa: si ya diligenció antes, se recuperará TODA la información de sus envíos anteriores.' },
                     { name:'nit', label:'NIT de la empresa', type:'text', required:true, lookup:true },
                     { name:'tipo_sociedad', label:'Tipo de sociedad', type:'select', options:['S.A.S','S.A.','Ltda.','E.U.','En comandita','Persona natural comerciante','Otra'] },
                     { name:'razon_social', label:'Razón social', type:'text', required:true, col:2 },
                     { name:'telefono', label:'Teléfono de la empresa', type:'tel', required:true },
                     { name:'correo', label:'Correo electrónico', type:'email' },
-                    { name:'placa', label:'Placa del vehículo', type:'text', required:true, col:2 },
+                    { name:'placa', label:'Placa del vehículo', type:'text', required:true, col:2, lookup:true },
                     { type:'heading', text:'Representante legal' },
                     { name:'rep_nombre', label:'Nombre del representante legal', type:'text', required:true, col:2 },
                     { name:'rep_cedula', label:'Cédula del representante legal', type:'text', required:true },
@@ -761,7 +770,7 @@
         //  ESTADO Y RENDER
         // =====================================================================
         const $ = (id) => document.getElementById(id);
-        let state = { tipo:null, persona:'natural', docs:[], steps:[], current:0, prev:null, session:{}, firma:{ strokes:[], w:0, h:0 } };
+        let state = { tipo:null, persona:'natural', docs:[], steps:[], current:0, prev:null, session:{}, sessionSrc:{}, firma:{ strokes:[], w:0, h:0 } };
 
         const todayISO = () => new Date().toISOString().slice(0,10);
         const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -858,6 +867,7 @@
             state.current = 0;
             state.prev = null;
             state.session = {};
+            state.sessionSrc = {};
             state.firma = { strokes:[], w:0, h:0 };
             $('steps-container').innerHTML = state.steps.map((d,i)=>renderStep(d,i)).join('');
             $('step-chips').innerHTML = state.steps.map((d,i)=>{
@@ -869,7 +879,7 @@
             // cargo) para que se autocompleten aunque el usuario no los toque.
             $('steps-container').querySelectorAll('[data-field][data-sync]').forEach(inp=>{
                 const k = inp.dataset.sync;
-                if (inp.value && state.session[k] == null) state.session[k] = inp.value;
+                if (inp.value && state.session[k] == null) { state.session[k] = inp.value; state.sessionSrc[k] = 'default'; }
             });
             showScreen('wizard');
             goToStep(0);
@@ -894,14 +904,16 @@
                 inp.addEventListener('change', ()=>applyConditionals(inp.dataset.doc));
             });
             // Autocompletado entre documentos: guarda el dato en la sesión.
+            // Lo escrito por el USUARIO manda sobre lo sembrado por el autorrellenado.
             c.querySelectorAll('[data-field][data-sync]').forEach(inp=>{
-                const upd = ()=>{ if (inp.value) state.session[inp.dataset.sync] = inp.value; };
+                const upd = ()=>{ if (inp.value) { state.session[inp.dataset.sync] = inp.value; state.sessionSrc[inp.dataset.sync] = 'user'; } };
                 inp.addEventListener('input', upd);
                 inp.addEventListener('change', upd);
             });
-            // Autorrellenado AUTOMÁTICO al escribir la cédula / NIT (primer campo).
+            // Autorrellenado AUTOMÁTICO al escribir la cédula/NIT y también la placa
+            // (la placa refina la búsqueda: prioriza envíos de ese mismo vehículo).
             c.querySelectorAll('[data-lookup]').forEach(inp=>{
-                inp.addEventListener('change', ()=>{ if ((inp.value||'').trim().length >= 5) doLookup(); });
+                inp.addEventListener('change', ()=>{ if ((inp.value||'').trim().length >= 3) doLookup(); });
             });
             // Limpia en vivo el rojo/banner cuando el usuario corrige un campo obligatorio.
             c.querySelectorAll('[data-field][data-fname]').forEach(inp=>{
@@ -943,7 +955,13 @@
             });
         }
 
-        // Autocompleta los campos vacíos con lo ya escrito en otros documentos (sesión).
+        // Un campo se puede (re)autorrellenar si está vacío o si todavía conserva el
+        // valor que puso el propio autorrellenado (es decir, el usuario no lo tocó).
+        const canAutofill = (el) => !el.value || (el.dataset.afv !== undefined && el.value === el.dataset.afv);
+        const setAutofilled = (el, v) => { el.value = v; el.dataset.afv = String(el.value); };
+
+        // Autocompleta los campos con lo ya escrito en otros documentos (sesión).
+        // Repone también los campos que llenó el propio autorrellenado (no los del usuario).
         function applySession(docKey){
             const container = $('steps-container');
             DOCS[docKey].fields.forEach(f=>{
@@ -951,35 +969,45 @@
                 if (!sync) return;
                 const v = state.session[sync];
                 if (v == null || v === '') return;
+                if (f.type === 'email' && !EMAIL_RX.test(String(v))) return;
                 const el = container.querySelector(`.doc-step[data-doc="${docKey}"] [name="${inputName(docKey,f.name)}"]`);
-                if (el && !el.value) el.value = v;
+                if (el && canAutofill(el)) setAutofilled(el, v);
             });
         }
 
-        // Vuelca los datos sincronizables del último envío a la sesión (sin pisar lo actual).
+        // Vuelca los datos sincronizables de los envíos anteriores a la sesión, sin
+        // pisar lo que el usuario ya escribió (sí actualiza lo sembrado por un lookup previo).
         function seedSessionFromPrev(){
             if (!state.prev) return;
+            const done = new Set();
             Object.keys(state.prev).forEach(doc=>{
                 if (!DOCS[doc]) return;
                 DOCS[doc].fields.forEach(f=>{
                     const sync = SYNC_MAP[f.name];
-                    if (!sync) return;
+                    if (!sync || done.has(sync)) return;
                     const v = state.prev[doc][f.name];
-                    if (v != null && v !== '' && state.session[sync] == null) state.session[sync] = v;
+                    if (v == null || v === '') return;
+                    if (f.type === 'email' && !EMAIL_RX.test(String(v))) return;
+                    if (state.session[sync] == null || state.sessionSrc[sync] === 'prev') {
+                        state.session[sync] = v; state.sessionSrc[sync] = 'prev'; done.add(sync);
+                    }
                 });
             });
         }
 
-        // Aplica los datos del último envío (state.prev) a los campos vacíos del paso.
-        // No toca aceptaciones (deben re-aceptarse) ni fechas (van a hoy).
+        // Aplica los datos de envíos anteriores (state.prev) a los campos del paso.
+        // No toca aceptaciones (deben re-aceptarse) ni fechas "de hoy" (firma,
+        // diligenciamiento); las fechas que son DATOS (nacimiento, vencimiento de
+        // licencia, constitución) sí se autorrellenan.
         function applyPrev(docKey){
             if (!state.prev || !state.prev[docKey]) return;
             const prev = state.prev[docKey];
             const container = $('steps-container');
             DOCS[docKey].fields.forEach(f=>{
-                if (!f.name || f.type === 'accept' || f.type === 'date') return;
+                if (!f.name || f.type === 'accept' || (f.type === 'date' && f.default === 'today')) return;
                 const val = prev[f.name];
                 if (val === undefined || val === null || val === '') return;
+                if (f.type === 'email' && !EMAIL_RX.test(String(val))) return; // no arrastrar correos incompletos
                 const name = inputName(docKey, f.name);
                 if (f.type === 'radio') {
                     if (container.querySelector(`input[name="${name}"]:checked`)) return;
@@ -993,33 +1021,71 @@
                     });
                 } else {
                     const el = container.querySelector(`.doc-step[data-doc="${docKey}"] [name="${name}"]`);
-                    if (el && !el.value) el.value = val;
+                    if (el && canAutofill(el)) setAutofilled(el, val);
                 }
             });
         }
 
-        // Autorrellenado AUTOMÁTICO: consulta el último envío por cédula/NIT
-        // (edge function con service role) apenas el usuario escribe el documento.
+        // Une los autorrellenados de VARIOS envíos anteriores: el más reciente manda
+        // y los más viejos rellenan lo que a ese le falte (así no se pierde nada
+        // aunque el último envío haya sido de otro flujo, p. ej. conductor sin
+        // contrato). Los datos del VEHÍCULO solo se toman de envíos con la MISMA
+        // placa; si aún no hay placa escrita, solo del envío más reciente.
+        function mergePrevFromEnvios(envios, placa){
+            const p = (placa || '').trim().toUpperCase();
+            const match = p ? envios.filter(e => String(e.placa || '').toUpperCase() === p) : [];
+            const rest = envios.filter(e => !match.includes(e));
+            const vehSources = p ? match : envios.slice(0, 1);
+            const prev = {};
+            match.concat(rest).forEach(e=>{
+                const af = e.autofill;
+                if (!af || typeof af !== 'object') return;
+                const vehOk = vehSources.includes(e);
+                Object.keys(af).forEach(doc=>{
+                    const fields = af[doc];
+                    if (!fields || typeof fields !== 'object') return;
+                    prev[doc] = prev[doc] || {};
+                    Object.keys(fields).forEach(k=>{
+                        if (VEH_FIELDS.has(k) && !vehOk) return;
+                        const v = fields[k];
+                        if (v === undefined || v === null || v === '') return;
+                        const fd = DOCS[doc] && DOCS[doc].fields.find(x=>x.name===k);
+                        if (fd && fd.type === 'email' && !EMAIL_RX.test(String(v))) return; // correo guardado incompleto
+                        if (prev[doc][k] === undefined) prev[doc][k] = v;
+                    });
+                });
+            });
+            return Object.keys(prev).length ? prev : null;
+        }
+
+        // Autorrellenado AUTOMÁTICO: consulta los envíos anteriores por cédula/NIT
+        // (+ placa como prioridad) apenas el usuario escribe el documento o la placa,
+        // y COMBINA hasta 10 envíos para recuperar absolutamente toda la información.
         async function doLookup(){
             const status = $('autofill-status');
             const provDoc = state.docs[0]; // 'proveedor' o 'proveedorEmpresa'
             const src = collectDoc(provDoc);
             const key = (src.cedula || src.nit || '').trim();
             const placa = (src.placa || '').trim();
-            const esEmpresa = state.persona === 'empresa';
             if (!status || key.length < 4) return; // se dispara solo con documento suficiente
             status.textContent = 'Buscando sus datos anteriores...'; status.className = 'text-xs font-semibold text-gray-500';
             try {
                 const { data, error } = await supabase.functions.invoke('documental-lookup', { body: { cedula:key, placa } });
                 if (error) throw error;
-                if (data && data.found && data.autofill) {
-                    state.prev = data.autofill;
+                const envios = (data && data.found)
+                    ? (Array.isArray(data.envios) && data.envios.length ? data.envios : (data.autofill ? [{ placa:'', autofill:data.autofill }] : []))
+                    : [];
+                state.prev = envios.length ? mergePrevFromEnvios(envios, placa) : null;
+                if (state.prev) {
+                    // Al re-consultar (p. ej. cambió la placa) se re-siembra lo que vino
+                    // de envíos anteriores; lo escrito por el usuario nunca se pisa.
+                    Object.keys(state.sessionSrc).forEach(k=>{ if (state.sessionSrc[k] === 'prev'){ delete state.session[k]; delete state.sessionSrc[k]; } });
                     seedSessionFromPrev();
                     applySession(provDoc);
                     applyPrev(provDoc);
-                    status.textContent = '✓ Datos encontrados: se autorrellenaron sus formularios con el último registro.'; status.className = 'text-xs font-bold text-emerald-600';
+                    applyConditionals(provDoc);
+                    status.textContent = '✓ Datos encontrados: se autorrellenaron sus formularios con la información de sus envíos anteriores.'; status.className = 'text-xs font-bold text-emerald-600';
                 } else {
-                    state.prev = null;
                     // Sin registros previos: no molestar con mensajes, es un usuario nuevo.
                     status.textContent = '';
                 }
@@ -1121,7 +1187,7 @@
                 if (inp.type === 'checkbox' && inp.closest('[data-accept-wrap]')) { out[k] = inp.checked; }
                 else if (inp.type === 'checkbox') { if (inp.checked){ out[k] = out[k]||[]; out[k].push(inp.value); } }
                 else if (inp.type === 'radio') { if (inp.checked) out[k] = inp.value; }
-                else { let v = (inp.value||'').trim(); if (v) out[k] = (inp.type === 'date' || inp.tagName === 'SELECT') ? v : v.toUpperCase(); }
+                else { let v = (inp.value||'').trim(); if (v) out[k] = (inp.type === 'date' || inp.tagName === 'SELECT') ? v : (inp.type === 'email' ? v.toLowerCase() : v.toUpperCase()); }
             });
             return out;
         }
@@ -1159,12 +1225,22 @@
                 else { const el = c.querySelector(`[name="${name}"]`); empty = !(el && (el.value||'').trim()); }
                 if (empty) out.push({ name:f.name, label: f.type==='accept' ? ('Falta marcar: ' + String(f.label||'').slice(0,70)) : (f.label || f.name) });
             });
+            // Correos con contenido pero incompletos (ej. "JHOAN"): bloquean el paso
+            // para que nunca vuelva a guardarse un correo a medias.
+            DOCS[docKey].fields.forEach(f=>{
+                if (f.type !== 'email' || !f.name) return;
+                const wrap = document.getElementById(wrapId(docKey, f.name));
+                if (wrap && wrap.style.display === 'none') return;
+                const el = c.querySelector(`[name="${inputName(docKey, f.name)}"]`);
+                const v = el ? (el.value||'').trim() : '';
+                if (v && !EMAIL_RX.test(v)) out.push({ name:f.name, label:(f.label || f.name) + ' — está incompleto', msg:'⚠ Correo incompleto — escríbalo completo (ej: nombre@dominio.com)' });
+            });
             return out;
         }
         function isDocComplete(docKey){ return missingFields(docKey).length === 0; }
 
         // Marca o limpia el estado de error (borde rojo + nota) de un campo.
-        function setFieldError(docKey, f, bad){
+        function setFieldError(docKey, f, bad, msg){
             const wrap = document.getElementById(wrapId(docKey, f.name));
             if (!wrap) return;
             const name = inputName(docKey, f.name);
@@ -1176,7 +1252,7 @@
                 wrap.querySelector(`[name="${name}"]`)?.classList.toggle('invalid', bad);
             }
             let note = wrap.querySelector('.field-err-note');
-            if (bad) { if (!note){ note = document.createElement('p'); note.className='field-err-note'; note.textContent='⚠ Falta diligenciar'; wrap.appendChild(note); } }
+            if (bad) { if (!note){ note = document.createElement('p'); note.className='field-err-note'; wrap.appendChild(note); } note.textContent = msg || '⚠ Falta diligenciar'; }
             else if (note) { note.remove(); }
         }
 
@@ -1292,8 +1368,8 @@
 
         function validateStep(docKey){
             const missing = missingFields(docKey);
-            const missingSet = new Set(missing.map(m=>m.name));
-            DOCS[docKey].fields.forEach(f=>{ if (f.name && f.required) setFieldError(docKey, f, missingSet.has(f.name)); });
+            const missingMap = new Map(missing.map(m=>[m.name, m.msg]));
+            DOCS[docKey].fields.forEach(f=>{ if (f.name && (f.required || f.type === 'email')) setFieldError(docKey, f, missingMap.has(f.name), missingMap.get(f.name)); });
             refreshBanner(docKey, missing);
             if (missing.length){
                 const el = document.getElementById(wrapId(docKey, missing[0].name)) || $('steps-container').querySelector(`[data-banner-doc="${docKey}"]`);
@@ -1306,11 +1382,12 @@
         function liveClear(inp){
             const docKey = inp.dataset.doc, fname = inp.dataset.fname;
             const f = DOCS[docKey] && DOCS[docKey].fields.find(x=>x.name===fname);
-            if (!f || !f.required) return;
+            if (!f || (!f.required && f.type !== 'email')) return;
             const banner = $('steps-container').querySelector(`[data-banner-doc="${docKey}"]`);
             if (!banner || banner.classList.contains('step-hidden')) return; // solo tras un intento fallido
             const still = missingFields(docKey);
-            setFieldError(docKey, f, still.some(m=>m.name===fname));
+            const m = still.find(x=>x.name===fname);
+            setFieldError(docKey, f, !!m, m && m.msg);
             refreshBanner(docKey, still);
         }
 
@@ -1348,7 +1425,9 @@
                 const raw = collectDoc(d);
                 const clean = {};
                 DOCS[d].fields.forEach(f=>{
-                    if (!f.name || f.type === 'accept' || f.type === 'date') return;
+                    // Se guardan también las fechas que son DATOS (nacimiento, vencimiento
+                    // de licencia, constitución); solo se excluyen las fechas "de hoy".
+                    if (!f.name || f.type === 'accept' || (f.type === 'date' && f.default === 'today')) return;
                     const v = raw[f.name];
                     if (v !== undefined && v !== null && v !== '') clean[f.name] = v;
                 });
