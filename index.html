@@ -222,8 +222,13 @@
         <p class="text-gray-500 mt-2">Todos los formularios quedaron diligenciados y enviados correctamente. TRANSHICOL S.A.S los revisará.</p>
         <div id="success-code" class="mt-4 inline-block px-4 py-2 rounded-lg bg-gray-100 text-gray-600 text-xs font-mono"></div>
         <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <button id="btn-new" class="px-5 py-2.5 rounded-xl font-bold text-sm text-[#181818] bg-[#FFD22E] hover:brightness-95">Diligenciar otro</button>
+            <button id="btn-pdf" class="px-6 py-3 rounded-xl font-extrabold text-sm text-white bg-gradient-to-b from-[#232323] to-[#0d0d0d] shadow-[0_6px_18px_rgba(2,6,23,.35)] ring-1 ring-[#FFD22E]/40 hover:brightness-125 active:scale-[.98] transition inline-flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-wait">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD22E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Descargar mi comprobante en PDF
+            </button>
+            <button id="btn-new" class="px-5 py-3 rounded-xl font-bold text-sm text-[#181818] bg-[#FFD22E] hover:brightness-95 active:scale-[.98] transition">Diligenciar otro</button>
         </div>
+        <p class="text-[11.5px] text-gray-400 mt-4 max-w-md mx-auto leading-snug">💡 Guarde el PDF como <b class="text-gray-500">soporte de su diligenciamiento</b>: incluye todos los formatos enviados, su firma y la huella de verificación.</p>
     </section>
 
     <div id="submit-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 items-center justify-center flex-col gap-4 text-white" style="display:none">
@@ -1472,6 +1477,8 @@
                 // de vuelta rompía el envío con error 42501. El id ya lo generamos arriba.
                 const { error } = await supabase.from('documental_envios').insert(payload);
                 if (error) throw error;
+                // Copia local del envío para el comprobante en PDF (soporte del proveedor).
+                state.enviado = { ...payload, created_at: new Date().toISOString() };
                 $('submit-overlay').style.display = 'none';
                 $('success-code').textContent = 'Comprobante: ' + payload.id.slice(0,8).toUpperCase()
                     + (firma.hash_sha256 ? ' · Huella SHA-256: ' + firma.hash_sha256.slice(0,16) + '…' : '');
@@ -1482,6 +1489,258 @@
                 $('submit-overlay').style.display = 'none';
                 toast('No se pudo enviar. Verifique su conexión e intente de nuevo.');
             }
+        }
+
+        // =====================================================================
+        //  COMPROBANTE EN PDF (soporte físico del proveedor)
+        //  MISMO formato corporativo que descarga el panel Doc Admin de la app
+        //  interna (pdfGenerator.descargarDocumentalPDF) — port 1:1. Las
+        //  librerías jsPDF/autoTable se cargan por CDN SOLO al pulsar el botón,
+        //  así el formulario no se vuelve más pesado.
+        // =====================================================================
+        let pdfLibsPromise = null;
+        function cargarLibsPDF(){
+            if (pdfLibsPromise) return pdfLibsPromise;
+            const load = (src) => new Promise((res, rej) => {
+                const s = document.createElement('script');
+                s.src = src; s.onload = res; s.onerror = () => rej(new Error('No se pudo cargar ' + src));
+                document.head.appendChild(s);
+            });
+            pdfLibsPromise = load('https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js')
+                .then(() => load('https://cdn.jsdelivr.net/npm/jspdf-autotable@5.0.8/dist/jspdf.plugin.autotable.min.js'));
+            return pdfLibsPromise;
+        }
+
+        const pdfFmtFecha = (f) => {
+            try { if (!f) return '—'; return new Date(`${f}T00:00:00`).toLocaleDateString('es-CO', { day:'2-digit', month:'short', year:'numeric' }); }
+            catch(e){ return f; }
+        };
+
+        function pdfDrawHeader(doc, title, fecha){
+            doc.setFillColor(24, 24, 24);
+            doc.rect(10, 10, 196, 22, 'F');
+            doc.setFillColor(255, 210, 46);
+            doc.rect(10, 10, 3, 22, 'F');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(15);
+            doc.setTextColor(255, 210, 46);
+            doc.text('TRANSHICOL S.A.S.', 17, 19);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(255, 255, 255);
+            doc.text('Documentación Administrativa de Proveedores', 17, 26);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(255, 255, 255);
+            doc.text(title.toUpperCase(), 200, 19, { align: 'right' });
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8.5);
+            doc.setTextColor(255, 210, 46);
+            doc.text(`Fecha del Reporte: ${pdfFmtFecha(fecha)}`, 200, 26, { align: 'right' });
+        }
+
+        function pdfDrawFirma(doc, nombre, xStart, xEnd, yLine){
+            const txt = String(nombre || '').trim().toUpperCase();
+            if (txt) {
+                doc.setFont('times', 'italic');
+                const maxW = (xEnd - xStart) - 4;
+                let size = 17;
+                doc.setFontSize(size);
+                while (size > 9 && doc.getTextWidth(txt) > maxW) { size -= 1; doc.setFontSize(size); }
+                doc.setTextColor(190, 30, 45);
+                doc.text(txt, (xStart + xEnd) / 2, yLine - 2.5, { align: 'center' });
+            }
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.setTextColor(24, 24, 24);
+        }
+
+        function pdfSetupFooter(doc, totalPagesExp){
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setDrawColor(230, 230, 230);
+                doc.setLineWidth(0.5);
+                doc.line(10, 268, 206, 268);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                doc.setTextColor(110, 110, 110);
+                doc.text('Documentación de Proveedores · TRANSHICOL S.A.S', 10, 274);
+                doc.text(`Página ${i} de ${totalPagesExp}`, 206, 274, { align: 'right' });
+            }
+        }
+
+        function descargarComprobantePDF(row){
+            const { jsPDF } = window.jspdf;
+            const autoTable = window.autoTable;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+            const totalPagesExp = '{total_pages_count_string}';
+
+            const docsMap = (row.datos && row.datos.documentos) || {};
+            const flujo = ((row.datos && row.datos.meta && row.datos.meta.flujo) || Object.keys(docsMap)).filter((k) => docsMap[k]);
+            const esEmpresa = !!(row.datos && row.datos.meta && row.datos.meta.persona === 'empresa');
+            const tipoLabel = row.tipo_proveedor === 'conductor' ? 'Conductor' : (esEmpresa ? 'Propietario (Empresa)' : 'Propietario');
+            const createdISO = row.created_at ? String(row.created_at).slice(0, 10) : new Date().toISOString().slice(0, 10);
+            const recibido = (() => { try { return new Date(row.created_at).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' }); } catch(e){ return pdfFmtFecha(createdISO); } })();
+            const comprobante = row.id ? String(row.id).slice(0, 8).toUpperCase() : '—';
+            const firma = row.datos && row.datos.firma && Array.isArray(row.datos.firma.trazos) && row.datos.firma.trazos.length ? row.datos.firma : null;
+            const evid = (row.datos && row.datos.evidencia_servidor) || null;
+            const signName = (firma && firma.firmante && firma.firmante.nombre) || row.nombre;
+            const signCedula = (firma && firma.firmante && firma.firmante.cedula) || row.cedula;
+
+            const drawPage = () => pdfDrawHeader(doc, 'Documentación de Proveedor', createdISO);
+            const L = (t) => ({ content: t, styles: { fontStyle: 'bold', textColor: [110, 110, 110] } });
+
+            // 1. Encabezado + franja del tipo de proveedor
+            drawPage();
+            let y = 37;
+            doc.setFillColor(255, 251, 235);
+            doc.setDrawColor(253, 230, 138);
+            doc.rect(10, y, 196, 9, 'FD');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.setTextColor(133, 100, 4);
+            doc.text(`TIPO DE VINCULACIÓN: ${tipoLabel.toUpperCase()}`, 15, y + 6);
+
+            // 2. Datos de identificación
+            y += 14;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(24, 24, 24);
+            doc.text('DATOS DEL PROVEEDOR', 10, y);
+            doc.setFillColor(255, 210, 46);
+            doc.rect(10, y + 1.5, doc.getTextWidth('DATOS DEL PROVEEDOR') + 4, 0.8, 'F');
+
+            const info = [
+                [L(esEmpresa ? 'RAZÓN SOCIAL:' : 'NOMBRE:'), row.nombre || '—', L(esEmpresa ? 'NIT:' : 'IDENTIFICACIÓN:'), row.cedula || '—'],
+                [L('PLACA:'), row.placa || '—', L('RECIBIDO:'), recibido],
+                [L('COMPROBANTE:'), comprobante, L('DOCUMENTOS:'), `${flujo.length} formato${flujo.length === 1 ? '' : 's'}`],
+            ];
+            autoTable(doc, {
+                startY: y + 4,
+                body: info,
+                theme: 'plain',
+                styles: { fontSize: 9.5, cellPadding: 2, textColor: [30, 30, 30] },
+                columnStyles: { 0: { cellWidth: 38 }, 1: { cellWidth: 60 }, 2: { cellWidth: 38 }, 3: { cellWidth: 60 } },
+                margin: { top: 34, bottom: 18, left: 10, right: 9 },
+                didDrawPage: (data) => { if (data.pageNumber > 1) drawPage(); },
+            });
+            y = doc.lastAutoTable.finalY + 9;
+
+            // 3. Un bloque por cada documento diligenciado
+            flujo.forEach((k) => {
+                const d = docsMap[k] || {};
+                if (y > 240) { doc.addPage(); drawPage(); y = 37; }
+
+                const titulo = String(d.titulo || k).toUpperCase();
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(11);
+                doc.setTextColor(24, 24, 24);
+                doc.text(titulo, 10, y, { maxWidth: 150 });
+                if (d.codigo) {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(8);
+                    doc.setTextColor(120, 120, 120);
+                    doc.text(String(d.codigo), 206, y, { align: 'right' });
+                }
+                doc.setFillColor(255, 210, 46);
+                doc.rect(10, y + 1.5, Math.min(doc.getTextWidth(titulo) + 4, 150), 0.8, 'F');
+
+                const campos = Array.isArray(d.campos) ? d.campos : [];
+                const body = campos.length
+                    ? campos.map((c) => [String(c.label != null ? c.label : ''), String(c.value != null ? c.value : '')])
+                    : [[{ content: 'Sin datos diligenciados', colSpan: 2, styles: { fontStyle: 'italic', textColor: [150, 150, 150] } }]];
+
+                autoTable(doc, {
+                    startY: y + 4,
+                    head: [['Campo', 'Respuesta']],
+                    body,
+                    theme: 'striped',
+                    headStyles: { fillColor: [50, 50, 50], textColor: [255, 255, 255], fontSize: 9, fontStyle: 'bold' },
+                    styles: { fontSize: 8.5, cellPadding: 2, valign: 'top', overflow: 'linebreak' },
+                    columnStyles: { 0: { cellWidth: 78, fontStyle: 'bold', textColor: [70, 70, 70] }, 1: { cellWidth: 118 } },
+                    margin: { top: 34, bottom: 18 },
+                    didDrawPage: (data) => { if (data.pageNumber > 1) drawPage(); },
+                });
+                y = doc.lastAutoTable.finalY + 9;
+            });
+
+            // 4. Firmas
+            if (y > (firma ? 202 : 225)) { doc.addPage(); drawPage(); y = 48; } else { y += 6; }
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.setTextColor(24, 24, 24);
+            doc.setDrawColor(180, 180, 180);
+
+            if (firma) {
+                // Firma manuscrita real: se re-dibujan los trazos vectoriales escalados
+                // sobre la línea de firma (tinta azul, como una firma de esfero).
+                const vw = (firma.lienzo && firma.lienzo.w) || 520;
+                const vh = (firma.lienzo && firma.lienzo.h) || 170;
+                const boxW = 76, boxH = 19;
+                const s = Math.min(boxW / vw, boxH / vh);
+                const offX = 15 + (boxW - vw * s) / 2;
+                const offY = (y + 20) - vh * s - 0.5;
+                doc.setDrawColor(30, 58, 138);
+                doc.setFillColor(30, 58, 138);
+                doc.setLineWidth(0.45);
+                doc.setLineCap('round');
+                doc.setLineJoin('round');
+                firma.trazos.forEach((st) => {
+                    if (!Array.isArray(st) || st.length === 0) return;
+                    if (st.length === 1) { doc.circle(offX + st[0][0] * s, offY + st[0][1] * s, 0.3, 'F'); return; }
+                    const deltas = [];
+                    for (let i = 1; i < st.length; i++) deltas.push([st[i][0] - st[i - 1][0], st[i][1] - st[i - 1][1]]);
+                    doc.lines(deltas, offX + st[0][0] * s, offY + st[0][1] * s, [s, s]);
+                });
+                doc.setLineWidth(0.2);
+                doc.setDrawColor(180, 180, 180);
+            } else {
+                pdfDrawFirma(doc, signName, 15, 95, y + 20);
+            }
+            doc.line(15, y + 20, 95, y + 20);
+            doc.text(esEmpresa ? 'Firma del representante legal' : 'Firma del proveedor', 15, y + 25);
+            doc.setFont('helvetica', 'bold');
+            doc.text(String(signName || '—'), 15, y + 29, { maxWidth: 78 });
+            doc.setFont('helvetica', 'normal');
+            doc.text(`${esEmpresa ? (firma ? 'C.C.' : 'NIT') : 'C.C.'} ${signCedula || '—'}`, 15, y + 33);
+
+            doc.line(115, y + 20, 195, y + 20);
+            doc.text('Recibido y verificado por', 115, y + 25);
+            doc.setFont('helvetica', 'bold');
+            doc.text('TRANSHICOL S.A.S', 115, y + 29);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Documentación administrativa', 115, y + 33);
+
+            // 5. Caja de evidencia de la firma electrónica (Ley 527/1999 · D.2364/2012)
+            if (firma) {
+                let yBox = y + 40;
+                if (yBox > 244) { doc.addPage(); drawPage(); yBox = 40; }
+                doc.setFillColor(248, 250, 252);
+                doc.setDrawColor(203, 213, 225);
+                doc.rect(10, yBox, 196, 18, 'FD');
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(7);
+                doc.setTextColor(71, 85, 105);
+                doc.text('FIRMA ELECTRÓNICA — LEY 527 DE 1999 · DECRETO 2364 DE 2012 · APLICA A TODOS LOS DOCUMENTOS DE ESTE ENVÍO', 13, yBox + 4.5);
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(6.8);
+                const fFecha = (() => { try { return firma.fecha_firma ? new Date(firma.fecha_firma).toLocaleString('es-CO') : '—'; } catch(e){ return firma.fecha_firma || '—'; } })();
+                doc.text(
+                    `Firmado por: ${signName || '—'} (${(firma.firmante && firma.firmante.rol) || '—'}) · Documento: ${signCedula || '—'} · Fecha de firma: ${fFecha} · IP: ${(evid && evid.ip) || '—'} · Comprobante: ${comprobante}`,
+                    13, yBox + 9, { maxWidth: 190 }
+                );
+                doc.setFont('courier', 'normal');
+                doc.setFontSize(6.6);
+                doc.text(`Huella SHA-256: ${firma.hash_sha256 || '—'}`, 13, yBox + 14);
+                doc.setFont('helvetica', 'normal');
+            }
+
+            pdfSetupFooter(doc, totalPagesExp);
+            doc.putTotalPages(totalPagesExp);
+
+            const safe = String(row.nombre || 'proveedor').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_').slice(0, 40);
+            doc.save(`Documentacion_${safe}_${createdISO}.pdf`);
         }
 
         // ── UI helpers ──
@@ -1508,6 +1767,22 @@
         $('btn-submit').addEventListener('click', submitAll);
         $('btn-restart').addEventListener('click', ()=>{ if(confirm('¿Cambiar el tipo de vinculación? Se perderá lo diligenciado.')) location.reload(); });
         $('btn-new').addEventListener('click', ()=>location.reload());
+        // Comprobante en PDF del envío recién realizado (soporte del proveedor).
+        $('btn-pdf').addEventListener('click', async ()=>{
+            if (!state.enviado) { toast('Primero envíe la documentación.'); return; }
+            const btn = $('btn-pdf');
+            const orig = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = 'Generando PDF…';
+            try {
+                await cargarLibsPDF();
+                descargarComprobantePDF(state.enviado);
+            } catch(e) {
+                console.error(e);
+                toast('No se pudo generar el PDF. Verifique su conexión e intente de nuevo.');
+            } finally {
+                btn.disabled = false; btn.innerHTML = orig;
+            }
+        });
     </script>
 </body>
 </html>
