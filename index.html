@@ -53,6 +53,12 @@
         .bulk-chip:active { transform:scale(.94); }
         .bulk-chip.bulk-done { border-style:solid; border-color:#10b981; color:#059669; background:#ecfdf5; }
 
+        /* Pad de firma manuscrita (vectorial) */
+        .sig-wrap { position:relative; border:2px dashed #cbd5e1; border-radius:.9rem; background:#fff; touch-action:none; overflow:hidden; transition:border-color .15s; }
+        .sig-wrap canvas { display:block; width:100%; height:170px; cursor:crosshair; }
+        .sig-hint { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:.4rem; color:#cbd5e1; font-size:.88rem; font-weight:700; pointer-events:none; user-select:none; }
+        .sig-invalid { border-color:#ef4444 !important; box-shadow:0 0 0 3px rgba(239,68,68,.18); }
+
         .step-hidden { display:none !important; }
         .invalid { border-color:#ef4444 !important; box-shadow:0 0 0 3px rgba(239,68,68,.18) !important; }
         .opt-pill.opt-invalid { border-color:#ef4444; background:#fef2f2; }
@@ -733,7 +739,7 @@
         //  ESTADO Y RENDER
         // =====================================================================
         const $ = (id) => document.getElementById(id);
-        let state = { tipo:null, persona:'natural', docs:[], steps:[], current:0, prev:null, session:{} };
+        let state = { tipo:null, persona:'natural', docs:[], steps:[], current:0, prev:null, session:{}, firma:{ strokes:[], w:0, h:0 } };
 
         const todayISO = () => new Date().toISOString().slice(0,10);
         const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -829,6 +835,7 @@
             state.current = 0;
             state.prev = null;
             state.session = {};
+            state.firma = { strokes:[], w:0, h:0 };
             $('steps-container').innerHTML = state.steps.map((d,i)=>renderStep(d,i)).join('');
             $('step-chips').innerHTML = state.steps.map((d,i)=>{
                 const title = d===REVISION ? 'Revisión' : DOCS[d].title;
@@ -1000,6 +1007,90 @@
             }
         }
 
+        // =====================================================================
+        //  FIRMA ELECTRÓNICA MANUSCRITA (vectorial)
+        //  Se captura como trazos de puntos [x,y] (texto puro, ~2-6 KB) y se
+        //  guarda con un paquete de evidencia conforme a la Ley 527 de 1999 y
+        //  el Decreto 2364 de 2012 (Colombia).
+        // =====================================================================
+        const FIRMA_LEGAL = 'Con mi firma electrónica manuscrita declaro que diligencié personalmente y acepto íntegramente el contenido de todos los documentos relacionados en este envío, que la información suministrada es veraz, y reconozco esta firma como firma electrónica válida conforme al artículo 7 de la Ley 527 de 1999 y el Decreto 2364 de 2012 de la República de Colombia. Esta firma aplica a cada uno de los documentos enumerados en este envío.';
+
+        function hasFirma(){ return state.firma && state.firma.strokes.reduce((n,s)=>n+s.length,0) >= 8; }
+        function firmaRolLabel(){ return state.persona==='empresa' ? 'Representante legal' : (state.tipo==='conductor' ? 'Conductor' : 'Propietario'); }
+
+        // Sincroniza el estado visual de la firma y el gate del botón Enviar.
+        function syncFirmaUI(){
+            const ok = hasFirma();
+            const st = $('sig-status');
+            if (st){ st.textContent = ok ? '✓ Firmado' : 'Pendiente de firma'; st.className = 'text-[11px] font-black ' + (ok ? 'text-emerald-600' : 'text-gray-400'); }
+            if (ok) $('sig-wrap')?.classList.remove('sig-invalid');
+            $('sig-hint')?.classList.toggle('step-hidden', state.firma.strokes.length > 0);
+            const btn = $('btn-submit');
+            if (btn && state.steps[state.current] === REVISION) btn.disabled = !state.docs.every(isDocComplete) || !ok;
+        }
+
+        // Monta el pad sobre el canvas de la Revisión y redibuja los trazos guardados.
+        function initSigPad(){
+            const cv = $('sig-pad'), wrap = $('sig-wrap');
+            if (!cv || !wrap) return;
+            const W = Math.max(280, Math.round((wrap.getBoundingClientRect().width || 522) - 2));
+            const H = 170;
+            if (!state.firma.w) { state.firma.w = W; state.firma.h = H; }
+            // Si cambió el ancho (p. ej. rotó el celular), reescala los trazos guardados.
+            if (state.firma.w !== W || state.firma.h !== H) {
+                const sx = W / state.firma.w, sy = H / state.firma.h;
+                state.firma.strokes = state.firma.strokes.map(s => s.map(([x,y]) => [Math.round(x*sx), Math.round(y*sy)]));
+                state.firma.w = W; state.firma.h = H;
+            }
+            const dpr = window.devicePixelRatio || 1;
+            cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+            cv.style.width = W + 'px'; cv.style.height = H + 'px';
+            const ctx = cv.getContext ? cv.getContext('2d') : null;
+            if (ctx) { ctx.scale(dpr, dpr); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#1e3a8a'; ctx.lineWidth = 2.2; }
+            const redraw = () => {
+                if (!ctx) return;
+                ctx.clearRect(0, 0, W, H);
+                state.firma.strokes.forEach(s => {
+                    if (!s.length) return;
+                    if (s.length === 1) { ctx.beginPath(); ctx.arc(s[0][0], s[0][1], 1.2, 0, 7); ctx.fillStyle = '#1e3a8a'; ctx.fill(); return; }
+                    ctx.beginPath(); ctx.moveTo(s[0][0], s[0][1]);
+                    for (let i = 1; i < s.length - 1; i++) { const mx = (s[i][0]+s[i+1][0])/2, my = (s[i][1]+s[i+1][1])/2; ctx.quadraticCurveTo(s[i][0], s[i][1], mx, my); }
+                    const L = s[s.length-1]; ctx.lineTo(L[0], L[1]); ctx.stroke();
+                });
+            };
+            redraw();
+            let cur = null;
+            const pos = (e) => { const r = cv.getBoundingClientRect(); return [Math.round(e.clientX - r.left), Math.round(e.clientY - r.top)]; };
+            cv.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                try { if (e.pointerId != null && cv.setPointerCapture) cv.setPointerCapture(e.pointerId); } catch(_) {}
+                cur = [pos(e)];
+                state.firma.strokes.push(cur);
+                syncFirmaUI();
+            });
+            cv.addEventListener('pointermove', (e) => {
+                if (!cur) return;
+                const p = pos(e), l = cur[cur.length-1];
+                if (Math.hypot(p[0]-l[0], p[1]-l[1]) < 2) return;
+                cur.push(p);
+                if (ctx) { ctx.beginPath(); ctx.moveTo(l[0], l[1]); ctx.lineTo(p[0], p[1]); ctx.stroke(); }
+            });
+            const end = () => { if (!cur) return; cur = null; redraw(); syncFirmaUI(); };
+            cv.addEventListener('pointerup', end);
+            cv.addEventListener('pointercancel', end);
+            cv.addEventListener('pointerleave', end);
+            $('sig-clear')?.addEventListener('click', () => { state.firma.strokes = []; if (ctx) ctx.clearRect(0, 0, W, H); syncFirmaUI(); });
+            syncFirmaUI();
+        }
+
+        // Huella SHA-256 del contenido (integridad verificable por el firmante).
+        async function sha256Hex(text){
+            try {
+                const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+                return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+            } catch(e) { return null; }
+        }
+
         function collectDoc(docKey){
             const out = {};
             $('steps-container').querySelectorAll(`.doc-step[data-doc="${docKey}"] [data-field]`).forEach(inp=>{
@@ -1104,10 +1195,32 @@
                             <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Completado</span>
                         </div>
                     </div>
-                    <h3 class="text-xl font-black text-gray-800 mt-4">${all?'¡Todo listo para enviar!':'Revisión final'}</h3>
-                    <p class="text-sm text-gray-500 mt-1 max-w-md mx-auto">${all?'Todos los formularios quedaron diligenciados. Presione «Enviar documentación» para finalizar.':'Aún faltan formularios por completar. Toque «Completar» para terminarlos; el envío se habilita al llegar al 100%.'}</p>
+                    <h3 class="text-xl font-black text-gray-800 mt-4">${all?'¡Todo listo!':'Revisión final'}</h3>
+                    <p class="text-sm text-gray-500 mt-1 max-w-md mx-auto">${all?'Todos los formularios quedaron diligenciados. Firme abajo y presione «Enviar documentación».':'Aún faltan formularios por completar. Toque «Completar» para terminarlos; el envío se habilita al llegar al 100% y firmar.'}</p>
                 </div>
-                <div class="space-y-2 max-w-xl mx-auto">${list}</div>`;
+                <div class="space-y-2 max-w-xl mx-auto">${list}</div>
+                ${(() => {
+                    const prov0 = collectDoc(state.docs[0]);
+                    const esEmp = state.persona === 'empresa';
+                    const fN = (esEmp ? prov0.rep_nombre : prov0.nombre) || '—';
+                    const fC = (esEmp ? prov0.rep_cedula : prov0.cedula) || '—';
+                    return `<div class="max-w-xl mx-auto mt-7" id="firma-card">
+                        <div class="flex items-center gap-2 pb-1.5 border-b border-gray-100 mb-2">
+                            <span class="w-1.5 h-4 rounded-full bg-[#FFD22E] shrink-0"></span>
+                            <h4 class="text-sm font-black text-[#181818] tracking-tight uppercase flex-1 min-w-0">Firma electrónica manuscrita</h4>
+                            <span id="sig-status"></span>
+                        </div>
+                        <p class="text-[11.5px] text-gray-500 leading-snug mb-2.5">${esc(FIRMA_LEGAL)}</p>
+                        <div id="sig-wrap" class="sig-wrap">
+                            <canvas id="sig-pad"></canvas>
+                            <span id="sig-hint" class="sig-hint">✍ Firme aquí con el dedo o el mouse</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-3 mt-2">
+                            <button type="button" id="sig-clear" class="text-xs font-bold text-gray-500 bg-white border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50">Borrar firma</button>
+                            <p class="text-[11px] font-bold text-gray-500 text-right">${esc(firmaRolLabel())}: <span class="text-gray-800">${esc(fN)}</span> · Doc. ${esc(fC)}</p>
+                        </div>
+                    </div>`;
+                })()}`;
 
             $('review-body').querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click', ()=>{
                 const idx = parseInt(b.dataset.goto,10);
@@ -1116,7 +1229,8 @@
                 const dk = state.steps[idx];
                 if (!isDocComplete(dk)) validateStep(dk);
             }));
-            $('btn-submit').disabled = !all;
+            $('btn-submit').disabled = !all || !hasFirma();
+            initSigPad();
         }
 
         function updateChips(current){
@@ -1184,7 +1298,7 @@
             else toast('Complete los campos obligatorios (marcados en rojo).');
         }
 
-        // ── Envío final: solo cuando TODOS los formularios están al 100% ──
+        // ── Envío final: solo cuando TODOS los formularios están al 100% y FIRMADOS ──
         async function submitAll(){
             for (const d of state.docs) {
                 if (!isDocComplete(d)) {
@@ -1193,6 +1307,13 @@
                     toast('Complete este formulario para poder enviar.');
                     return;
                 }
+            }
+            if (!hasFirma()) {
+                const wrap = $('sig-wrap');
+                wrap?.classList.add('sig-invalid');
+                wrap?.scrollIntoView({ behavior:'smooth', block:'center' });
+                toast('Para enviar, firme en el recuadro de firma.');
+                return;
             }
 
             const prov = collectDoc(state.docs[0]);
@@ -1211,13 +1332,36 @@
                 autofill[d] = clean;
             });
 
+            // ── Paquete de firma electrónica + evidencia (Ley 527/1999, D. 2364/2012) ──
+            const firma = {
+                tipo: 'manuscrita_vectorial',
+                trazos: state.firma.strokes,
+                lienzo: { w: state.firma.w, h: state.firma.h },
+                puntos: state.firma.strokes.reduce((n,s)=>n+s.length,0),
+                firmante: {
+                    nombre: (esEmpresa ? prov.rep_nombre : prov.nombre) || null,
+                    cedula: (esEmpresa ? prov.rep_cedula : prov.cedula) || null,
+                    rol: firmaRolLabel(),
+                },
+                fecha_firma: new Date().toISOString(),
+                zona_horaria: (()=>{ try { return Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch(e){ return null; } })(),
+                user_agent: navigator.userAgent,
+                origen: (()=>{ try { return location.origin; } catch(e){ return null; } })(),
+                consentimiento: FIRMA_LEGAL,
+                documentos_firmados: state.docs.map(d => DOCS[d].title),
+            };
+            // Huella de integridad: SHA-256 sobre todo el contenido firmado
+            // (documentos + autofill + firma sin el hash). El firmante recibe la
+            // huella en su comprobante y puede verificar que nada se alteró.
+            firma.hash_sha256 = await sha256Hex(JSON.stringify({ documentos, autofill, firma }));
+
             const payload = {
                 id: genId(),
                 tipo_proveedor: state.tipo,
                 nombre: (esEmpresa ? prov.razon_social : prov.nombre) || null,
                 cedula: (esEmpresa ? prov.nit : prov.cedula) || null,
                 placa: (prov.placa || '').toUpperCase() || null,
-                datos: { documentos, autofill, meta: { enviado_en:new Date().toISOString(), persona:state.persona, user_agent:navigator.userAgent, flujo:state.docs } }
+                datos: { documentos, autofill, firma, meta: { enviado_en:new Date().toISOString(), persona:state.persona, user_agent:navigator.userAgent, flujo:state.docs } }
             };
 
             $('submit-overlay').style.display = 'flex';
@@ -1227,7 +1371,8 @@
                 const { error } = await supabase.from('documental_envios').insert(payload);
                 if (error) throw error;
                 $('submit-overlay').style.display = 'none';
-                $('success-code').textContent = 'Comprobante: ' + payload.id.slice(0,8).toUpperCase();
+                $('success-code').textContent = 'Comprobante: ' + payload.id.slice(0,8).toUpperCase()
+                    + (firma.hash_sha256 ? ' · Huella SHA-256: ' + firma.hash_sha256.slice(0,16) + '…' : '');
                 showScreen('success');
                 window.scrollTo({top:0});
             } catch(e) {
