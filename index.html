@@ -1498,6 +1498,27 @@
         //  librerías jsPDF/autoTable se cargan por CDN SOLO al pulsar el botón,
         //  así el formulario no se vuelve más pesado.
         // =====================================================================
+        // Firma institucional activa del uso "Recibido y verificado por"
+        // (tabla documental_firmas, gestionada en la app interna: Documental →
+        // Firmas). El anon solo puede leer firmas activas (RLS). Si falla la
+        // consulta, el comprobante sale con el bloque genérico de siempre.
+        let firmaEmpresaCache; // undefined = aún no consultada
+        async function fetchFirmaEmpresa(){
+            if (firmaEmpresaCache !== undefined) return firmaEmpresaCache;
+            try {
+                const { data, error } = await supabase.from('documental_firmas')
+                    .select('nombre, cargo, firma')
+                    .eq('slot', 'doc_admin_recibido').eq('activo', true)
+                    .maybeSingle();
+                if (error) throw error;
+                firmaEmpresaCache = data || null;
+            } catch(e) {
+                console.error('No se pudo consultar la firma institucional', e);
+                return null; // sin cachear: se reintenta en el próximo clic
+            }
+            return firmaEmpresaCache;
+        }
+
         let pdfLibsPromise = null;
         function cargarLibsPDF(){
             if (pdfLibsPromise) return pdfLibsPromise;
@@ -1570,7 +1591,46 @@
             }
         }
 
-        function descargarComprobantePDF(row){
+        // Estampa una firma sobre la línea de firma del PDF: trazos vectoriales
+        // { trazos, lienzo } (tinta azul, como esfero) o imagen { imagen: dataURL }
+        // (firma escaneada). Mismo helper que pdfGenerator.stampFirmaDocumental.
+        function pdfStampFirmaDoc(doc, firma, xStart, xEnd, yLine){
+            const boxW = (xEnd - xStart) - 4, boxH = 19;
+            if (firma && Array.isArray(firma.trazos) && firma.trazos.length) {
+                const vw = (firma.lienzo && firma.lienzo.w) || 520;
+                const vh = (firma.lienzo && firma.lienzo.h) || 170;
+                const s = Math.min(boxW / vw, boxH / vh);
+                const offX = xStart + (boxW - vw * s) / 2;
+                const offY = yLine - vh * s - 0.5;
+                doc.setDrawColor(30, 58, 138);
+                doc.setFillColor(30, 58, 138);
+                doc.setLineWidth(0.45);
+                doc.setLineCap('round');
+                doc.setLineJoin('round');
+                firma.trazos.forEach((st) => {
+                    if (!Array.isArray(st) || st.length === 0) return;
+                    if (st.length === 1) { doc.circle(offX + st[0][0] * s, offY + st[0][1] * s, 0.3, 'F'); return; }
+                    const deltas = [];
+                    for (let i = 1; i < st.length; i++) deltas.push([st[i][0] - st[i - 1][0], st[i][1] - st[i - 1][1]]);
+                    doc.lines(deltas, offX + st[0][0] * s, offY + st[0][1] * s, [s, s]);
+                });
+                doc.setLineWidth(0.2);
+                doc.setDrawColor(180, 180, 180);
+                return true;
+            }
+            if (firma && firma.imagen) {
+                try {
+                    const props = doc.getImageProperties(firma.imagen);
+                    const s = Math.min(boxW / props.width, boxH / props.height);
+                    const w = props.width * s, h = props.height * s;
+                    doc.addImage(firma.imagen, props.fileType || 'PNG', xStart + (boxW - w) / 2, yLine - h - 0.5, w, h);
+                    return true;
+                } catch(e) { console.error('Firma imagen inválida', e); }
+            }
+            return false;
+        }
+
+        function descargarComprobantePDF(row, firmaEmp){
             const { jsPDF } = window.jspdf;
             const autoTable = window.autoTable;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
@@ -1673,28 +1733,8 @@
             doc.setDrawColor(180, 180, 180);
 
             if (firma) {
-                // Firma manuscrita real: se re-dibujan los trazos vectoriales escalados
-                // sobre la línea de firma (tinta azul, como una firma de esfero).
-                const vw = (firma.lienzo && firma.lienzo.w) || 520;
-                const vh = (firma.lienzo && firma.lienzo.h) || 170;
-                const boxW = 76, boxH = 19;
-                const s = Math.min(boxW / vw, boxH / vh);
-                const offX = 15 + (boxW - vw * s) / 2;
-                const offY = (y + 20) - vh * s - 0.5;
-                doc.setDrawColor(30, 58, 138);
-                doc.setFillColor(30, 58, 138);
-                doc.setLineWidth(0.45);
-                doc.setLineCap('round');
-                doc.setLineJoin('round');
-                firma.trazos.forEach((st) => {
-                    if (!Array.isArray(st) || st.length === 0) return;
-                    if (st.length === 1) { doc.circle(offX + st[0][0] * s, offY + st[0][1] * s, 0.3, 'F'); return; }
-                    const deltas = [];
-                    for (let i = 1; i < st.length; i++) deltas.push([st[i][0] - st[i - 1][0], st[i][1] - st[i - 1][1]]);
-                    doc.lines(deltas, offX + st[0][0] * s, offY + st[0][1] * s, [s, s]);
-                });
-                doc.setLineWidth(0.2);
-                doc.setDrawColor(180, 180, 180);
+                // Firma manuscrita real del proveedor (trazos vectoriales, tinta azul).
+                pdfStampFirmaDoc(doc, firma, 15, 95, y + 20);
             } else {
                 pdfDrawFirma(doc, signName, 15, 95, y + 20);
             }
@@ -1705,12 +1745,19 @@
             doc.setFont('helvetica', 'normal');
             doc.text(`${esEmpresa ? (firma ? 'C.C.' : 'NIT') : 'C.C.'} ${signCedula || '—'}`, 15, y + 33);
 
+            // Firma institucional activa (app interna: Documental → Firmas).
+            if (firmaEmp && firmaEmp.firma) pdfStampFirmaDoc(doc, firmaEmp.firma, 115, 195, y + 20);
             doc.line(115, y + 20, 195, y + 20);
             doc.text('Recibido y verificado por', 115, y + 25);
             doc.setFont('helvetica', 'bold');
-            doc.text('TRANSHICOL S.A.S', 115, y + 29);
+            doc.text(String((firmaEmp && firmaEmp.nombre) || 'TRANSHICOL S.A.S'), 115, y + 29, { maxWidth: 78 });
             doc.setFont('helvetica', 'normal');
-            doc.text('Documentación administrativa', 115, y + 33);
+            if (firmaEmp && firmaEmp.nombre) {
+                doc.text(String(firmaEmp.cargo || 'Documentación administrativa'), 115, y + 33, { maxWidth: 78 });
+                doc.text('TRANSHICOL S.A.S', 115, y + 37);
+            } else {
+                doc.text('Documentación administrativa', 115, y + 33);
+            }
 
             // 5. Caja de evidencia de la firma electrónica (Ley 527/1999 · D.2364/2012)
             if (firma) {
@@ -1774,8 +1821,8 @@
             const orig = btn.innerHTML;
             btn.disabled = true; btn.innerHTML = 'Generando PDF…';
             try {
-                await cargarLibsPDF();
-                descargarComprobantePDF(state.enviado);
+                const [, firmaEmp] = await Promise.all([cargarLibsPDF(), fetchFirmaEmpresa()]);
+                descargarComprobantePDF(state.enviado, firmaEmp);
             } catch(e) {
                 console.error(e);
                 toast('No se pudo generar el PDF. Verifique su conexión e intente de nuevo.');
