@@ -90,6 +90,67 @@
         @keyframes pop { 0% { transform:scale(.6); opacity:0;} 60% { transform:scale(1.08);} 100% { transform:scale(1); opacity:1;} }
         .pop { animation:pop .5s cubic-bezier(.2,.8,.2,1); }
 
+        /* ── Inducción en diapositivas (antes del registro de inducción) ── */
+        .ind-deck { position:relative; border-radius:1.4rem; background:#fff; border:1.5px solid #eef0f4; box-shadow:0 16px 44px rgba(2,6,23,.09); overflow:hidden; transition:border-color .2s, box-shadow .2s; }
+        .ind-deck.ind-complete { border-color:#6ee7b7; }
+        .ind-top { display:flex; align-items:center; gap:.7rem; padding:.75rem 1rem .55rem; background:#181818; color:#fff; }
+        .ind-seg { display:flex; gap:3px; padding:0 1rem .8rem; background:#181818; }
+        .ind-seg button { flex:1; height:5px; border-radius:9px; background:rgba(255,255,255,.14); transition:background .3s, transform .15s; padding:0; border:0; }
+        .ind-seg button.seen { background:rgba(255,210,46,.55); cursor:pointer; }
+        .ind-seg button.cur { background:#FFD22E; transform:scaleY(1.35); }
+        .ind-seg button:disabled { cursor:default; }
+        .ind-view { position:relative; min-height:470px; touch-action:pan-y; }
+        .ind-slide { display:none; padding:1.4rem 1.6rem 1.7rem; }
+        .ind-slide.on { display:block; animation:indIn .38s cubic-bezier(.22,.8,.3,1); }
+        .ind-slide.ind-full { padding:0; }
+        @keyframes indIn { from { opacity:0; transform:translateX(var(--ind-dx,18px)); } to { opacity:1; transform:none; } }
+        .ind-k { font-size:10.5px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:#b48f00; }
+        .ind-h { font-size:1.5rem; font-weight:800; color:#111827; letter-spacing:-.02em; line-height:1.15; margin-top:.15rem; }
+        .ind-p { font-size:.9rem; color:#475569; line-height:1.6; }
+        .ind-mini { font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#94a3b8; }
+        .ind-card { border:1px solid #eef0f4; border-radius:1rem; background:#fafbfc; padding:.9rem 1rem; }
+        .ind-card-y { background:linear-gradient(160deg,#fffbea,#fff4c7); border-color:rgba(255,210,46,.45); }
+        .ind-card-d { background:linear-gradient(160deg,#232323,#111); border-color:#111; color:#fff; }
+        .ind-list li { position:relative; padding-left:1.1rem; margin:.34rem 0; font-size:.87rem; color:#334155; line-height:1.45; }
+        .ind-list li::before { content:''; position:absolute; left:0; top:.48em; width:.45rem; height:.45rem; border-radius:3px; background:#FFD22E; }
+        .ind-list.ind-x li::before { content:'✕'; width:auto; height:auto; background:none; top:0; color:#dc2626; font-weight:900; font-size:.8rem; }
+        .ind-img { width:100%; height:100%; object-fit:cover; border-radius:1rem; background:#eef0f4; }
+        .ind-pill { display:inline-flex; align-items:center; gap:.3rem; font-size:11px; font-weight:800; padding:.28rem .6rem; border-radius:99px; white-space:nowrap; }
+        .ind-chip { display:inline-flex; font-size:11.5px; font-weight:700; color:#334155; background:#fff; border:1px solid #e5e7eb; border-radius:.55rem; padding:.22rem .5rem; }
+        .ind-me { background:#181818; color:#FFD22E; border-color:#181818; box-shadow:0 0 0 3px rgba(255,210,46,.45); }
+        .ind-acc { border:1px solid #eef0f4; border-radius:.95rem; background:#fafbfc; transition:background .15s, border-color .15s; }
+        .ind-acc[open] { background:#fff; border-color:rgba(255,210,46,.6); box-shadow:0 6px 18px rgba(2,6,23,.06); }
+        .ind-acc summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:.65rem; padding:.7rem .85rem; font-weight:800; font-size:.9rem; color:#111827; }
+        .ind-acc summary::-webkit-details-marker { display:none; }
+        .ind-acc summary::after { content:'+'; margin-left:auto; font-size:1.15rem; font-weight:800; color:#b48f00; transition:transform .2s; }
+        .ind-acc[open] summary::after { transform:rotate(45deg); }
+        .ind-acc .ind-acc-b { padding:0 .95rem .85rem; }
+        .ind-n { width:1.7rem; height:1.7rem; border-radius:.55rem; display:inline-flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:900; background:#181818; color:#FFD22E; flex-shrink:0; }
+        .ind-tl { position:relative; padding-left:1.4rem; }
+        .ind-tl::before { content:''; position:absolute; left:.45rem; top:.3rem; bottom:.3rem; width:2px; background:linear-gradient(#FFD22E,#eef0f4); }
+        .ind-tl li { position:relative; margin-bottom:1rem; }
+        .ind-tl li::before { content:''; position:absolute; left:-1.22rem; top:.3rem; width:.8rem; height:.8rem; border-radius:99px; background:#fff; border:3px solid #FFD22E; }
+        .ind-stat { border-radius:1rem; padding:.85rem .9rem; background:#fafbfc; border:1px solid #eef0f4; }
+        .ind-stat b { display:block; font-size:1.35rem; font-weight:900; color:#111827; letter-spacing:-.02em; line-height:1.1; }
+        .ind-stat span { display:block; font-size:12px; font-weight:600; color:#64748b; margin-top:.2rem; line-height:1.35; }
+        .ind-stat.ind-red { background:#fef2f2; border-color:#fecaca; } .ind-stat.ind-red b { color:#b91c1c; }
+        /* Durante la inducción la barra flotante pasa las diapositivas: mientras corre
+           la lectura mínima el botón queda gris y se llena de amarillo. */
+        #btn-next { position:relative; overflow:hidden; }
+        #btn-next .ind-fill { position:absolute; inset:0; transform-origin:left; transform:scaleX(0); background:linear-gradient(180deg,#FFD22E,#F2BE00); }
+        #btn-next.ind-wait { background-image:none !important; background-color:#e9ecf1 !important; color:#475569; box-shadow:none !important; cursor:wait; }
+        .ind-locked { opacity:.5; cursor:not-allowed !important; }
+        .ind-locked:hover { border-color:#e5e7eb !important; background:#f9fafb !important; }
+        @media (max-width: 767px) {
+            .ind-view { min-height:0; }
+            .ind-slide { padding:1.1rem 1rem 1.3rem; }
+            .ind-h { font-size:1.25rem; }
+            .ind-top, .ind-seg { padding-left:.8rem; padding-right:.8rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .ind-slide.on { animation:none; }
+        }
+
         /* Ajustes de celular */
         @media (max-width: 767px) {
             .card-pad { padding:1.1rem !important; }
@@ -141,16 +202,16 @@
                 <span class="inline-flex items-center gap-1.5 mt-5 text-sm font-extrabold text-[#181818] group-hover:gap-2.5 transition-all">Comenzar <span class="text-[#d9a900]">&rarr;</span></span>
             </button>
 
-            <button data-tipo="conductor" class="tipo-card group relative text-left bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_6px_24px_rgba(2,6,23,.05)] hover:shadow-[0_16px_44px_rgba(2,6,23,.10)] hover:-translate-y-0.5 hover:border-[#FFD22E]/70 active:scale-[.99] transition-all">
-                <span class="absolute top-5 right-5 text-[10px] font-extrabold text-gray-400 bg-gray-50 border border-gray-100 rounded-full px-2.5 py-1">6 formatos</span>
+            <button data-tipo="personal" class="tipo-card group relative text-left bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_6px_24px_rgba(2,6,23,.05)] hover:shadow-[0_16px_44px_rgba(2,6,23,.10)] hover:-translate-y-0.5 hover:border-[#FFD22E]/70 active:scale-[.99] transition-all">
+                <span class="absolute top-5 right-5 text-[10px] font-extrabold text-gray-400 bg-gray-50 border border-gray-100 rounded-full px-2.5 py-1">Inducción + 6 formatos</span>
                 <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#181818] to-[#3d3d3d] text-[#FFD22E] flex items-center justify-center mb-4 shadow-[0_6px_16px_rgba(2,6,23,.25)] group-hover:scale-105 transition-transform">
                     <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
                 </div>
-                <h3 class="text-lg font-extrabold text-gray-800">Soy Conductor</h3>
-                <p class="text-sm text-gray-500 mt-1">Conductor que opera el vehículo en las rutas asignadas.</p>
+                <h3 class="text-lg font-extrabold text-gray-800">Soy Conductor / Operador / Aparejador</h3>
+                <p class="text-sm text-gray-500 mt-1">Conductor de tractocamión, operador de grúa o camión grúa, o aparejador de los mismos.</p>
                 <ul class="mt-4 space-y-1.5 text-[13px] text-gray-600 font-medium">
-                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> SARLAFT · Dotación y EPP · Registro de inducción</li>
-                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> Actas de compromiso · Evaluación de inducción</li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> Inducción en diapositivas · SARLAFT · Dotación y EPP</li>
+                    <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-[#FFD22E]"></span> Registro y evaluación de inducción · Actas de compromiso</li>
                 </ul>
                 <span class="inline-flex items-center gap-1.5 mt-5 text-sm font-extrabold text-[#181818] group-hover:gap-2.5 transition-all">Comenzar <span class="text-[#d9a900]">&rarr;</span></span>
             </button>
@@ -179,6 +240,41 @@
                 </div>
                 <h3 class="text-base font-extrabold text-gray-800">Empresa (NIT)</h3>
                 <p class="text-sm text-gray-500 mt-1">El vehículo pertenece a una empresa. El <b>representante legal</b> diligencia el SARLAFT de personas jurídicas y el contrato.</p>
+            </button>
+        </div>
+    </section>
+
+    <!-- ============ PANTALLA 1C: CARGO (solo personal operativo) ============ -->
+    <section id="screen-cargo" class="max-w-4xl mx-auto px-4 py-10 md:py-12 step-hidden fade-up">
+        <div class="text-center mb-7">
+            <button id="btn-back-cargo" class="text-xs font-semibold text-gray-400 hover:text-gray-700 mb-4 inline-flex items-center gap-1">&larr; Volver</button>
+            <h2 class="text-xl md:text-2xl font-black text-gray-800 tracking-tight">¿Cuál es su cargo?</h2>
+            <p class="text-gray-500 mt-2 text-sm max-w-lg mx-auto">Los tres cargos ven la inducción en diapositivas y diligencian los mismos formatos. Operadores y aparejadores responden además lo propio de izaje de cargas.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4">
+            <button data-rol="conductor" class="rol-card group text-left bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_6px_24px_rgba(2,6,23,.05)] hover:shadow-[0_16px_44px_rgba(2,6,23,.10)] hover:-translate-y-0.5 hover:border-[#FFD22E]/70 active:scale-[.99] transition-all">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#181818] to-[#3d3d3d] text-[#FFD22E] flex items-center justify-center mb-3 shadow-[0_6px_16px_rgba(2,6,23,.25)] group-hover:scale-105 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17V7h11v10"/><path d="M13 10h4l4 4v3h-8"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/></svg>
+                </div>
+                <h3 class="text-base font-extrabold text-gray-800">Conductor</h3>
+                <p class="text-sm text-gray-500 mt-1">Conduce el tractocamión o carrotanque en las rutas asignadas.</p>
+                <p class="mt-4 text-[11.5px] font-bold text-gray-400">Inducción · 6 formatos</p>
+            </button>
+            <button data-rol="operador" class="rol-card group text-left bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_6px_24px_rgba(2,6,23,.05)] hover:shadow-[0_16px_44px_rgba(2,6,23,.10)] hover:-translate-y-0.5 hover:border-[#FFD22E]/70 active:scale-[.99] transition-all">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#181818] to-[#3d3d3d] text-[#FFD22E] flex items-center justify-center mb-3 shadow-[0_6px_16px_rgba(2,6,23,.25)] group-hover:scale-105 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5l14-2v3"/><path d="M4 7h16"/><path d="M18 6v6"/><path d="M16.5 14a1.5 1.5 0 1 0 3 0c0-1-1.5-1.5-1.5-2"/><path d="M2 21h8"/><path d="M4 11l4-4M4 15l4-4"/></svg>
+                </div>
+                <h3 class="text-base font-extrabold text-gray-800">Operador de grúa / camión grúa</h3>
+                <p class="text-sm text-gray-500 mt-1">Opera la grúa o el camión grúa en las maniobras de izaje.</p>
+                <p class="mt-4 text-[11.5px] font-bold text-gray-400">Inducción · 6 formatos · izaje</p>
+            </button>
+            <button data-rol="aparejador" class="rol-card group text-left bg-white rounded-3xl border border-gray-100 p-6 shadow-[0_6px_24px_rgba(2,6,23,.05)] hover:shadow-[0_16px_44px_rgba(2,6,23,.10)] hover:-translate-y-0.5 hover:border-[#FFD22E]/70 active:scale-[.99] transition-all">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#181818] to-[#3d3d3d] text-[#FFD22E] flex items-center justify-center mb-3 shadow-[0_6px_16px_rgba(2,6,23,.25)] group-hover:scale-105 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><circle cx="12" cy="10" r="2"/><path d="M12 12v2a3 3 0 1 1-3 3"/><path d="M5 22l7-5 7 5"/></svg>
+                </div>
+                <h3 class="text-base font-extrabold text-gray-800">Aparejador</h3>
+                <p class="text-sm text-gray-500 mt-1">Prepara y asegura la carga y guía al operador de la grúa o camión grúa.</p>
+                <p class="mt-4 text-[11.5px] font-bold text-gray-400">Inducción · 6 formatos · izaje</p>
             </button>
         </div>
     </section>
@@ -307,7 +403,7 @@
             <p>Certifico que he leído el presente consentimiento, comprendo su contenido y me declaro totalmente de acuerdo.</p>`;
 
         const LEGAL_ACTA_VIAL = `
-            <p>Como conductor de TRANSHICOL S.A.S me comprometo a:</p>
+            <p>Como {{ROL}} de TRANSHICOL S.A.S me comprometo a:</p>
             <ol>
                 <li>Respetar a peatones, motociclistas y demás usuarios de la vía, y las señales de tránsito.</li>
                 <li>Realizar pausas activas por lo menos cada 3 horas y mantener una actitud defensiva.</li>
@@ -363,6 +459,18 @@
         const SINONA = [{v:'SI',l:'SI'},{v:'NO',l:'NO'},{v:'N/A',l:'N/A'}];
         const VF = [{v:'V',l:'Verdadero'},{v:'F',l:'Falso'}];
 
+        // Personal operativo: los tres cargos diligencian los mismos formatos.
+        // La clave es también el tipo_proveedor que se guarda. Los campos con
+        // roles:[...] solo aparecen para esos cargos; en textos y etiquetas,
+        // {{ROL}} y {{VEH}} se cambian por los del cargo y default:'@cargo'
+        // pone el cargo por defecto (ver docDef).
+        const ROLES = {
+            conductor:  { label:'Conductor',                      cargo:'Conductor',                      noun:'conductor',                      veh:'vehículo' },
+            operador:   { label:'Operador de grúa / camión grúa', cargo:'Operador de grúa / camión grúa', noun:'operador de grúa / camión grúa', veh:'vehículo o equipo' },
+            aparejador: { label:'Aparejador',                     cargo:'Aparejador',                     noun:'aparejador',                     veh:'vehículo o equipo' },
+        };
+        const IZAJE = ['operador','aparejador'];
+
         // Campos que representan el MISMO dato en distintos documentos → se
         // autocompletan entre sí (por nombre de campo). Clave: nombre de campo.
         const SYNC_MAP = {
@@ -411,7 +519,8 @@
                     { name:'nombre', label:'Nombre completo', type:'text', required:true, col:2 },
                     { name:'telefono', label:'Teléfono / celular', type:'tel', required:true },
                     { name:'correo', label:'Correo electrónico', type:'email' },
-                    { name:'placa', label:'Placa del vehículo', type:'text', required:true, col:2, lookup:true },
+                    { name:'placa', label:'Placa del {{VEH}}', type:'text', required:true, col:2, lookup:true },
+                    { name:'equipo_izaje', label:'Equipo con el que trabaja', type:'radio', options:[{v:'Grúa',l:'Grúa'},{v:'Camión grúa',l:'Camión grúa'},{v:'Grúa y camión grúa',l:'Ambos'}], required:true, roles:IZAJE },
                     { type:'autofill' },
                 ]
             },
@@ -523,11 +632,26 @@
                 ]
             },
 
+            // Presentación de inducción: va antes del registro, para los tres cargos.
+            // Las diapositivas están en SLIDES; lo que se guarda es la evidencia de
+            // que se vio completa. noAutofill: se vuelve a ver en cada envío.
+            induccion: {
+                title: 'Inducción corporativa 2026', short:'Inducción 2026', code:'Presentación · aplica a conductores, operadores y aparejadores',
+                kicker: 'Véala completa antes del registro',
+                fields: [
+                    { name:'diapositivas', label:'Diapositivas de la inducción vistas', type:'slides', required:true, noAutofill:true,
+                      missingLabel:'Ver todas las diapositivas de la inducción', missingMsg:'⚠ Aún le faltan diapositivas por ver' },
+                    { name:'tiempo_induccion', label:'Tiempo dedicado a la inducción', type:'hidden', noAutofill:true },
+                    { name:'acepta_induccion', type:'accept', required:true, noAutofill:true,
+                      label:'Vi completa la Inducción 2026 de TRANSHICOL S.A.S y comprendí su contenido: políticas, reglas de seguridad, responsabilidades y riesgos de mi cargo.' },
+                ]
+            },
+
             registro: {
                 title: 'Registro de inducción y reinducción', code:'F-GH-007',
                 fields: [
                     { name:'nombres', label:'Nombres y apellidos', type:'text', required:true, col:2 },
-                    { name:'cargo', label:'Cargo', type:'text', default:'Conductor' },
+                    { name:'cargo', label:'Cargo', type:'text', default:'@cargo' },
                     { name:'fecha', label:'Fecha', type:'date', default:'today' },
                     { name:'tipo', label:'Tipo', type:'checkgroup', options:['Inducción','Reinducción','Tiempo','Cambio sitio de trabajo','Cambio de cargo'] },
 
@@ -550,6 +674,13 @@
                     { name:'t_2_9_1', label:'2.9.1 Primeros auxilios, control de incendios, evacuación', type:'radio', options:SINONA },
                     { name:'t_2_9_2', label:'2.9.2 Manejo defensivo y seguridad vial', type:'radio', options:SINONA },
                     { name:'t_2_9_3', label:'2.9.3 Legislación aplicable al cargo', type:'radio', options:SINONA },
+
+                    // Solo operadores y aparejadores: cursos de izaje (requisitos de ingreso, vigencia 1 año).
+                    { type:'heading', text:'2.10 Cursos aplicables de izaje', bulk:'SI', roles:IZAJE },
+                    { type:'note', text:'Requisitos de ingreso de operadores y aparejadores (vigencia de 1 año). Marque N/A solo si el curso no aplica a su cargo.', roles:IZAJE },
+                    { name:'t_2_10_1', label:'2.10.1 Certificado de operador', type:'radio', options:SINONA, required:true, roles:IZAJE },
+                    { name:'t_2_10_2', label:'2.10.2 Certificado de aparejador', type:'radio', options:SINONA, required:true, roles:IZAJE },
+                    { name:'t_2_10_3', label:'2.10.3 Mecánica básica', type:'radio', options:SINONA, required:true, roles:IZAJE },
 
                     { type:'heading', text:'3. Inducción gestión humana', bulk:'SI' },
                     { name:'t_3_1', label:'3.1 Manual de funciones y responsabilidades', type:'radio', options:SINONA },
@@ -592,7 +723,7 @@
                 title: 'Evaluación de inducción / reinducción', code:'F-HSEQ-07',
                 fields: [
                     { name:'nombre', label:'Nombre empleado', type:'text', required:true, col:2 },
-                    { name:'cargo', label:'Cargo', type:'text', default:'Conductor' },
+                    { name:'cargo', label:'Cargo', type:'text', default:'@cargo' },
                     { name:'fecha', label:'Fecha', type:'date', default:'today' },
                     { type:'heading', text:'Selección múltiple (única respuesta)' },
                     { name:'q1', label:'1. ¿Cuáles son las políticas de nuestra empresa?', type:'radio', options:[
@@ -620,6 +751,15 @@
                         {v:'a',l:'Gestión gerencial'},{v:'b',l:'Gestión HSEQ y aseguramiento'},{v:'c',l:'Gestión de mantenimiento'},
                         {v:'d',l:'Gestión de apoyo'},{v:'e',l:'Gestión contable y administrativa'},{v:'f',l:'Gestión humana'},{v:'g',l:'Gestión operativa'} ], required:true },
                     { name:'q10', label:'10. El objetivo general del plan de emergencia es disminuir las consecuencias negativas', type:'radio', options:VF, required:true },
+                    // Solo operadores y aparejadores. `correct` deja junto a la respuesta
+                    // si acertó, para quien califica (no se muestra antes de enviar).
+                    { type:'heading', text:'Izaje de cargas', roles:IZAJE },
+                    { name:'q11', label:'11. ¿Cuál de las siguientes acciones debe realizarse antes de iniciar una maniobra de izaje de carga?', type:'radio', required:true, roles:IZAJE,
+                      correct:'b', resultLabel:'Resultado pregunta 11 (izaje)', options:[
+                        {v:'a',l:'A. Iniciar el izaje y verificar los elementos durante la maniobra.'},
+                        {v:'b',l:'B. Verificar el peso de la carga, capacidad del equipo, estado de eslingas y accesorios, condiciones del terreno y delimitar el área.'},
+                        {v:'c',l:'C. Permitir el ingreso de personal al área mientras se estabiliza la carga.'},
+                        {v:'d',l:'D. Utilizar cualquier accesorio de izaje siempre que visualmente parezca resistente.'} ] },
                     { type:'heading', text:'Firmas y calificación' },
                     { name:'firma_empleado', label:'Firma empleado (nombre)', type:'text' },
                     { name:'firma_inductor', label:'Firma de quien imparte la inducción', type:'text' },
@@ -635,7 +775,7 @@
                     { name:'licencia', label:'N° de licencia', type:'text' },
                     { name:'categoria', label:'Categoría', type:'text' },
                     { name:'vencimiento', label:'Vencimiento licencia', type:'date' },
-                    { name:'cargo', label:'Cargo', type:'text', default:'Conductor' },
+                    { name:'cargo', label:'Cargo', type:'text', default:'@cargo' },
                     { name:'tipo_vehiculo', label:'Tipo de vehículo', type:'text' },
                     { name:'experiencia', label:'Experiencia', type:'text' },
                     { name:'verifica_th', label:'Nombre de quien verifica T.H.', type:'text' },
@@ -645,9 +785,9 @@
                     { name:'acepta_vial', type:'accept', label:'Me comprometo a cumplir todas las normas de seguridad vial descritas.', required:true },
                     { type:'heading', text:'Motivo y compromiso' },
                     { name:'motivo', label:'Motivo del acta', type:'textarea' },
-                    { name:'compromiso', label:'Compromiso del conductor', type:'textarea' },
+                    { name:'compromiso', label:'Compromiso del {{ROL}}', type:'textarea' },
                     { type:'heading', text:'Firmas' },
-                    { name:'firma_conductor', label:'Firma del conductor (nombre)', type:'text', required:true },
+                    { name:'firma_conductor', label:'Firma del {{ROL}} (nombre)', type:'text', required:true },
                     { name:'firma_verificador', label:'Firma del verificador T.H.', type:'text' },
                 ]
             },
@@ -763,19 +903,41 @@
         };
 
         // Flujos por tipo de proveedor y persona (natural / empresa)
+        // 'personal' = conductor, operador de grúa / camión grúa y aparejador.
         const FLOWS = {
-            'conductor':           ['proveedor','sarlaft','dotacion','registro','actaCompromisos','evaluacion','actaVial'],
+            'personal':            ['proveedor','sarlaft','dotacion','induccion','registro','actaCompromisos','evaluacion','actaVial'],
             'propietario:natural': ['proveedor','sarlaft','contrato'],
             'propietario:empresa': ['proveedorEmpresa','sarlaftEmpresa','contratoEmpresa'],
         };
-        const flowKey = (tipo, persona) => tipo === 'conductor' ? 'conductor' : `propietario:${persona}`;
+        const flowKey = (tipo, persona) => ROLES[tipo] ? 'personal' : `propietario:${persona}`;
         const REVISION = '__revision__';
 
         // =====================================================================
         //  ESTADO Y RENDER
         // =====================================================================
         const $ = (id) => document.getElementById(id);
-        let state = { tipo:null, persona:'natural', docs:[], steps:[], current:0, prev:null, session:{}, sessionSrc:{}, firma:{ strokes:[], w:0, h:0 } };
+        let state = { tipo:null, persona:'natural', docs:[], steps:[], current:0, prev:null, session:{}, sessionSrc:{}, firma:{ strokes:[], w:0, h:0 }, defs:{}, ind:null };
+
+        // Definición de un documento ajustada al cargo elegido (se calcula una vez
+        // por formulario): quita los campos de otros cargos, cambia {{ROL}}/{{VEH}}
+        // y pone el cargo por defecto. Todo el formulario lee los documentos de aquí.
+        function docDef(key){
+            if (state.defs[key]) return state.defs[key];
+            const base = DOCS[key];
+            if (!base) return base;
+            const rol = ROLES[state.tipo];
+            const tok = { ROL: rol ? rol.noun : 'propietario', VEH: rol ? rol.veh : 'vehículo' };
+            const rt = (s) => typeof s === 'string' ? s.replace(/\{\{(ROL|VEH)\}\}/g, (_, k) => tok[k]) : s;
+            const fields = base.fields
+                .filter(f => !f.roles || f.roles.includes(state.tipo))
+                .map(f => {
+                    const o = { ...f };
+                    ['label','text','html','placeholder'].forEach(k => { if (o[k]) o[k] = rt(o[k]); });
+                    if (o.default === '@cargo') o.default = rol ? rol.cargo : '';
+                    return o;
+                });
+            return (state.defs[key] = { ...base, title: rt(base.title), fields });
+        }
 
         const todayISO = () => new Date().toISOString().slice(0,10);
         const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -800,6 +962,9 @@
                 // Estado del autorrellenado automático (se dispara solo al escribir
                 // la cédula/NIT). Invisible mientras no haya nada que informar.
                 return `<div class="md:col-span-2 -mt-1"><span id="autofill-status" class="text-xs font-semibold"></span></div>`;
+            if (f.type === 'slides') return renderDeck(doc, f);
+            if (f.type === 'hidden')
+                return `<input type="hidden" name="${inputName(doc, f.name)}" data-field data-doc="${doc}" data-fname="${f.name}">`;
 
             const name = inputName(doc, f.name);
             const req = f.required ? '<span class="text-red-500">*</span>' : '';
@@ -848,13 +1013,14 @@
         function renderStep(docKey, idx){
             if (docKey === REVISION)
                 return `<div class="doc-step step-hidden" data-step="${idx}" data-doc="${REVISION}"><div id="review-body"></div></div>`;
-            const doc = DOCS[docKey];
+            const doc = docDef(docKey);
             const fieldsHtml = doc.fields.map((f, i) => renderField(docKey, f, i)).join('');
+            const kicker = doc.kicker ? `Paso ${idx+1} de ${state.docs.length} · ${doc.kicker}` : `Formato ${idx+1} de ${state.docs.length}`;
             return `<div class="doc-step ${idx===0?'':'step-hidden'}" data-step="${idx}" data-doc="${docKey}">
                 <div class="flex items-start gap-3.5 mb-6">
                     <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#FFD22E] to-[#eebb00] text-[#181818] font-extrabold flex items-center justify-center text-base shrink-0 shadow-[0_5px_14px_rgba(245,196,0,.35)]">${idx+1}</div>
                     <div class="min-w-0">
-                        <p class="text-[10px] font-extrabold uppercase tracking-[.16em] text-[#b48f00]">Formato ${idx+1} de ${state.docs.length}</p>
+                        <p class="text-[10px] font-extrabold uppercase tracking-[.16em] text-[#b48f00]">${esc(kicker)}</p>
                         <h3 class="text-lg md:text-xl font-extrabold text-gray-800 tracking-tight leading-tight">${esc(doc.title)}</h3>
                         ${doc.code?`<p class="text-[11px] text-gray-400 font-bold">${esc(doc.code)}</p>`:''}
                     </div>
@@ -874,12 +1040,15 @@
             state.session = {};
             state.sessionSrc = {};
             state.firma = { strokes:[], w:0, h:0 };
+            state.defs = {};
+            state.ind = null;
             $('steps-container').innerHTML = state.steps.map((d,i)=>renderStep(d,i)).join('');
             $('step-chips').innerHTML = state.steps.map((d,i)=>{
-                const title = d===REVISION ? 'Revisión' : DOCS[d].title;
+                const title = d===REVISION ? 'Revisión' : (docDef(d).short || docDef(d).title);
                 return `<span class="chip" data-chip="${i}" data-title="${esc(title)}"></span>`;
             }).join('');
             wireInteractions();
+            initDeck();
             // Sembrar la sesión con los valores por defecto (p. ej. tipo de identificación,
             // cargo) para que se autocompleten aunque el usuario no los toque.
             $('steps-container').querySelectorAll('[data-field][data-sync]').forEach(inp=>{
@@ -930,7 +1099,7 @@
             c.querySelectorAll('.bulk-chip').forEach(chip=>{
                 chip.addEventListener('click', ()=>{
                     const docKey = chip.dataset.bulkDoc, start = parseInt(chip.dataset.bulkIdx,10), val = chip.dataset.bulkVal;
-                    const fields = DOCS[docKey].fields;
+                    const fields = docDef(docKey).fields;
                     for (let i = start+1; i < fields.length; i++){
                         const f = fields[i];
                         if (f.type === 'heading') break; // fin de la sección
@@ -949,7 +1118,7 @@
 
         function applyConditionals(docKey){
             if (docKey === REVISION) return;
-            DOCS[docKey].fields.forEach(f=>{
+            docDef(docKey).fields.forEach(f=>{
                 if (!f.showIf) return;
                 const ctrlName = inputName(docKey, f.showIf.field);
                 const radio = $('steps-container').querySelector(`input[name="${ctrlName}"]:checked`);
@@ -969,7 +1138,7 @@
         // Repone también los campos que llenó el propio autorrellenado (no los del usuario).
         function applySession(docKey){
             const container = $('steps-container');
-            DOCS[docKey].fields.forEach(f=>{
+            docDef(docKey).fields.forEach(f=>{
                 const sync = SYNC_MAP[f.name];
                 if (!sync) return;
                 const v = state.session[sync];
@@ -987,7 +1156,7 @@
             const done = new Set();
             Object.keys(state.prev).forEach(doc=>{
                 if (!DOCS[doc]) return;
-                DOCS[doc].fields.forEach(f=>{
+                docDef(doc).fields.forEach(f=>{
                     const sync = SYNC_MAP[f.name];
                     if (!sync || done.has(sync)) return;
                     const v = state.prev[doc][f.name];
@@ -1008,8 +1177,8 @@
             if (!state.prev || !state.prev[docKey]) return;
             const prev = state.prev[docKey];
             const container = $('steps-container');
-            DOCS[docKey].fields.forEach(f=>{
-                if (!f.name || f.type === 'accept' || (f.type === 'date' && f.default === 'today')) return;
+            docDef(docKey).fields.forEach(f=>{
+                if (!f.name || f.noAutofill || f.type === 'accept' || (f.type === 'date' && f.default === 'today')) return;
                 const val = prev[f.name];
                 if (val === undefined || val === null || val === '') return;
                 if (f.type === 'email' && !EMAIL_RX.test(String(val))) return; // no arrastrar correos incompletos
@@ -1102,6 +1271,512 @@
         }
 
         // =====================================================================
+        //  INDUCCIÓN 2026 EN DIAPOSITIVAS
+        //  Resumen fiel de la presentación «INDUCCIÓN ACT 2026» (40 láminas →
+        //  16 o 17): el mismo contenido, agrupado y sin repetir. Va antes del
+        //  registro de inducción para conductores, operadores y aparejadores;
+        //  las diapositivas con roles:[...] solo las ven esos cargos. Las fotos
+        //  están en /induccion (WebP livianos que cargan al mostrarse).
+        // =====================================================================
+        const IND_LECTURA_SEG = 4; // lectura mínima de cada diapositiva la primera vez
+        const IND_LOGO = 'https://i.postimg.cc/VNSN6KgD/LOGO-OK.png';
+        const indImg = (f, cls = '') => `<img src="induccion/${f}" alt="" loading="lazy" decoding="async" class="ind-img ${cls}">`;
+        const indHead = (k, h, sub) => `<p class="ind-k">${k}</p><h3 class="ind-h">${h}</h3>${sub ? `<p class="ind-p mt-1.5">${sub}</p>` : ''}`;
+        const indUl = (items, cls = '') => `<ul class="ind-list ${cls}">${items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+        const indAcc = (n, title, body, open, sub) => `<details class="ind-acc"${open ? ' open' : ''}><summary>${n ? `<span class="ind-n">${n}</span>` : ''}<span class="min-w-0">${title}${sub ? `<span class="block text-[11.5px] font-semibold text-gray-500 leading-snug mt-0.5">${sub}</span>` : ''}</span></summary><div class="ind-acc-b">${body}</div></details>`;
+        const indPasos = (items) => `<ol class="mt-2 space-y-1.5">${items.map((t, i) => `<li class="flex items-start gap-2.5 text-[13.5px] text-gray-800 leading-snug"><span class="ind-n">${i + 1}</span><span class="pt-0.5">${t}</span></li>`).join('')}</ol>`;
+
+        const IND_DIRECTORIO = [
+            ['Gerencia', 'Santos Velandia', '310 7793971', 'gerencia@transhicol.com'],
+            ['Jefe de Operaciones', 'Linder Rodriguez', '320 4122200', 'operaciones@transhicol.com'],
+            ['Supervisor de ruta', 'Kevin Mendoza', '314 2203806', 'trafico@transhicol.com'],
+            ['Director Ejecutivo', 'Jhoan Garzón', '301 7983221', 'mantenimiento@transhicol.com'],
+            ['Coordinador HSEQ', 'Paula Patiño', '314 2203806', 'coordinacionhseq@transhicol.com'],
+            ['Coord. administrativo', 'Karol Velandia', '312 2989319', 'administracion@transhicol.com'],
+            ['Coord. carga seca', 'Deivi Patiño', '314 2203806', 'trafico@transhicol.com'],
+            ['Contabilidad', 'Nubelcy Perez', '310 3285982', 'contabilidad@transhicol.com'],
+            ['Gestión humana', 'Julieth Ortega', '321 2375815', 'gestionhumana@transhicol.com'],
+        ];
+        // [curso, vigencia, ¿es de izaje? (se pregunta en el registro, punto 2.10)]
+        const IND_CURSOS = {
+            conductor: [['Atención de contingencia ambiental','1 año'],['Investigación de incidentes de tránsito','1 año'],['Leyes básicas de tránsito','1 año'],['Manejo de extintores','1 año'],['Manejo defensivo','1 año'],['Mecánica básica','1 año'],['Mercancías peligrosas','2 años'],['Primeros auxilios','1 año'],['Trabajo en alturas','1 año y 6 meses']],
+            izaje: [['Certificado de operador','1 año',1],['Certificado de aparejador','1 año',1],['Manejo defensivo','1 año'],['Mecánica básica','1 año',1],['Primeros auxilios','1 año'],['Trabajo en alturas','1 año y 6 meses']],
+        };
+        const IND_COMITES = [
+            ['COPASST', 'Comité Paritario de Seguridad y Salud en el Trabajo', 'Vela por su seguridad y salud para reducir accidentes y enfermedades laborales: propone medidas y capacitaciones, vigila la higiene y seguridad industrial, analiza las causas de accidentes y enfermedades, inspecciona ambientes, máquinas y equipos, y tramita sus sugerencias y reclamos.',
+                ['Julieth Ortega · presidente', 'Angélica Bohórquez · secretaria', 'Karol Velandia · representante de los trabajadores', 'Omar Camargo · suplente']],
+            ['COCOLA', 'Comité de Convivencia Laboral', 'Lo protege de los riesgos psicosociales: previene el acoso laboral y sexual y la violencia en el trabajo, y ayuda a identificar y manejar el estrés laboral y el síndrome de burnout.',
+                ['Ronald Reyes · presidente', 'Linder Justo · secretario', 'Deisy Medina · representante de los trabajadores', 'Julián Darío Suaterna y Hernesto Castro · suplentes de los trabajadores', 'Deivi Patiño Picón y Oscar Cerón · principales por gerencia', 'Jhoan Garzón · suplente por gerencia']],
+            ['PESV', 'Comité del Plan Estratégico de Seguridad Vial', 'Define las acciones para prevenir y reducir la accidentalidad vial: identifica y evalúa los riesgos, fija medidas de prevención y control, y promueve hábitos y conductas seguras en la vía.',
+                ['Paula Andrea Patiño · líder', 'Santos Velandia · gerente', 'Linder Justo Rodríguez · jefe operativo', 'Kevin Mendoza · supervisor de ruta', 'Karol Velandia · aux. mantenimiento']],
+            ['Brigadas', 'Brigadas de emergencia', 'Personas capacitadas para prevenir, controlar y responder a emergencias, protegiendo a las personas, los bienes y el medio ambiente.',
+                ['Paula Andrea Patiño · líder', 'Primeros auxilios: Linder Justo, Karol Velandia', 'Incendios: Julián Darío Suaterna, Hernesto Castro, Álvaro Ovando', 'Evacuación: Santos Velandia, Julieth Ortega, Jhoan Garzón']],
+        ];
+        const indTablaCursos = (rows, marcarIzaje) => `<div class="rounded-2xl border border-gray-100 overflow-hidden">${rows.map(([c, v, iz], i) => `
+            <div class="flex items-center gap-3 px-3.5 py-2.5 ${i % 2 ? 'bg-gray-50/80' : 'bg-white'}">
+                <span class="flex-1 text-[13.5px] font-semibold text-gray-700">${c}${marcarIzaje && iz ? ' <span class="ind-pill bg-[#181818] text-[#FFD22E] ml-1">izaje</span>' : ''}</span>
+                <span class="ind-pill bg-emerald-50 text-emerald-700 border border-emerald-200">${v}</span>
+            </div>`).join('')}</div>`;
+
+        const SLIDES = [
+            { id:'portada', title:'Bienvenida', dwell:2, full:true, html:(c) => `
+                <div class="relative min-h-[470px] flex flex-col overflow-hidden text-white bg-[#111]">
+                    <img src="induccion/flota.webp" alt="" decoding="async" class="absolute inset-0 w-full h-full object-cover opacity-80">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0b0b0b] via-[#0b0b0b]/80 to-[#0b0b0b]/10"></div>
+                    <div class="relative flex-1 flex flex-col p-6 md:p-9">
+                        <img src="${IND_LOGO}" alt="Transhicol" class="h-11 w-auto self-start bg-white rounded-xl p-1.5 shadow-lg">
+                        <div class="mt-auto pt-20">
+                            <p class="ind-k" style="color:#FFD22E">Inducción 2026 · ${c.R.label}</p>
+                            <h3 class="text-[1.85rem] md:text-[2.6rem] font-extrabold tracking-tight leading-[1.08] mt-1.5">¡Bienvenido a<br>TRANSHICOL S.A.S!</h3>
+                            <p class="text-white/80 mt-3 max-w-xl text-[14.5px] leading-relaxed">Ahora usted hace parte de un gran equipo de colaboradores que comparten sus conocimientos y habilidades en pro del crecimiento individual y colectivo de todo el equipo.</p>
+                            <div class="flex flex-wrap gap-2 mt-5">
+                                <span class="ind-pill bg-white/10 border border-white/20">⏱ Unos ${c.min} minutos</span>
+                                <span class="ind-pill bg-white/10 border border-white/20">📑 ${c.n} diapositivas</span>
+                                <span class="ind-pill bg-white/10 border border-white/20">📱 Celular o PC</span>
+                            </div>
+                            <p class="text-white/55 text-[12px] mt-4">Avance con «Siguiente», deslizando el dedo o con las flechas del teclado.</p>
+                        </div>
+                    </div>
+                </div>` },
+
+            { id:'historia', title:'Nuestra historia', html:() => `
+                ${indHead('Quiénes somos', 'Nuestra historia')}
+                <div class="grid md:grid-cols-5 gap-5 mt-5">
+                    <ol class="ind-tl md:col-span-3">
+                        <li><p class="font-black text-[#b48f00] text-sm">2010</p><p class="ind-p">Un grupo de amigos alquila una empresa de transporte: esa experiencia fue la motivación para crear una empresa propia.</p></li>
+                        <li><p class="font-black text-[#b48f00] text-sm">2011</p><p class="ind-p">Los emprendedores <b class="text-gray-800">Santos Velandia</b> y <b class="text-gray-800">Rosemberg Quiroga</b> constituyen legalmente Transporte Hidrocarburos de Colombia S.A.S. — <b class="text-gray-800">TRANSHICOL</b>.</p></li>
+                        <li><p class="font-black text-[#b48f00] text-sm">Hoy</p><p class="ind-p">Crecemos gracias a la excelencia y garantía del servicio, y aportamos al desarrollo local en el sector petrolero con vehículos modernos, tecnología avanzada y personal altamente calificado.</p></li>
+                    </ol>
+                    <div class="md:col-span-2 space-y-3">
+                        <div class="h-40">${indImg('vision.webp')}</div>
+                        <div class="ind-card"><p class="ind-mini">Cómo competimos</p><p class="text-[13px] text-gray-600 leading-snug mt-1">El sector tiene empresas fuertes y posicionadas. TRANSHICOL ha aumentado su cartera de clientes y compite a nivel nacional con <b class="text-gray-800">12 vehículos propios</b> y flota tercerizada según la demanda; sus vehículos modernos le dan acceso a clientes que los exigen.</p></div>
+                    </div>
+                </div>` },
+
+            { id:'mision', title:'Misión y visión', html:() => `
+                ${indHead('Hacia dónde vamos', 'Misión y visión')}
+                <div class="grid md:grid-cols-2 gap-3 mt-5">
+                    <div class="ind-card ind-card-y"><div class="flex items-center gap-2"><span class="ind-n">1</span><p class="font-extrabold text-gray-900">Misión</p></div>
+                        <p class="ind-p mt-2">Prestar servicios de transporte de carga líquida y seca con la mejor tecnología y una gestión humana competente y comprometida; con capacidad de respuesta, puntualidad, salud, seguridad y la confianza de nuestros clientes, siguiendo la normatividad legal vigente y protegiendo el medio ambiente con alto nivel de calidad.</p></div>
+                    <div class="ind-card"><div class="flex items-center gap-2"><span class="ind-n">2</span><p class="font-extrabold text-gray-900">Visión</p></div>
+                        <p class="ind-p mt-2">En 2026, ser líder nacional en el transporte de carga líquida y seca, con alternativas modernas acordes a las exigencias de la industria, protección del ambiente, bienestar de los trabajadores y mejora continua del sistema integrado de gestión HSEQ, cumpliendo las expectativas de los clientes y la normatividad legal vigente.</p></div>
+                </div>
+                <div class="h-36 md:h-44 mt-3 flex justify-center"><img src="induccion/mision.webp" alt="" loading="lazy" decoding="async" class="h-full w-auto object-contain"></div>` },
+
+            { id:'valores', title:'Valores y certificaciones', html:() => `
+                ${indHead('Lo que nos mueve', 'Valores corporativos', 'Cada valor abre el camino al siguiente.')}
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 mt-4">
+                    ${[['Eficiencia','Usamos nuestros recursos de la mejor forma para lograr los objetivos.'],
+                       ['Cumplimiento','Garantizamos a nuestros clientes el servicio de forma oportuna.'],
+                       ['Seguridad','En lo humano, ambiental y material: cuidamos nuestra integridad y la de nuestro entorno.'],
+                       ['Mejora continua','Crecemos aprendiendo de cada día, cada situación, cada tropiezo y cada logro.']]
+                      .map(([t, d], i) => i === 2
+                        ? `<div class="ind-card ind-card-d"><span class="ind-n" style="background:#FFD22E;color:#181818">${i + 1}</span><p class="font-extrabold mt-2 text-[#FFD22E]">${t}</p><p class="text-[12.5px] leading-snug mt-1 text-white/75">${d}</p></div>`
+                        : `<div class="ind-card"><span class="ind-n">${i + 1}</span><p class="font-extrabold mt-2 text-gray-900">${t}</p><p class="text-[12.5px] leading-snug mt-1 text-gray-500">${d}</p></div>`).join('')}
+                </div>
+                <p class="ind-mini mt-6">Certificaciones · Consejo Colombiano de Seguridad (CCS)</p>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mt-2">
+                    ${[['ISO 45001','GS 1097','Seguridad y salud en el trabajo'],['ISO 9001','GC 409','Calidad'],['ISO 14001','GA 400','Gestión ambiental'],['ISO 39001','GSV 011','Seguridad vial'],['RUC','Registro Uniforme','para Contratistas']]
+                      .map(([a, b, d]) => `<div class="rounded-2xl border-2 border-sky-100 bg-sky-50/60 px-3 py-2.5 text-center"><p class="text-[13px] font-black text-sky-800">${a}</p><p class="text-[11px] font-extrabold text-gray-700">${b}</p><p class="text-[10.5px] text-gray-500 leading-tight mt-0.5">${d}</p></div>`).join('')}
+                </div>
+                <p class="text-center text-[11px] font-extrabold tracking-[.22em] text-gray-400 mt-5">«TRANSPORTE EFICIENTE Y SEGURO»</p>` },
+
+            { id:'organizacion', title:'Cómo nos organizamos', html:(c) => {
+                const chip = (t, r) => `<span class="ind-chip${c.rol === r ? ' ind-me' : ''}">${t}${c.rol === r ? ' · usted' : ''}</span>`;
+                const fila = (items, cls) => `<div class="flex flex-wrap justify-center gap-1.5">${items.map(t => `<span class="ind-chip ${cls}">${t}</span>`).join('')}</div>`;
+                return `
+                ${indHead('Cómo nos organizamos', 'Estructura y procesos')}
+                <div class="grid md:grid-cols-5 gap-5 mt-5">
+                    <div class="md:col-span-3">
+                        <p class="ind-mini mb-2">Organigrama (DI-GG-08, resumido)</p>
+                        <div class="space-y-2 text-center">
+                            <span class="inline-block ind-pill bg-[#FFD22E] text-[#181818] text-[12px] px-4 py-1.5">Gerencia</span>
+                            ${fila(['Asesor jurídico','Oficial de cumplimiento','Revisor fiscal'], '!bg-red-50 !border-red-200 !text-red-800')}
+                            ${fila(['Coordinador HSEQ','Coordinador de mantenimiento','Director ejecutivo','Contador','Coordinador administrativo','Jefe de gestión humana'], '!bg-[#181818] !text-white !border-[#181818]')}
+                            ${fila(['Jefe de operaciones','Coordinador de operaciones carga seca'], '!bg-sky-50 !border-sky-200 !text-sky-900')}
+                            <div class="grid grid-cols-2 gap-2 text-left">
+                                <div class="ind-card !p-2.5"><p class="text-[11px] font-black text-gray-800 mb-1.5">Supervisor de ruta</p><div class="flex flex-wrap gap-1">${chip('Conductor','conductor')}${chip('Operador','operador')}${chip('Aparejador','aparejador')}</div></div>
+                                <div class="ind-card !p-2.5"><p class="text-[11px] font-black text-gray-800 mb-1.5">Supervisor de izaje</p><div class="flex flex-wrap gap-1">${chip('Operador','operador')}${chip('Aparejador','aparejador')}</div></div>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-gray-400 leading-snug mt-2.5">Además: supervisor y auxiliar de HSE; auxiliar de mantenimiento, mecánico, auxiliar mecánico, llantero y soldador; líder de gestión técnica de flota y tecnología de la información; contador de apoyo y auxiliar contable; servicios generales.</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="ind-mini mb-2">Mapa de procesos (DI-HSEQ-08)</p>
+                        <div class="space-y-1.5">
+                            <p class="text-[11.5px] font-bold text-gray-500 text-center">Requisitos del cliente y partes interesadas ↓</p>
+                            <div class="rounded-xl px-3 py-2 bg-red-50 border border-red-100"><p class="text-[10px] font-black uppercase tracking-wide text-red-700">Estratégicos</p><p class="text-[13px] font-bold text-gray-800">Gestión gerencial · Gestión HSEQ</p></div>
+                            <div class="rounded-xl px-3 py-2 bg-amber-50 border border-amber-200"><p class="text-[10px] font-black uppercase tracking-wide text-amber-700">Misional</p><p class="text-[13px] font-bold text-gray-800">Gestión operativa</p></div>
+                            <div class="rounded-xl px-3 py-2 bg-lime-50 border border-lime-200"><p class="text-[10px] font-black uppercase tracking-wide text-lime-700">Apoyo</p><p class="text-[13px] font-bold text-gray-800">Gestión contable · administrativa · humana</p></div>
+                            <p class="text-[11.5px] font-bold text-gray-500 text-center">↓ Satisfacción del cliente y partes interesadas</p>
+                            <p class="text-[11.5px] font-black text-[#b48f00] text-center">↻ Mejoramiento continuo</p>
+                        </div>
+                    </div>
+                </div>`; } },
+
+            { id:'directorio', title:'Directorio', html:() => `
+                ${indHead('A quién acudir', 'Directorio telefónico', 'Toque un número para llamar o un correo para escribir. Guárdelos en su celular.')}
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-4">
+                    ${IND_DIRECTORIO.map(([a, n, t, m]) => `<div class="ind-card !p-3">
+                        <p class="text-[10px] font-black uppercase tracking-wider text-[#b48f00]">${a}</p>
+                        <p class="font-extrabold text-gray-900 text-[14px] leading-tight mt-0.5">${n}</p>
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
+                            <a href="tel:+57${t.replace(/\s/g, '')}" class="text-[13px] font-bold text-emerald-700 hover:underline whitespace-nowrap">📞 ${t}</a>
+                            <a href="mailto:${m}" class="text-[11.5px] font-semibold text-gray-500 hover:text-gray-800 break-all">${m}</a>
+                        </div></div>`).join('')}
+                </div>` },
+
+            { id:'cargo', title:'Su cargo', html:(c) => `
+                ${indHead('Manual de funciones', c.izaje ? `Su cargo: ${c.R.label}` : 'Su cargo: Conductor de vehículo tractocamión')}
+                <div class="grid md:grid-cols-5 gap-5 mt-4">
+                    <div class="md:col-span-3 space-y-3">
+                        ${c.izaje
+                            ? `<div class="ind-card ind-card-y"><p class="text-[13px] text-gray-700 leading-snug"><b>Reporta a</b> (según el organigrama): Supervisor de izaje o Supervisor de ruta. Su copia del manual de funciones (M-GH-01) se entrega con la documentación de contratación; las funciones generales de abajo aplican a todo el personal operativo.</p></div>`
+                            : `<div class="ind-card ind-card-y"><p class="text-[13px] text-gray-700 leading-snug"><b>Objetivo:</b> conducir el vehículo asignado garantizando la entrega oportuna y satisfactoria de la carga, cumpliendo los requisitos de salud, seguridad y ambiente, del cliente y los legales aplicables.</p><p class="text-[13px] text-gray-700 mt-1.5"><b>Reporta a:</b> Jefe operativo, Coordinador HSEQ y Gestión Humana.</p></div>`}
+                        <p class="ind-mini">Funciones generales</p>
+                        ${indUl([
+                            `Realizar diariamente la inspección preoperacional y verificar el estado general del ${c.R.veh} asignado, según la normatividad de la empresa.`,
+                            'Portar a diario la documentación requerida para su función y asegurarse de que esté vigente.',
+                            'Conocer y verificar la orden de cargue cada vez que sea asignada.',
+                            `Solicitar a tiempo al jefe de mantenimiento repuestos menores, combustible y lubricantes para el óptimo funcionamiento del ${c.R.veh}.`,
+                            'Participar en la implementación del SGA de clasificación y comunicación de peligros de los productos químicos.',
+                            'Participar en los procesos de capacitación y entrenamiento que brinda el empleador.',
+                            'Reportar de inmediato cualquier incidente (volcamiento, impacto, colisión, entre otros).',
+                            'Cumplir con el reglamento interno de trabajo.'])}
+                    </div>
+                    <div class="md:col-span-2 h-44 md:h-auto md:min-h-[300px]">${indImg(c.izaje ? 'grua1.webp' : 'foton.webp')}</div>
+                </div>` },
+
+            { id:'responsabilidades', title:'Responsabilidades', html:() => `
+                ${indHead('Lo que se espera de usted', 'Responsabilidades', 'Toque cada grupo para verlo completo.')}
+                <div class="grid md:grid-cols-5 gap-4 mt-4">
+                    <div class="md:col-span-3 space-y-2">
+                        ${indAcc('1', 'Responsabilidades específicas', indUl([
+                            'Cumplir el reglamento interno de trabajo.',
+                            'Conocer las políticas internas y los procedimientos de la empresa.',
+                            'Demostrar buenos hábitos de trabajo.',
+                            'Participar en el programa de capacitación y entrenamiento de la empresa y de la compañía contratante.',
+                            'Cumplir con las responsabilidades de la normatividad vigente.',
+                            'No estacionar el vehículo en zonas residenciales, lugares públicos, áreas o zonas escolares.',
+                            'Identificar el vehículo mediante rótulos y placas con el número UN.',
+                            'Usar y mantener los elementos de protección personal.']), true)}
+                        ${indAcc('2', 'Responsabilidades en HSEQ', indUl([
+                            'Procurar el cuidado integral de su salud.',
+                            'Suministrar información clara, veraz y completa sobre su estado de salud.',
+                            'Cumplir las normas, reglamentos e instrucciones del sistema de gestión (SG-SST / SGI).',
+                            'Informar a tiempo los peligros y riesgos latentes en su sitio de trabajo.',
+                            'Participar en las capacitaciones del plan del SG-SST y contribuir a sus objetivos.',
+                            'Generar acciones correctivas y preventivas de las actividades propias de su trabajo.',
+                            'Cumplir el programa de manejo ambiental, orientando sus acciones al cuidado del ambiente.',
+                            'Portar el uniforme de la empresa de forma adecuada, en completo orden y aseo.',
+                            'Participar en las actividades del Comité de Convivencia Laboral y del COPASST.',
+                            'Reportar cualquier incidente que se presente en las actividades de la empresa.']))}
+                        ${indAcc('3', 'Seguridad vial · ISO 39001 · PESV', indUl([
+                            'Participar en la difusión de los objetivos, políticas y procedimientos de seguridad vial.',
+                            'Demostrar buenos hábitos de conducción y de comportamiento en la vía, respetando las señales de tránsito y los límites de velocidad.',
+                            'Participar en simulacros de atención de víctimas en accidentes viales.',
+                            'Cumplir el estándar de seguridad vial y el programa de capacitaciones y entrenamiento.',
+                            'Apoyar la implementación del Sistema de Gestión de Seguridad Vial.',
+                            'Inspeccionar y reportar a tiempo las condiciones inseguras que afecten la operatividad del vehículo.',
+                            'Acatar la política de seguridad vial de TRANSHICOL y las normas de tránsito y transporte.']))}
+                    </div>
+                    <div class="md:col-span-2 h-40 md:h-auto md:min-h-[280px]">${indImg('equipo.webp')}</div>
+                </div>` },
+
+            { id:'politicas', title:'Políticas', html:() => `
+                ${indHead('Políticas de TRANSHICOL', '8 políticas que todos cumplimos', 'Toque cada política para leerla.')}
+                <div class="grid md:grid-cols-2 gap-2 mt-4 items-start">
+                    ${indAcc('1', 'Política integral SSTA', `<p class="ind-p">Condiciones de trabajo seguras y saludables: identificamos los peligros, valoramos los riesgos y los controlamos (eliminándolos si es necesario). Prevenimos lesiones, enfermedades laborales, acoso laboral y accidentes de trabajo; controlamos el impacto socio-ambiental y evitamos daños a la propiedad. Directivos y trabajadores cumplimos los requisitos legales, los de TRANSHICOL, los de clientes, contratistas y subcontratistas, y los acordados con la comunidad.</p>`, false, 'Trabajo seguro y saludable para todos.')}
+                    ${indAcc('2', 'No alcohol, drogas ni tabaco', indUl([
+                        'Prohibido consumir, portar, distribuir o vender tabaco, alcohol o sustancias psicoactivas en instalaciones, proyectos, vehículos y actividades laborales.',
+                        'Prohibido presentarse a trabajar bajo sus efectos. También se prohíben los cigarrillos electrónicos y vapeadores.',
+                        'Debe informar las condiciones de salud que puedan generar riesgo.',
+                        'Hay campañas de prevención, controles, inspecciones y pruebas de consumo.',
+                        'Aplica a colaboradores, contratistas, subcontratistas y visitantes: nuestra actividad es de riesgo Clase V (el más alto), con sustancias inflamables y áreas peligrosas.',
+                        'Incumplirla genera sanciones disciplinarias y puede ser causal de despido justificado.']), false, 'Cero consumo: puede ser causal de despido.')}
+                    ${indAcc('3', 'Seguridad vial', `<p class="ind-p">Prevenir accidentes de tránsito en instalaciones y vías públicas. Exige cumplir la normatividad, tener vehículos y equipos en óptimas condiciones (mantenimiento preventivo y correctivo), personal calificado, cultura de manejo defensivo y seguimiento permanente. Sus reglas están en la siguiente diapositiva.</p>`, false, 'Prevenir accidentes de tránsito.')}
+                    ${indAcc('4', 'Transparencia', `<p class="ind-p">Informamos a nuestras partes interesadas de forma clara, completa, oportuna y trazable, y combatimos la corrupción. Todos mantenemos registros de cualquier transacción con activos de TRANSHICOL, y toda conducta que busque eludir la ley en perjuicio de la empresa —de empleados, socios, proveedores, clientes o terceros— se reporta a la gerencia.</p>`, false, 'Cuentas claras y cero corrupción.')}
+                    ${indAcc('5', 'Seguridad física', `<p class="ind-p">Un entorno operacional confiable que protege a empleados, propiedades, información, clientes y contratistas en todos los lugares donde operamos, promoviendo los Derechos Humanos (Naciones Unidas) y nuestros valores, bajo el eslogan «Transporte eficiente y seguro».</p>`, false, 'Protegemos personas, bienes e información.')}
+                    ${indAcc('6', 'Prevención del acoso laboral y sexual', indUl([
+                        'Marco legal: Ley 1010 de 2006, Ley 2365 de 2024 y Resolución 3461 de 2025.',
+                        'Acoso laboral es toda conducta persistente que genere miedo, intimidación, desmotivación o perjuicio laboral, venga de quien venga y sin importar su cargo.',
+                        'Cero tolerancia al acoso y la discriminación; respeto a la dignidad, la honra, la intimidad y la salud mental; igualdad sin distinción de género, orientación sexual, creencias o ideología; protección especial frente a la violencia basada en género y a la población LGBTIQ+.',
+                        'Mecanismos: Reglamento y Comité de Convivencia Laboral, formación y trámite confidencial y oportuno de quejas.',
+                        'Todos debemos promover la sana convivencia y reportar; incumplirla es falta grave.']), false, 'Cero tolerancia al acoso y la discriminación.')}
+                    ${indAcc('7', 'Prevención de lavado de activos y financiación del terrorismo', `<p class="ind-p">Evitamos que la empresa sea usada para lavar activos o financiar el terrorismo. Por eso usted diligencia el formato SARLAFT y declara que sus recursos tienen origen lícito.</p>`, false, 'Recursos de origen lícito (SARLAFT).')}
+                    ${indAcc('8', 'Desconexión laboral', indUl([
+                        'Ley 2191 de 2022, Ley 2101 de 2021 y Código Sustantivo del Trabajo.',
+                        'Jornada máxima semanal: 47 h (16-jul-2023), 46 h (2024), 44 h (2025) y 42 h desde el 16 de julio de 2026.',
+                        'Tiene derecho a no enviar, revisar ni responder mensajes, llamadas o correos fuera de su horario, salvo fuerza mayor o emergencia grave.',
+                        'Los medios oficiales son el correo corporativo y WhatsApp; fuera de la jornada no está obligado a responder.',
+                        'Se prohíbe a los mandos hacer requerimientos en descansos, permisos, vacaciones o licencias, salvo una emergencia sin otra alternativa; si pasa, puede poner una queja formal ante Talento Humano.',
+                        'Aplica también al trabajo en casa, el teletrabajo y el trabajo remoto.']), false, 'Derecho a descansar fuera de la jornada.')}
+                </div>` },
+
+            { id:'vial', title:'Seguridad vial', html:() => `
+                ${indHead('Política de seguridad vial', 'Reglas que no se negocian', 'Prevenimos accidentes para proteger la vida, a las personas, el ambiente y los bienes de la empresa.')}
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5 mt-4">
+                    ${[['60 km/h','Máximo en carretera'],['40 km/h','En zona urbana'],['30 km/h','Zonas escolares o residenciales'],
+                       ['10 h','Jornada máxima de conducción al día'],['15 min','De descanso cada 4 horas'],['5 a. m. – 8 p. m.','Único horario permitido para movilizarse'],
+                       ['Cinturón','Siempre, para el conductor y los pasajeros'],['Celular','Prohibido conduciendo: solo manos libres conectado antes, o detenido en un lugar seguro',1],['0 alcohol','Ni drogas ni tabaco en sedes, proyectos y vehículos: sanción y posible despido',1]]
+                      .map(([b, s, red]) => `<div class="ind-stat${red ? ' ind-red' : ''}"><b>${b}</b><span>${s}</span></div>`).join('')}
+                </div>
+                <div class="ind-card ind-card-y mt-3"><p class="text-[13px] text-gray-700 leading-snug"><b>Su parte:</b> participe en las capacitaciones y actividades de prevención, reporte daños o fallas de inmediato y cumpla las normas legales y los procedimientos internos.</p></div>` },
+
+            { id:'sanciones', title:'Reglamento y sanciones', html:() => `
+                ${indHead('Reglamento interno de trabajo', 'Reglas claras, sanciones claras')}
+                <div class="grid md:grid-cols-2 gap-3 mt-4">
+                    <div class="ind-card"><p class="font-extrabold text-gray-900 text-[14px]">¿Qué es?</p><p class="ind-p mt-1">Define las normas que dicta el empleador y fija las condiciones de trabajo en la empresa.</p></div>
+                    <div class="ind-card"><p class="font-extrabold text-gray-900 text-[14px]">¿Por qué le sirve?</p><p class="ind-p mt-1">Le garantiza que, si va a ser sancionado, la conducta y la forma de sancionarla están escritas en el reglamento.</p></div>
+                </div>
+                <p class="ind-mini mt-5 mb-2">Conductas que generan sanción</p>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    ${[['🌙','Movilizarse entre 8 p. m. y 5 a. m.'],['💨','Exceso de velocidad'],['🍺','Alcoholemia positiva'],['👥','Llevar acompañantes'],['⛑️','No usar los EPP'],['📄','Andar sin documentos'],['🗺️','Rutas no autorizadas'],['🙅','Mal comportamiento'],['⚠️','Incumplimiento']]
+                      .map(([i, t]) => `<div class="flex items-center gap-2.5 rounded-2xl border border-red-100 bg-red-50/60 px-3 py-2.5"><span class="text-xl leading-none">${i}</span><span class="text-[12.5px] font-bold text-red-900 leading-tight">${t}</span></div>`).join('')}
+                </div>` },
+
+            { id:'cursos', title:'Cursos de ingreso', html:(c) => {
+                const mine = c.izaje ? IND_CURSOS.izaje : IND_CURSOS.conductor;
+                const other = c.izaje ? IND_CURSOS.conductor : IND_CURSOS.izaje;
+                return `
+                ${indHead('Requisitos de ingreso', 'Cursos básicos de su cargo', 'Debe tenerlos vigentes para trabajar con TRANSHICOL.')}
+                <div class="grid md:grid-cols-5 gap-4 mt-4">
+                    <div class="md:col-span-3">
+                        <p class="ind-mini mb-2">${c.izaje ? 'Operadores / aparejadores' : 'Conductores'} · su cargo</p>
+                        ${indTablaCursos(mine, c.izaje)}
+                        ${c.izaje ? '<p class="text-[12px] text-gray-500 mt-2 leading-snug">Por los marcados <b>izaje</b> le preguntamos en el Registro de inducción (punto 2.10).</p>' : ''}
+                    </div>
+                    <div class="md:col-span-2 space-y-3">
+                        ${indAcc('', `Cursos de ${c.izaje ? 'conductores' : 'operadores / aparejadores'}`, indTablaCursos(other, false))}
+                        <div class="h-36">${indImg(c.izaje ? 'grua2.webp' : 'competencia.webp')}</div>
+                    </div>
+                </div>`; } },
+
+            { id:'riesgos', title:'Riesgos y peligros', html:() => {
+                const lvl = ([t, n]) => `<div class="flex items-center justify-between gap-2 py-1.5 border-b border-gray-100 last:border-0"><span class="text-[13px] font-bold text-gray-700">${t}</span><span class="ind-pill ${n === 'Extremo' ? 'bg-red-600 text-white' : 'bg-amber-100 text-amber-800'}">${n}</span></div>`;
+                const cats = [
+                    ['Físico','🔊','Ruido, iluminación, vibraciones, radiaciones ionizantes y no ionizantes, temperaturas extremas y presiones atmosféricas.'],
+                    ['Biológico','🦠','Virus, bacterias, hongos, parásitos, picaduras, mordeduras, fluidos y excrementos.'],
+                    ['Químico','🧪','Polvos orgánicos, fibras, líquidos (nieblas y rocíos), gases y vapores, humos metálicos y no metálicos, material particulado.'],
+                    ['Biomecánico','🧍','Posturas (prolongada, mantenida, forzada), esfuerzo, movimiento repetitivo y manipulación manual de cargas.'],
+                    ['Psicosocial','🧠','Gestión organizacional, condiciones de la tarea, estrés laboral, habilidades y conocimientos, jornadas de trabajo.'],
+                    ['Condiciones de seguridad','⚙️','Mecánico (herramientas y equipos), eléctrico (alta y baja tensión), locativo, tecnológico (explosión, incendio), accidentes de tránsito, público (robos, atentados), trabajo en alturas y espacios confinados.'],
+                    ['Fenómenos naturales','🌧️','Sismos, terremotos, vendavales, inundaciones, derrumbes y lluvias (granizadas, heladas).'],
+                ];
+                return `
+                ${indHead('Conozca sus riesgos', 'Riesgos prioritarios y peligros')}
+                <div class="grid md:grid-cols-5 gap-4 mt-4">
+                    <div class="md:col-span-2 space-y-3">
+                        <div class="ind-card !bg-white"><p class="ind-mini mb-1">Personal operativo</p>${[['Químico','Extremo'],['Tránsito','Extremo'],['Tecnológico','Extremo'],['Alturas','Extremo'],['Biomecánico','Medio'],['Mecánico','Medio'],['Orden público','Medio']].map(lvl).join('')}</div>
+                        <div class="ind-card !bg-white"><p class="ind-mini mb-1">Personal administrativo</p>${[['Biomecánico','Medio'],['Orden público','Medio'],['Psicosocial','Medio']].map(lvl).join('')}</div>
+                    </div>
+                    <div class="md:col-span-3">
+                        <p class="ind-mini mb-2">Peligros que identificamos</p>
+                        <div class="grid sm:grid-cols-2 gap-2">${cats.map(([t, i, d]) => `<div class="ind-card !p-2.5"><p class="text-[12.5px] font-black text-gray-900">${i} ${t}</p><p class="text-[11.5px] text-gray-500 leading-snug mt-0.5">${d}</p></div>`).join('')}</div>
+                    </div>
+                </div>`; } },
+
+            { id:'comites', title:'Comités y brigadas', html:() => `
+                ${indHead('Usted no está solo', 'Comités y brigadas', 'Acuda a ellos: existen para cuidarlo.')}
+                <div class="grid md:grid-cols-2 gap-2.5 mt-4">
+                    ${IND_COMITES.map(([sig, nombre, que, gente]) => `<div class="ind-card">
+                        <div class="flex items-baseline gap-2 flex-wrap"><p class="font-black text-gray-900">${sig}</p><p class="text-[11px] font-bold text-gray-500">${nombre}</p></div>
+                        <p class="text-[12.5px] text-gray-600 leading-snug mt-1">${que}</p>
+                        <div class="flex flex-wrap gap-1 mt-2">${gente.map(g => `<span class="ind-chip !text-[11px]">${g}</span>`).join('')}</div>
+                    </div>`).join('')}
+                </div>` },
+
+            { id:'ambiente', title:'Ambiente y emergencias', html:() => `
+                ${indHead('Cuidamos el ambiente y su vida', 'Ambiente, EPP y emergencias')}
+                <div class="grid md:grid-cols-2 gap-3 mt-4">
+                    <div class="ind-card"><p class="font-extrabold text-gray-900 text-[14px]">🌱 Programas ambientales</p>${indUl(['Uso eficiente y ahorro de agua.','Uso eficiente y ahorro de energía.','Manejo de residuos sólidos.'])}</div>
+                    <div class="ind-card"><p class="font-extrabold text-gray-900 text-[14px]">♻️ Separe en la fuente</p><p class="text-[11px] text-gray-400">Código de colores nacional (Resolución 2184 de 2019)</p>
+                        <div class="space-y-1.5 mt-2">
+                            ${[['#ffffff','#cbd5e1','Blanca','Aprovechables: plástico, vidrio, metales, papel y cartón limpios y secos.'],
+                               ['#1f2937','#1f2937','Negra','No aprovechables: papel higiénico, servilletas, papeles y cartones con comida o grasa.'],
+                               ['#16a34a','#16a34a','Verde','Orgánicos aprovechables: restos de comida y residuos de poda.']]
+                              .map(([bg, bd, t, d]) => `<div class="flex items-start gap-2.5"><span class="w-5 h-6 rounded-md shrink-0 mt-0.5 border-2" style="background:${bg};border-color:${bd}"></span><p class="text-[12.5px] text-gray-600 leading-snug"><b class="text-gray-900">${t}:</b> ${d}</p></div>`).join('')}
+                        </div></div>
+                    <div class="ind-card"><p class="font-extrabold text-gray-900 text-[14px]">⛑️ Elementos de protección personal</p><p class="ind-p mt-1">Los EPP <b>minimizan</b> los riesgos, no los eliminan: úselos siempre, completos y en buen estado.</p></div>
+                    <div class="ind-card"><p class="font-extrabold text-gray-900 text-[14px]">🚑 Accidentes y emergencias</p>${indUl([
+                        'Ante un accidente de trabajo (AT) o una enfermedad laboral (EL), la ARL le da cobertura <b>médica y económica</b>. Repórtelo de inmediato.',
+                        'El plan de emergencias y MEDEVAC busca <b>disminuir las consecuencias negativas</b> de una emergencia: conozca las rutas de evacuación y siga a los brigadistas.'])}</div>
+                </div>` },
+
+            { id:'izaje', title:'Izaje seguro de cargas', roles:IZAJE, dwell:5, html:() => `
+                ${indHead('Operadores y aparejadores', 'Izaje seguro de cargas')}
+                <div class="h-32 md:h-40 mt-4">${indImg('grua2.webp')}</div>
+                <div class="grid md:grid-cols-5 gap-3 mt-3">
+                    <div class="md:col-span-3 ind-card ind-card-y">
+                        <p class="font-extrabold text-gray-900 text-[14px]">Antes de iniciar CUALQUIER maniobra</p>
+                        ${indPasos(['Verifique el <b>peso de la carga</b>.','Confirme la <b>capacidad del equipo</b> (grúa o camión grúa) para ese peso.','Revise el <b>estado de eslingas y accesorios</b>.','Evalúe las <b>condiciones del terreno</b>.','<b>Delimite y señalice</b> el área.'])}
+                    </div>
+                    <div class="md:col-span-2 ind-card !bg-red-50 !border-red-200">
+                        <p class="font-extrabold text-red-800 text-[14px]">Nunca</p>
+                        ${indUl(['Iniciar el izaje y «verificar sobre la marcha».','Dejar entrar personas al área mientras se estabiliza la carga.','Usar un accesorio solo porque «se ve resistente».'], 'ind-x')}
+                    </div>
+                </div>
+                <p class="text-[12.5px] text-gray-600 leading-snug mt-3"><b>Trabajo en equipo:</b> el aparejador prepara y asegura la carga y guía con señales; el operador maniobra solo con el área despejada y atento a esas señales. Mantenga vigentes sus certificados de operador / aparejador (1 año).</p>` },
+
+            { id:'cierre', title:'Cierre', dwell:2, html:(c) => `
+                <div class="relative h-40 md:h-52 rounded-2xl overflow-hidden">
+                    ${indImg('gracias.webp', '!rounded-none')}
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#0b0b0b]/85 via-[#0b0b0b]/45 to-transparent"></div>
+                    <div class="absolute inset-0 flex flex-col justify-center p-5 md:p-7"><p class="ind-k" style="color:#FFD22E">Inducción 2026</p><h3 class="text-white text-2xl md:text-3xl font-extrabold leading-tight">¡Muchas gracias<br>por su atención!</h3></div>
+                </div>
+                <div class="grid md:grid-cols-2 gap-3 mt-4">
+                    <div class="ind-card"><p class="font-extrabold text-gray-900 text-[14px]">📲 Instale CloudFleet</p>
+                        ${indPasos(['En Play Store busque <b>CloudFleet</b> e instálela.','Escriba el alias de la cuenta: <b>transhicol</b> y toque «Continuar».','Ingrese con el usuario y la contraseña que le asigna la empresa.'])}</div>
+                    <div class="ind-card ind-card-y"><p class="font-extrabold text-gray-900 text-[14px]">✅ Lo que sigue</p>
+                        <p class="ind-p mt-1">Toque <b>«Terminar inducción»</b>, confirme abajo que la vio y siga con el <b>Registro de inducción</b> y la <b>Evaluación</b>${c.izaje ? ', que incluye una pregunta de izaje de cargas' : ''}.</p></div>
+                </div>` },
+        ];
+
+        const slidesFor = (rol) => SLIDES.filter(s => !s.roles || s.roles.includes(rol));
+        function indCtx(){
+            const n = slidesFor(state.tipo).length;
+            return { rol: state.tipo, R: ROLES[state.tipo] || ROLES.conductor, izaje: IZAJE.includes(state.tipo), n, min: Math.max(6, Math.round(n * 0.6)) };
+        }
+
+        function renderDeck(doc, f){
+            const c = indCtx();
+            const list = slidesFor(state.tipo);
+            return `<div id="${wrapId(doc, f.name)}" class="md:col-span-2">
+                <div class="ind-deck" data-ind-deck>
+                    <div class="ind-top">
+                        <img src="${IND_LOGO}" alt="" class="h-7 w-auto bg-white rounded-md p-0.5 shrink-0">
+                        <div class="min-w-0 flex-1 leading-tight">
+                            <p class="text-[10px] font-extrabold uppercase tracking-[.16em] text-[#FFD22E]">Inducción 2026</p>
+                            <p class="text-[13px] font-bold truncate" data-ind-title></p>
+                        </div>
+                        <span class="text-[11px] font-extrabold text-white/70 tabular-nums" data-ind-count></span>
+                    </div>
+                    <div class="ind-seg">${list.map((s, i) => `<button type="button" data-ind-go="${i}" title="${esc(s.title)}" aria-label="Ir a la diapositiva ${i + 1}: ${esc(s.title)}"></button>`).join('')}</div>
+                    <div class="ind-view" data-ind-view>${list.map((s, i) => `<section class="ind-slide${s.full ? ' ind-full' : ''}" data-ind-slide="${i}" aria-label="Diapositiva ${i + 1} de ${list.length}: ${esc(s.title)}">${s.html(c)}</section>`).join('')}</div>
+                </div>
+                <p class="text-[12px] font-bold mt-2.5" data-ind-status></p>
+                <input type="hidden" name="${inputName(doc, f.name)}" data-field data-doc="${doc}" data-fname="${f.name}">
+            </div>`;
+        }
+
+        // Visor de la inducción. Durante el paso, la barra flotante del formulario
+        // pasa las diapositivas (un solo botón de avanzar, siempre a mano en el
+        // celular): cada diapositiva pide unos segundos de lectura la primera vez y
+        // el botón se va llenando. Se puede volver a las ya vistas (segmentos,
+        // «Anterior», flechas o deslizando). Al terminar llena la evidencia
+        // (diapositivas vistas y tiempo), habilita la confirmación y la barra vuelve
+        // a ser «Guardar y continuar». goToStep llama ind.enter() al abrir el paso.
+        function initDeck(){
+            const deck = $('steps-container').querySelector('[data-ind-deck]');
+            if (!deck) return;
+            const list = slidesFor(state.tipo);
+            const n = list.length;
+            const slides = [...deck.querySelectorAll('[data-ind-slide]')];
+            const segs = [...deck.querySelectorAll('[data-ind-go]')];
+            const view = deck.querySelector('[data-ind-view]');
+            const title = deck.querySelector('[data-ind-title]');
+            const count = deck.querySelector('[data-ind-count]');
+            const status = deck.parentElement.querySelector('[data-ind-status]');
+            const field = (fname) => $('steps-container').querySelector(`[name="${inputName('induccion', fname)}"]`);
+            const accept = field('acepta_induccion');
+            const ind = { i:0, max:0, read:new Set(), ready:false, readyAt:0, secs:0, done:false, started:false, t0:0, timer:null };
+            state.ind = ind;
+            const enPaso = () => state.steps[state.current] === 'induccion';
+
+            const lockAccept = (lock) => {
+                if (!accept) return;
+                accept.disabled = lock;
+                accept.closest('[data-accept-wrap]')?.classList.toggle('ind-locked', lock);
+            };
+            // Botón «Siguiente» de la barra flotante según el estado de la presentación.
+            const paintNav = () => {
+                if (!enPaso()) return;
+                const btn = $('btn-next');
+                if (ind.done) { btn.disabled = false; btn.classList.remove('ind-wait'); btn.textContent = 'Guardar y continuar →'; return; }
+                btn.innerHTML = `<span class="ind-fill"></span><span class="relative">${ind.i === n - 1 ? 'Terminar inducción ✓' : 'Siguiente diapositiva →'}</span>`;
+                btn.disabled = !ind.ready;
+                btn.classList.toggle('ind-wait', !ind.ready);
+                if (!ind.ready) {
+                    const fill = btn.querySelector('.ind-fill');
+                    const falta = Math.max(0, ind.readyAt - Date.now()) / 1000;
+                    fill.style.transform = `scaleX(${ind.secs ? 1 - falta / ind.secs : 1})`;
+                    void fill.offsetWidth;
+                    fill.style.transition = `transform ${falta}s linear`;
+                    fill.style.transform = 'scaleX(1)';
+                }
+            };
+            const paint = () => {
+                segs.forEach((b, j) => {
+                    b.classList.toggle('cur', j === ind.i);
+                    b.classList.toggle('seen', j !== ind.i && j <= ind.max);
+                    b.disabled = j > ind.max;
+                });
+                status.className = 'text-[12px] font-bold mt-2.5 ' + (ind.done ? 'text-emerald-600' : 'text-gray-500');
+                status.textContent = ind.done
+                    ? `✓ Vio las ${n} diapositivas. Marque la confirmación y toque «Guardar y continuar».`
+                    : `Diapositivas vistas: ${ind.read.size} de ${n}. Avance con «Siguiente diapositiva», deslizando o con las flechas.`;
+                paintNav();
+            };
+            const show = (k, dir = 1) => {
+                if (k < 0 || k >= n || k > ind.max) return;
+                clearTimeout(ind.timer);
+                deck.style.setProperty('--ind-dx', dir >= 0 ? '18px' : '-18px');
+                slides.forEach((s, j) => s.classList.toggle('on', j === k));
+                ind.i = k;
+                title.textContent = list[k].title;
+                count.textContent = `${k + 1} / ${n}`;
+                if (ind.read.has(k)) ind.ready = true;
+                else {
+                    ind.ready = false;
+                    ind.secs = list[k].dwell ?? IND_LECTURA_SEG;
+                    ind.readyAt = Date.now() + ind.secs * 1000;
+                    ind.timer = setTimeout(() => { ind.read.add(k); if (ind.i === k) ind.ready = true; paint(); }, ind.secs * 1000);
+                }
+                paint();
+                // En celular la diapositiva nueva puede empezar por encima de la pantalla.
+                const top = deck.getBoundingClientRect().top;
+                if (top < 0) window.scrollTo({ top: window.scrollY + top - 76, behavior: 'smooth' });
+            };
+            const finish = () => {
+                ind.done = true;
+                const secs = Math.max(1, Math.round((Date.now() - ind.t0) / 1000));
+                const set = (fname, v) => { const el = field(fname); if (el) { el.value = v; el.dispatchEvent(new Event('change', { bubbles:true })); } };
+                set('diapositivas', `${n} de ${n} (completa)`);
+                set('tiempo_induccion', `${Math.floor(secs / 60)} min ${secs % 60} s`);
+                lockAccept(false);
+                deck.classList.add('ind-complete');
+                deck.classList.remove('invalid');
+                paint();
+                toast('✓ Inducción completa. Confirme abajo que la vio y continúe.');
+                accept?.closest('[data-accept-wrap]')?.scrollIntoView({ behavior:'smooth', block:'center' });
+            };
+            ind.next = () => {
+                if (!ind.started || !ind.ready) return;
+                if (ind.i === n - 1) { if (!ind.done) finish(); return; }
+                ind.max = Math.max(ind.max, ind.i + 1);
+                show(ind.i + 1, 1);
+            };
+            ind.prev = () => { if (ind.started) show(ind.i - 1, -1); };
+            ind.enter = () => {
+                if (!ind.started) { ind.started = true; ind.t0 = Date.now(); show(0); }
+                else paintNav();
+            };
+            segs.forEach((b, j) => b.addEventListener('click', () => show(j, j >= ind.i ? 1 : -1)));
+            // Deslizar con el dedo (celular / tablet).
+            let sx = null, sy = 0;
+            view.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') { sx = e.clientX; sy = e.clientY; } });
+            view.addEventListener('pointerup', (e) => {
+                if (sx === null) return;
+                const dx = e.clientX - sx, dy = e.clientY - sy;
+                sx = null;
+                if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) (dx < 0 ? ind.next : ind.prev)();
+            });
+            view.addEventListener('pointercancel', () => { sx = null; });
+            lockAccept(true);
+            paint();
+        }
+
+        // =====================================================================
         //  FIRMA ELECTRÓNICA MANUSCRITA (vectorial)
         //  Se captura como trazos de puntos [x,y] (texto puro, ~2-6 KB) y se
         //  guarda con un paquete de evidencia conforme a la Ley 527 de 1999 y
@@ -1110,7 +1785,7 @@
         const FIRMA_LEGAL = 'Con mi firma electrónica manuscrita declaro que diligencié personalmente y acepto íntegramente el contenido de todos los documentos relacionados en este envío, que la información suministrada es veraz, y reconozco esta firma como firma electrónica válida conforme al artículo 7 de la Ley 527 de 1999 y el Decreto 2364 de 2012 de la República de Colombia. Esta firma aplica a cada uno de los documentos enumerados en este envío.';
 
         function hasFirma(){ return state.firma && state.firma.strokes.reduce((n,s)=>n+s.length,0) >= 8; }
-        function firmaRolLabel(){ return state.persona==='empresa' ? 'Representante legal' : (state.tipo==='conductor' ? 'Conductor' : 'Propietario'); }
+        function firmaRolLabel(){ return ROLES[state.tipo] ? ROLES[state.tipo].label : (state.persona==='empresa' ? 'Representante legal' : 'Propietario'); }
 
         // Sincroniza el estado visual de la firma y el gate del botón Enviar.
         function syncFirmaUI(){
@@ -1192,14 +1867,14 @@
                 if (inp.type === 'checkbox' && inp.closest('[data-accept-wrap]')) { out[k] = inp.checked; }
                 else if (inp.type === 'checkbox') { if (inp.checked){ out[k] = out[k]||[]; out[k].push(inp.value); } }
                 else if (inp.type === 'radio') { if (inp.checked) out[k] = inp.value; }
-                else { let v = (inp.value||'').trim(); if (v) out[k] = (inp.type === 'date' || inp.tagName === 'SELECT') ? v : (inp.type === 'email' ? v.toLowerCase() : v.toUpperCase()); }
+                else { let v = (inp.value||'').trim(); if (v) out[k] = (inp.type === 'date' || inp.type === 'hidden' || inp.tagName === 'SELECT') ? v : (inp.type === 'email' ? v.toLowerCase() : v.toUpperCase()); }
             });
             return out;
         }
 
         // Estructura auto-descriptiva para el admin: { titulo, codigo, campos:[{label, value}] }.
         function buildLabeled(docKey){
-            const doc = DOCS[docKey];
+            const doc = docDef(docKey);
             const raw = collectDoc(docKey);
             const campos = [];
             doc.fields.forEach(f=>{
@@ -1211,6 +1886,9 @@
                 else if (f.type === 'accept') { if (v !== true) return; v = 'Aceptado'; }
                 if (v === '' || (Array.isArray(v) && v.length===0)) return;
                 campos.push({ label: f.label || f.name, value: String(v) });
+                // Preguntas con respuesta correcta conocida: el resultado va al lado
+                // para quien califica la evaluación.
+                if (f.correct) campos.push({ label: f.resultLabel || ('Resultado ' + f.name), value: raw[f.name] === f.correct ? 'Correcta' : `Incorrecta (la correcta es la ${f.correct.toUpperCase()})` });
             });
             return { titulo: doc.title, codigo: doc.code || '', campos };
         }
@@ -1219,7 +1897,7 @@
         function missingFields(docKey){
             const c = $('steps-container');
             const out = [];
-            DOCS[docKey].fields.forEach(f=>{
+            docDef(docKey).fields.forEach(f=>{
                 if (!f.required || !f.name) return;
                 const wrap = document.getElementById(wrapId(docKey, f.name));
                 if (wrap && wrap.style.display === 'none') return;
@@ -1228,11 +1906,11 @@
                 if (f.type === 'radio') empty = !c.querySelector(`input[name="${name}"]:checked`);
                 else if (f.type === 'accept') { const el = c.querySelector(`input[name="${name}"]`); empty = !(el && el.checked); }
                 else { const el = c.querySelector(`[name="${name}"]`); empty = !(el && (el.value||'').trim()); }
-                if (empty) out.push({ name:f.name, label: f.type==='accept' ? ('Falta marcar: ' + String(f.label||'').slice(0,70)) : (f.label || f.name) });
+                if (empty) out.push({ name:f.name, label: f.type==='accept' ? ('Falta marcar: ' + String(f.label||'').slice(0,70)) : (f.missingLabel || f.label || f.name), msg: f.missingMsg });
             });
             // Correos con contenido pero incompletos (ej. "JHOAN"): bloquean el paso
             // para que nunca vuelva a guardarse un correo a medias.
-            DOCS[docKey].fields.forEach(f=>{
+            docDef(docKey).fields.forEach(f=>{
                 if (f.type !== 'email' || !f.name) return;
                 const wrap = document.getElementById(wrapId(docKey, f.name));
                 if (wrap && wrap.style.display === 'none') return;
@@ -1253,6 +1931,8 @@
                 wrap.querySelectorAll('.opt-pill').forEach(p=>p.classList.toggle('opt-invalid', bad));
             } else if (f.type === 'accept') {
                 wrap.querySelector('.accept-box')?.classList.toggle('invalid', bad);
+            } else if (f.type === 'slides') {
+                wrap.querySelector('.ind-deck')?.classList.toggle('invalid', bad);
             } else {
                 wrap.querySelector(`[name="${name}"]`)?.classList.toggle('invalid', bad);
             }
@@ -1273,7 +1953,7 @@
 
         // ── Revisión final ──
         function renderReview(){
-            const items = state.docs.map((d,idx)=>({ key:d, idx, title:DOCS[d].title, code:DOCS[d].code, done:isDocComplete(d) }));
+            const items = state.docs.map((d,idx)=>({ key:d, idx, title:docDef(d).title, code:docDef(d).code, done:isDocComplete(d) }));
             const doneCount = items.filter(i=>i.done).length;
             const pct = Math.round(doneCount / state.docs.length * 100);
             const all = doneCount === state.docs.length;
@@ -1368,13 +2048,17 @@
             $('btn-next').classList.toggle('step-hidden', isRev);
             $('btn-submit').classList.toggle('step-hidden', !isRev);
             $('btn-next').textContent = (state.steps[i+1] === REVISION) ? 'Ir a revisión →' : 'Guardar y continuar →';
+            $('btn-next').disabled = false;
+            $('btn-next').classList.remove('ind-wait');
             window.scrollTo({top:0, behavior:'smooth'});
+            // En la inducción la barra pasa las diapositivas hasta terminarla.
+            if (docKey === 'induccion') state.ind?.enter();
         }
 
         function validateStep(docKey){
             const missing = missingFields(docKey);
             const missingMap = new Map(missing.map(m=>[m.name, m.msg]));
-            DOCS[docKey].fields.forEach(f=>{ if (f.name && (f.required || f.type === 'email')) setFieldError(docKey, f, missingMap.has(f.name), missingMap.get(f.name)); });
+            docDef(docKey).fields.forEach(f=>{ if (f.name && (f.required || f.type === 'email')) setFieldError(docKey, f, missingMap.has(f.name), missingMap.get(f.name)); });
             refreshBanner(docKey, missing);
             if (missing.length){
                 const el = document.getElementById(wrapId(docKey, missing[0].name)) || $('steps-container').querySelector(`[data-banner-doc="${docKey}"]`);
@@ -1386,7 +2070,7 @@
         // Limpia en vivo el error de un campo cuando el usuario lo diligencia.
         function liveClear(inp){
             const docKey = inp.dataset.doc, fname = inp.dataset.fname;
-            const f = DOCS[docKey] && DOCS[docKey].fields.find(x=>x.name===fname);
+            const f = DOCS[docKey] && docDef(docKey).fields.find(x=>x.name===fname);
             if (!f || (!f.required && f.type !== 'email')) return;
             const banner = $('steps-container').querySelector(`[data-banner-doc="${docKey}"]`);
             if (!banner || banner.classList.contains('step-hidden')) return; // solo tras un intento fallido
@@ -1399,6 +2083,7 @@
         function onNext(){
             const docKey = state.steps[state.current];
             if (docKey === REVISION) return;
+            if (docKey === 'induccion' && state.ind && !state.ind.done) { state.ind.next(); return; }
             if (validateStep(docKey)) goToStep(state.current + 1);
             else toast('Complete los campos obligatorios (marcados en rojo).');
         }
@@ -1429,10 +2114,11 @@
                 documentos[d] = buildLabeled(d);
                 const raw = collectDoc(d);
                 const clean = {};
-                DOCS[d].fields.forEach(f=>{
+                docDef(d).fields.forEach(f=>{
                     // Se guardan también las fechas que son DATOS (nacimiento, vencimiento
-                    // de licencia, constitución); solo se excluyen las fechas "de hoy".
-                    if (!f.name || f.type === 'accept' || (f.type === 'date' && f.default === 'today')) return;
+                    // de licencia, constitución); solo se excluyen las fechas "de hoy" y
+                    // lo que debe repetirse en cada envío (noAutofill: la inducción).
+                    if (!f.name || f.noAutofill || f.type === 'accept' || (f.type === 'date' && f.default === 'today')) return;
                     const v = raw[f.name];
                     if (v !== undefined && v !== null && v !== '') clean[f.name] = v;
                 });
@@ -1455,7 +2141,7 @@
                 user_agent: navigator.userAgent,
                 origen: (()=>{ try { return location.origin; } catch(e){ return null; } })(),
                 consentimiento: FIRMA_LEGAL,
-                documentos_firmados: state.docs.map(d => DOCS[d].title),
+                documentos_firmados: state.docs.map(d => docDef(d).title),
             };
             // Huella de integridad: SHA-256 sobre todo el contenido firmado
             // (documentos + autofill + firma sin el hash). El firmante recibe la
@@ -1468,7 +2154,7 @@
                 nombre: (esEmpresa ? prov.razon_social : prov.nombre) || null,
                 cedula: (esEmpresa ? prov.nit : prov.cedula) || null,
                 placa: (prov.placa || '').toUpperCase() || null,
-                datos: { documentos, autofill, firma, meta: { enviado_en:new Date().toISOString(), persona:state.persona, user_agent:navigator.userAgent, flujo:state.docs } }
+                datos: { documentos, autofill, firma, meta: { enviado_en:new Date().toISOString(), persona:state.persona, cargo: ROLES[state.tipo] ? ROLES[state.tipo].label : null, user_agent:navigator.userAgent, flujo:state.docs } }
             };
 
             $('submit-overlay').style.display = 'flex';
@@ -1639,7 +2325,7 @@
             const docsMap = (row.datos && row.datos.documentos) || {};
             const flujo = ((row.datos && row.datos.meta && row.datos.meta.flujo) || Object.keys(docsMap)).filter((k) => docsMap[k]);
             const esEmpresa = !!(row.datos && row.datos.meta && row.datos.meta.persona === 'empresa');
-            const tipoLabel = row.tipo_proveedor === 'conductor' ? 'Conductor' : (esEmpresa ? 'Propietario (Empresa)' : 'Propietario');
+            const tipoLabel = ROLES[row.tipo_proveedor] ? ROLES[row.tipo_proveedor].label : (esEmpresa ? 'Propietario (Empresa)' : 'Propietario');
             const createdISO = row.created_at ? String(row.created_at).slice(0, 10) : new Date().toISOString().slice(0, 10);
             const recibido = (() => { try { return new Date(row.created_at).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' }); } catch(e){ return pdfFmtFecha(createdISO); } })();
             const comprobante = row.id ? String(row.id).slice(0, 8).toUpperCase() : '—';
@@ -1792,7 +2478,7 @@
 
         // ── UI helpers ──
         function showScreen(name){
-            ['selector','subtipo','wizard','success'].forEach(s=>$(`screen-${s}`).classList.toggle('step-hidden', s!==name));
+            ['selector','subtipo','cargo','wizard','success'].forEach(s=>$(`screen-${s}`).classList.toggle('step-hidden', s!==name));
         }
         let toastT;
         function toast(msg){
@@ -1804,13 +2490,26 @@
 
         // ── Eventos ──
         document.querySelectorAll('.tipo-card').forEach(b=>b.addEventListener('click', ()=>{
-            if (b.dataset.tipo === 'propietario') showScreen('subtipo');
-            else buildWizard('conductor', 'natural');
+            showScreen(b.dataset.tipo === 'propietario' ? 'subtipo' : 'cargo');
+            window.scrollTo({top:0});
         }));
         document.querySelectorAll('.persona-card').forEach(b=>b.addEventListener('click', ()=>buildWizard('propietario', b.dataset.persona)));
+        document.querySelectorAll('.rol-card').forEach(b=>b.addEventListener('click', ()=>buildWizard(b.dataset.rol, 'natural')));
         $('btn-back-selector').addEventListener('click', ()=>showScreen('selector'));
+        $('btn-back-cargo').addEventListener('click', ()=>showScreen('selector'));
+        // Flechas del teclado para pasar las diapositivas de la inducción (en PC).
+        document.addEventListener('keydown', (e)=>{
+            if (!state.ind || state.steps[state.current] !== 'induccion') return;
+            if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.altKey || e.ctrlKey || e.metaKey) return;
+            if (e.key === 'ArrowRight') { e.preventDefault(); state.ind.next(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); state.ind.prev(); }
+        });
         $('btn-next').addEventListener('click', onNext);
-        $('btn-prev').addEventListener('click', ()=>goToStep(state.current-1));
+        $('btn-prev').addEventListener('click', ()=>{
+            // En la inducción sin terminar, «Anterior» vuelve una diapositiva (desde la primera, al paso anterior).
+            if (state.steps[state.current] === 'induccion' && state.ind && !state.ind.done && state.ind.i > 0) { state.ind.prev(); return; }
+            goToStep(state.current-1);
+        });
         $('btn-submit').addEventListener('click', submitAll);
         $('btn-restart').addEventListener('click', ()=>{ if(confirm('¿Cambiar el tipo de vinculación? Se perderá lo diligenciado.')) location.reload(); });
         $('btn-new').addEventListener('click', ()=>location.reload());
