@@ -110,14 +110,12 @@
         .ind-mini { font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:#94a3b8; }
         .ind-card { border:1px solid #eef0f4; border-radius:1rem; background:#fafbfc; padding:.9rem 1rem; }
         .ind-card-y { background:linear-gradient(160deg,#fffbea,#fff4c7); border-color:rgba(255,210,46,.45); }
-        .ind-card-d { background:linear-gradient(160deg,#232323,#111); border-color:#111; color:#fff; }
         .ind-list li { position:relative; padding-left:1.1rem; margin:.34rem 0; font-size:.87rem; color:#334155; line-height:1.45; }
         .ind-list li::before { content:''; position:absolute; left:0; top:.48em; width:.45rem; height:.45rem; border-radius:3px; background:#FFD22E; }
         .ind-list.ind-x li::before { content:'✕'; width:auto; height:auto; background:none; top:0; color:#dc2626; font-weight:900; font-size:.8rem; }
         .ind-img { width:100%; height:100%; object-fit:cover; border-radius:1rem; background:#eef0f4; }
         .ind-pill { display:inline-flex; align-items:center; gap:.3rem; font-size:11px; font-weight:800; padding:.28rem .6rem; border-radius:99px; white-space:nowrap; }
         .ind-chip { display:inline-flex; font-size:11.5px; font-weight:700; color:#334155; background:#fff; border:1px solid #e5e7eb; border-radius:.55rem; padding:.22rem .5rem; }
-        .ind-me { background:#181818; color:#FFD22E; border-color:#181818; box-shadow:0 0 0 3px rgba(255,210,46,.45); }
         .ind-acc { border:1px solid #eef0f4; border-radius:.95rem; background:#fafbfc; transition:background .15s, border-color .15s; }
         .ind-acc[open] { background:#fff; border-color:rgba(255,210,46,.6); box-shadow:0 6px 18px rgba(2,6,23,.06); }
         .ind-acc summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:.65rem; padding:.7rem .85rem; font-weight:800; font-size:.9rem; color:#111827; }
@@ -134,6 +132,80 @@
         .ind-stat b { display:block; font-size:1.35rem; font-weight:900; color:#111827; letter-spacing:-.02em; line-height:1.1; }
         .ind-stat span { display:block; font-size:12px; font-weight:600; color:#64748b; margin-top:.2rem; line-height:1.35; }
         .ind-stat.ind-red { background:#fef2f2; border-color:#fecaca; } .ind-stat.ind-red b { color:#b91c1c; }
+
+        /* Organigrama (DI-GG-08). Un color por nivel: Gerencia amarillo, control y asesoría rojo,
+           coordinaciones azul oscuro, equipos azul claro. En celular el árbol baja como lista con
+           un tronco a la izquierda; con ancho de sobra (container query) se abre en columnas como
+           el documento. Sin soporte de container queries se queda en lista, que también sirve. */
+        .org { --org-ln:#c5cedb; --org-gap:14px; container:org / inline-size; position:relative; border:1px solid #eef0f4; border-radius:1.1rem; padding:1.1rem .75rem .85rem;
+               background:radial-gradient(circle at 1px 1px,#e3e8ef 1px,transparent 1.4px) 0 0/16px 16px,#fcfdfe; }
+        .org-box { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; text-align:center; line-height:1.2; border-radius:.65rem; }
+        .org-ger { width:max-content; margin:0 auto; padding:.55rem 1.8rem; border-radius:99px; font-size:12.5px; font-weight:900; letter-spacing:.18em; text-transform:uppercase; color:#181818;
+                   background:linear-gradient(180deg,#FFDD55,#F2BE00); box-shadow:0 0 0 5px rgba(255,210,46,.22),0 8px 22px rgba(242,190,0,.32); }
+        .org-ctl { height:100%; min-height:2.6rem; padding:.45rem .4rem; font-size:11px; font-weight:800; color:#fff; background:linear-gradient(180deg,#d42c38,#a3131e); box-shadow:0 6px 14px rgba(163,19,30,.2); }
+        .org-coo { min-height:2.25rem; padding:.45rem .75rem; justify-content:flex-start; text-align:left; font-size:12px; font-weight:800; color:#fff; background:linear-gradient(180deg,#17344f,#0a1c2f); box-shadow:0 6px 14px rgba(10,28,47,.2); }
+        .org-t1, .org-t2 { padding:.26rem .5rem; font-size:11px; }
+        .org-t1 { font-weight:700; color:#0b3558; background:#d3e7f8; border:1px solid #b5d4ef; }
+        .org-t2 { font-weight:600; color:#2a5378; background:#eef5fc; border:1px solid #d6e7f6; }
+        .org-box.ind-me { font-weight:800; color:#FFD22E; background:#181818; border-color:#181818; box-shadow:0 0 0 3px rgba(255,210,46,.45); }
+        .org-stem { width:2px; height:var(--org-gap); margin:0 auto; background:var(--org-ln); }
+        /* Bus: cada hijo baja su línea y pone su tramo de barra (el primero y el último, medio tramo) */
+        .org-ctls { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); max-width:30rem; margin:0 auto; }
+        .org-r { position:relative; padding:var(--org-gap) .2rem 0; }
+        .org-r::before { content:''; position:absolute; top:0; left:50%; width:2px; height:var(--org-gap); margin-left:-1px; background:var(--org-ln); }
+        .org-r::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--org-ln); }
+        .org-r:first-child::after { left:calc(50% - 1px); }
+        .org-r:last-child::after { right:calc(50% - 1px); }
+        /* Coordinaciones en celular: lista con tronco a la izquierda */
+        .org-l2 { position:relative; display:flex; flex-direction:column; max-width:30rem; margin:0 auto; padding-top:.7rem; }
+        .org-l2::before { content:''; position:absolute; top:0; left:.55rem; right:calc(50% - 1px); height:2px; background:var(--org-ln); }
+        .org-l2::after { content:''; position:absolute; top:0; left:.55rem; width:2px; height:.7rem; background:var(--org-ln); }
+        .org-k { position:relative; padding:0 0 .55rem 1.5rem; }
+        .org-k::before { content:''; position:absolute; top:0; bottom:0; left:.55rem; width:2px; background:var(--org-ln); }
+        .org-k::after { content:''; position:absolute; top:1.125rem; left:.55rem; width:.95rem; height:2px; background:var(--org-ln); }
+        .org-sub { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.4rem; }
+        .org-axis { order:1; padding-bottom:0; }
+        .org-axis::before { bottom:auto; height:calc(1.125rem + 2px); }
+        .org-axis .org-box { min-height:2.25rem; justify-content:flex-start; text-align:left; padding:.3rem .75rem; }
+        .org-ops { order:2; margin-top:.6rem; padding:.55rem; border:1px solid #d6e7f6; border-radius:.9rem; background:#f6faff; }
+        .org-ops-h { font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#0b3558; line-height:1.35; }
+        .org-ops-h span { font-size:11px; font-weight:600; letter-spacing:0; text-transform:none; color:#64748b; }
+        /* Las dos tarjetas van lado a lado si caben; si no, una debajo de la otra (sin partir «· usted») */
+        .org-sups { display:flex; flex-wrap:wrap; gap:.45rem; margin-top:.45rem; }
+        .org-sup { flex:1 1 auto; padding:.4rem; border:1px solid #e3edf7; border-radius:.75rem; background:#fff; }
+        .org-sup > .org-box { justify-content:flex-start; text-align:left; }
+        .org-crew { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.4rem; }
+        .org-crew .org-box { padding:.24rem .45rem; font-size:10.5px; white-space:nowrap; }
+        .org-legend { display:flex; flex-wrap:wrap; justify-content:center; gap:.35rem .9rem; margin-top:.85rem; padding-top:.7rem; border-top:1px dashed #e2e7ee; font-size:10.5px; font-weight:700; color:#64748b; }
+        .org-legend span { display:inline-flex; align-items:center; gap:.35rem; }
+        .org-legend i { width:.7rem; height:.7rem; border-radius:.25rem; }
+        /* Con ancho de sobra: columnas como el documento; el tronco sigue por el eje hasta el
+           Líder de flota y TI, y del Director ejecutivo baja la línea a la operación en campo */
+        /* Celulares muy angostos (≈320 px): que «cumplimiento» quepa en su caja */
+        @container org (max-width: 250px) {
+            .org-r { padding-left:.12rem; padding-right:.12rem; }
+            .org-ctl { padding:.4rem .2rem; font-size:10px; hyphens:auto; overflow-wrap:anywhere; }
+        }
+        @container org (min-width: 660px) {
+            .org-l2 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,.78fr) repeat(3,minmax(0,1fr)); row-gap:var(--org-gap); max-width:none; padding-top:0; }
+            .org-l2::before, .org-l2::after { content:none; }
+            .org-k { grid-row:1; display:flex; flex-direction:column; padding:var(--org-gap) .18rem 0; }
+            .org-k::before { bottom:auto; left:50%; height:var(--org-gap); margin-left:-1px; }
+            .org-k::after { top:0; left:0; right:0; width:auto; }
+            .org-k.org-first::after { left:calc(50% - 1px); }
+            .org-k.org-last::after { right:calc(50% - 1px); }
+            .org-tall { grid-row:1 / span 2; }
+            .org-coo { min-height:2.9rem; padding:.4rem .25rem; justify-content:center; text-align:center; font-size:10.5px; }
+            .org-sub { position:relative; flex-direction:column; flex-wrap:nowrap; gap:.4rem; margin-top:0; padding-top:.5rem; }
+            .org-sub::before { content:''; position:absolute; top:0; bottom:0; left:50%; width:2px; margin-left:-1px; background:var(--org-ln); }
+            .org-sub .org-box, .org-axis .org-box { padding:.3rem .25rem; font-size:10px; }
+            .org-dir .org-sub { flex:1; }
+            .org-dir .org-sub::before { bottom:calc(-1 * var(--org-gap)); }
+            .org-axis { order:0; align-self:start; }
+            .org-axis::before { height:auto; bottom:0; }
+            .org-axis .org-box { min-height:0; margin-top:calc(2.9rem + .5rem); justify-content:center; text-align:center; }
+            .org-ops { order:0; grid-row:2; grid-column:3 / -1; margin-top:0; }
+        }
         /* Durante la inducción la barra flotante pasa las diapositivas: mientras corre
            la lectura mínima el botón queda gris y se llena de amarillo. */
         #btn-next { position:relative; overflow:hidden; }
@@ -1370,9 +1442,7 @@
                        ['Cumplimiento','Garantizamos a nuestros clientes el servicio de forma oportuna.'],
                        ['Seguridad','En lo humano, ambiental y material: cuidamos nuestra integridad y la de nuestro entorno.'],
                        ['Mejora continua','Crecemos aprendiendo de cada día, cada situación, cada tropiezo y cada logro.']]
-                      .map(([t, d], i) => i === 2
-                        ? `<div class="ind-card ind-card-d"><span class="ind-n" style="background:#FFD22E;color:#181818">${i + 1}</span><p class="font-extrabold mt-2 text-[#FFD22E]">${t}</p><p class="text-[12.5px] leading-snug mt-1 text-white/75">${d}</p></div>`
-                        : `<div class="ind-card"><span class="ind-n">${i + 1}</span><p class="font-extrabold mt-2 text-gray-900">${t}</p><p class="text-[12.5px] leading-snug mt-1 text-gray-500">${d}</p></div>`).join('')}
+                      .map(([t, d], i) => `<div class="ind-card"><span class="ind-n">${i + 1}</span><p class="font-extrabold mt-2 text-gray-900">${t}</p><p class="text-[12.5px] leading-snug mt-1 text-gray-500">${d}</p></div>`).join('')}
                 </div>
                 <p class="ind-mini mt-6">Certificaciones · Consejo Colombiano de Seguridad (CCS)</p>
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-2 mt-2">
@@ -1382,37 +1452,62 @@
                 <p class="text-center text-[11px] font-extrabold tracking-[.22em] text-gray-400 mt-5">«TRANSPORTE EFICIENTE Y SEGURO»</p>` },
 
             { id:'organizacion', title:'Cómo nos organizamos', html:(c) => {
-                const chip = (t, r) => `<span class="ind-chip${c.rol === r ? ' ind-me' : ''}">${t}${c.rol === r ? ' · usted' : ''}</span>`;
-                const fila = (items, cls) => `<div class="flex flex-wrap justify-center gap-1.5">${items.map(t => `<span class="ind-chip ${cls}">${t}</span>`).join('')}</div>`;
+                const yo = (t, r) => `<span class="org-box org-t2${c.rol === r ? ' ind-me' : ''}">${t}${c.rol === r ? ' · usted' : ''}</span>`;
+                // Coordinaciones de izquierda a derecha como en el DI-GG-08: [cargo, equipo [[cargo, 1 directo | 2 más abajo]], clase].
+                // null = eje central: el Líder de flota y TI cuelga del tronco de Gerencia, no de una coordinación.
+                const COORD = [
+                    ['Coordinador HSEQ', [['Supervisor HSE',1],['Auxiliar de HSE',1]]],
+                    ['Coordinador de mantenimiento', [['Auxiliar de mantenimiento',1],['Mecánico',2],['Auxiliar mecánico',2],['Llantero',2],['Soldador',2]], 'org-tall'],
+                    ['Director ejecutivo', [['Jefe de operaciones',1],['Coordinador de operaciones carga seca',1]], 'org-dir'],
+                    null,
+                    ['Contador', [['Contador de apoyo',1],['Auxiliar contable',2]]],
+                    ['Coordinador administrativo', []],
+                    ['Jefe de gestión humana', [['Servicios generales',1]]],
+                ];
+                const kids = COORD.map((k, i) => !k
+                    ? `<div class="org-k org-axis"><span class="org-box org-t1">Líder de gestión técnica de flota y TI</span></div>`
+                    : `<div class="org-k${k[2] ? ` ${k[2]}` : ''}${i === 0 ? ' org-first' : ''}${i === COORD.length - 1 ? ' org-last' : ''}">
+                        <div class="org-box org-coo">${k[0]}</div>
+                        ${k[1].length ? `<div class="org-sub">${k[1].map(([t, n]) => `<span class="org-box org-t${n}">${t}</span>`).join('')}</div>` : ''}
+                    </div>`).join('');
+                const proc = (cls, k, t) => `<div class="rounded-xl px-3 py-2 sm:flex sm:items-center sm:gap-3 ${cls}"><p class="text-[10px] font-black uppercase tracking-wide sm:w-24 shrink-0">${k}</p><p class="text-[13px] font-bold text-gray-800 leading-snug">${t}</p></div>`;
+                const flecha = () => `<span class="text-[#b48f00] font-black md:hidden">↓</span><span class="text-[#b48f00] font-black hidden md:inline">→</span>`;
                 return `
                 ${indHead('Cómo nos organizamos', 'Estructura y procesos')}
-                <div class="grid md:grid-cols-5 gap-5 mt-5">
-                    <div class="md:col-span-3">
-                        <p class="ind-mini mb-2">Organigrama (DI-GG-08, resumido)</p>
-                        <div class="space-y-2 text-center">
-                            <span class="inline-block ind-pill bg-[#FFD22E] text-[#181818] text-[12px] px-4 py-1.5">Gerencia</span>
-                            ${fila(['Asesor jurídico','Oficial de cumplimiento','Revisor fiscal'], '!bg-red-50 !border-red-200 !text-red-800')}
-                            ${fila(['Coordinador HSEQ','Coordinador de mantenimiento','Director ejecutivo','Contador','Coordinador administrativo','Jefe de gestión humana'], '!bg-[#181818] !text-white !border-[#181818]')}
-                            ${fila(['Jefe de operaciones','Coordinador de operaciones carga seca'], '!bg-sky-50 !border-sky-200 !text-sky-900')}
-                            <div class="grid grid-cols-2 gap-2 text-left">
-                                <div class="ind-card !p-2.5"><p class="text-[11px] font-black text-gray-800 mb-1.5">Supervisor de ruta</p><div class="flex flex-wrap gap-1">${chip('Conductor','conductor')}${chip('Operador','operador')}${chip('Aparejador','aparejador')}</div></div>
-                                <div class="ind-card !p-2.5"><p class="text-[11px] font-black text-gray-800 mb-1.5">Supervisor de izaje</p><div class="flex flex-wrap gap-1">${chip('Operador','operador')}${chip('Aparejador','aparejador')}</div></div>
+                <p class="ind-mini mt-5 mb-2">Organigrama (DI-GG-08)</p>
+                <div class="org">
+                    <div class="org-box org-ger">Gerencia</div>
+                    <div class="org-stem"></div>
+                    <div class="org-ctls">${['Asesor jurídico','Oficial de cumplimiento','Revisor fiscal'].map(t => `<div class="org-r"><div class="org-box org-ctl">${t}</div></div>`).join('')}</div>
+                    <div class="org-stem"></div>
+                    <div class="org-l2">${kids}
+                        <div class="org-ops">
+                            <p class="org-ops-h">Operación en campo <span>· reporta a Jefe de operaciones y Coord. carga seca</span></p>
+                            <div class="org-sups">
+                                <div class="org-sup"><span class="org-box org-t1">Supervisor de ruta</span><div class="org-crew">${yo('Conductor','conductor')}${yo('Operador','operador')}${yo('Aparejador','aparejador')}</div></div>
+                                <div class="org-sup"><span class="org-box org-t1">Supervisor de izaje</span><div class="org-crew">${yo('Operador','operador')}${yo('Aparejador','aparejador')}</div></div>
                             </div>
                         </div>
-                        <p class="text-[11px] text-gray-400 leading-snug mt-2.5">Además: supervisor y auxiliar de HSE; auxiliar de mantenimiento, mecánico, auxiliar mecánico, llantero y soldador; líder de gestión técnica de flota y tecnología de la información; contador de apoyo y auxiliar contable; servicios generales.</p>
                     </div>
-                    <div class="md:col-span-2">
-                        <p class="ind-mini mb-2">Mapa de procesos (DI-HSEQ-08)</p>
-                        <div class="space-y-1.5">
-                            <p class="text-[11.5px] font-bold text-gray-500 text-center">Requisitos del cliente y partes interesadas ↓</p>
-                            <div class="rounded-xl px-3 py-2 bg-red-50 border border-red-100"><p class="text-[10px] font-black uppercase tracking-wide text-red-700">Estratégicos</p><p class="text-[13px] font-bold text-gray-800">Gestión gerencial · Gestión HSEQ</p></div>
-                            <div class="rounded-xl px-3 py-2 bg-amber-50 border border-amber-200"><p class="text-[10px] font-black uppercase tracking-wide text-amber-700">Misional</p><p class="text-[13px] font-bold text-gray-800">Gestión operativa</p></div>
-                            <div class="rounded-xl px-3 py-2 bg-lime-50 border border-lime-200"><p class="text-[10px] font-black uppercase tracking-wide text-lime-700">Apoyo</p><p class="text-[13px] font-bold text-gray-800">Gestión contable · administrativa · humana</p></div>
-                            <p class="text-[11.5px] font-bold text-gray-500 text-center">↓ Satisfacción del cliente y partes interesadas</p>
-                            <p class="text-[11.5px] font-black text-[#b48f00] text-center">↻ Mejoramiento continuo</p>
-                        </div>
+                    <div class="org-legend">
+                        <span><i style="background:linear-gradient(180deg,#FFDD55,#F2BE00)"></i>Gerencia</span>
+                        <span><i style="background:#c0202c"></i>Control y asesoría</span>
+                        <span><i style="background:#10283f"></i>Coordinaciones</span>
+                        <span><i style="background:#d3e7f8;border:1px solid #b5d4ef"></i>Equipos de trabajo</span>
+                        <span><i style="background:#181818;box-shadow:0 0 0 2px rgba(255,210,46,.6)"></i>Su cargo</span>
                     </div>
-                </div>`; } },
+                </div>
+                <p class="ind-mini mt-5 mb-2">Mapa de procesos (DI-HSEQ-08)</p>
+                <div class="grid md:grid-cols-[7.5rem_1fr_7.5rem] items-center gap-2">
+                    <p class="text-[11.5px] font-bold text-gray-500 text-center leading-snug">Requisitos del cliente y partes interesadas ${flecha()}</p>
+                    <div class="space-y-1.5">
+                        ${proc('bg-red-50 border border-red-100 text-red-700', 'Estratégicos', 'Gestión gerencial · Gestión HSEQ')}
+                        ${proc('bg-amber-50 border border-amber-200 text-amber-700', 'Misional', 'Gestión operativa')}
+                        ${proc('bg-lime-50 border border-lime-200 text-lime-700', 'Apoyo', 'Gestión contable · administrativa · humana')}
+                    </div>
+                    <p class="text-[11.5px] font-bold text-gray-500 text-center leading-snug">${flecha()} Satisfacción del cliente y partes interesadas</p>
+                </div>
+                <p class="text-[11.5px] font-black text-[#b48f00] text-center mt-2">↻ Mejoramiento continuo</p>`; } },
 
             { id:'directorio', title:'Directorio', html:() => `
                 ${indHead('A quién acudir', 'Directorio telefónico', 'Toque un número para llamar o un correo para escribir. Guárdelos en su celular.')}
