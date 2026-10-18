@@ -1033,7 +1033,8 @@
             if (f.type === 'autofill')
                 // Estado del autorrellenado automático (se dispara solo al escribir
                 // la cédula/NIT). Invisible mientras no haya nada que informar.
-                return `<div class="md:col-span-2 -mt-1"><span id="autofill-status" class="text-xs font-semibold"></span></div>`;
+                // Debajo, el reto para recuperar los datos (celular o correo registrado).
+                return `<div class="md:col-span-2 -mt-1"><span id="autofill-status" class="text-xs font-semibold"></span><div id="autofill-reto" class="hidden"></div></div>`;
             if (f.type === 'slides') return renderDeck(doc, f);
             if (f.type === 'hidden')
                 return `<input type="hidden" name="${inputName(doc, f.name)}" data-field data-doc="${doc}" data-fname="${f.name}">`;
@@ -1109,6 +1110,7 @@
             state.steps = [...state.docs, REVISION];
             state.current = 0;
             state.prev = null;
+            state.reto = null;
             state.session = {};
             state.sessionSrc = {};
             state.firma = { strokes:[], w:0, h:0 };
@@ -1304,20 +1306,68 @@
             return Object.keys(prev).length ? prev : null;
         }
 
-        // Autorrellenado AUTOMÁTICO: consulta los envíos anteriores por cédula/NIT
-        // (+ placa como prioridad) apenas el usuario escribe el documento o la placa,
-        // y COMBINA hasta 10 envíos para recuperar absolutamente toda la información.
-        async function doLookup(){
+        // Autorrellenado en DOS PASOS (18-oct-2026). Con solo el documento la función
+        // ya no entrega datos: si hay envíos anteriores responde el celular y el
+        // correo registrados ENMASCARADOS, y el proveedor escribe uno de los dos
+        // completo; el servidor lo compara y solo entonces devuelve los envíos
+        // (hasta 10, combinados; la placa prioriza los de ese vehículo). Si no hay
+        // envíos, no acierta o prefiere no responder, se llena a mano como un
+        // usuario nuevo, sin mensajes de error.
+        const docLookupActual = () => {
+            const src = collectDoc(state.docs[0]);
+            return { key: (src.cedula || src.nit || '').trim(), placa: (src.placa || '').trim() };
+        };
+        function ocultarReto(){
+            const box = $('autofill-reto');
+            if (box) { box.innerHTML = ''; box.classList.add('hidden'); }
+            if (state.reto && !state.reto.valor) state.reto = null;
+        }
+        function mostrarReto(key, pistas){
+            const box = $('autofill-reto');
+            if (!box) return;
+            state.reto = { key, valor:null };
+            const partes = [];
+            if (pistas.masked_phone) partes.push(`Teléfono: <span class="font-mono text-gray-800">${esc(pistas.masked_phone)}</span>`);
+            if (pistas.masked_email) partes.push(`Correo: <span class="font-mono text-gray-800">${esc(pistas.masked_email)}</span>`);
+            box.innerHTML = `<div class="mt-2 rounded-2xl border border-[#FFD22E]/60 bg-[#fffdf3] p-3.5">
+                <p class="text-[13px] font-semibold text-gray-700 leading-snug">Para recuperar sus datos, complete su número de celular o su correo electrónico registrado anteriormente:</p>
+                <p class="text-xs font-bold text-gray-500 mt-1.5 break-words">${partes.join(' &nbsp;|&nbsp; ')}</p>
+                <div class="mt-2.5 flex flex-col sm:flex-row gap-2">
+                    <input id="reto-valor" type="text" inputmode="email" autocomplete="off" spellcheck="false" maxlength="120" class="field-input" style="text-transform:none" placeholder="Celular o correo completo">
+                    <button type="button" id="reto-ok" class="px-5 py-3 rounded-xl font-extrabold text-sm text-[#181818] bg-gradient-to-b from-[#FFD22E] to-[#F2BE00] shadow-[0_5px_16px_rgba(245,196,0,.40)] hover:brightness-105 active:scale-[.98] transition whitespace-nowrap">Recuperar mis datos</button>
+                </div>
+                <button type="button" id="reto-no" class="text-xs font-semibold text-gray-400 hover:text-gray-700 mt-2">Prefiero llenar a mano</button>
+            </div>`;
+            // Justo debajo del documento que acaba de escribir: al final del paso
+            // quedaría fuera de la pantalla en el celular.
+            const ancla = document.getElementById(wrapId(state.docs[0], 'cedula')) || document.getElementById(wrapId(state.docs[0], 'nit'));
+            if (ancla && ancla.nextElementSibling !== box) { ancla.insertAdjacentElement('afterend', box); box.classList.add('md:col-span-2'); }
+            box.classList.remove('hidden');
+            const inp = $('reto-valor'), ok = $('reto-ok');
+            const enviar = async ()=>{
+                const valor = (inp.value || '').trim();
+                if (!valor) { inp.focus(); return; }
+                ok.disabled = true; ok.textContent = 'Verificando...';
+                const actual = docLookupActual();
+                if (actual.key !== key) { ocultarReto(); return; }
+                const found = await recuperarDatos(key, actual.placa, valor);
+                ocultarReto();
+                if (found) state.reto = { key, valor };
+            };
+            ok.addEventListener('click', enviar);
+            inp.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') { e.preventDefault(); enviar(); } });
+            $('reto-no').addEventListener('click', ()=>{ state.reto = null; ocultarReto(); });
+        }
+
+        // Paso 2: pide los datos con la respuesta del reto. Devuelve true si llegaron.
+        async function recuperarDatos(key, placa, valor){
             const status = $('autofill-status');
-            const provDoc = state.docs[0]; // 'proveedor' o 'proveedorEmpresa'
-            const src = collectDoc(provDoc);
-            const key = (src.cedula || src.nit || '').trim();
-            const placa = (src.placa || '').trim();
-            if (!status || key.length < 4) return; // se dispara solo con documento suficiente
-            status.textContent = 'Buscando sus datos anteriores...'; status.className = 'text-xs font-semibold text-gray-500';
+            const provDoc = state.docs[0];
+            if (status) { status.textContent = 'Recuperando sus datos anteriores...'; status.className = 'text-xs font-semibold text-gray-500'; }
             try {
-                const { data, error } = await supabase.functions.invoke('documental-lookup', { body: { cedula:key, placa } });
+                const { data, error } = await supabase.functions.invoke('documental-lookup', { body: { cedula:key, placa, challenge_value:valor } });
                 if (error) throw error;
+                if (docLookupActual().key !== key) return false;   // cambió el documento mientras tanto
                 const envios = (data && data.found)
                     ? (Array.isArray(data.envios) && data.envios.length ? data.envios : (data.autofill ? [{ placa:'', autofill:data.autofill }] : []))
                     : [];
@@ -1330,11 +1380,41 @@
                     applySession(provDoc);
                     applyPrev(provDoc);
                     applyConditionals(provDoc);
-                    status.textContent = '✓ Datos encontrados: se autorrellenaron sus formularios con la información de sus envíos anteriores.'; status.className = 'text-xs font-bold text-emerald-600';
-                } else {
-                    // Sin registros previos: no molestar con mensajes, es un usuario nuevo.
-                    status.textContent = '';
+                    if (status) { status.textContent = '✓ Datos encontrados: se autorrellenaron sus formularios con la información de sus envíos anteriores.'; status.className = 'text-xs font-bold text-emerald-600'; }
+                    return true;
                 }
+                // No coincide: se llena a mano, sin mensajes que estorben.
+                if (status) status.textContent = '';
+                return false;
+            } catch(e) {
+                console.error(e);
+                if (status) status.textContent = '';
+                return false;
+            }
+        }
+
+        // Paso 1: ¿hay envíos anteriores con este documento? Se dispara al escribir
+        // la cédula/NIT o la placa. Si el reto ya se superó con este documento (por
+        // ejemplo, cambió la placa), repite el paso 2 con la misma respuesta.
+        async function doLookup(){
+            const status = $('autofill-status');
+            const { key, placa } = docLookupActual();
+            if (!status || key.length < 4) return; // se dispara solo con documento suficiente
+            if (state.reto && state.reto.key === key) {
+                if (state.reto.valor) await recuperarDatos(key, placa, state.reto.valor);
+                return; // o el reto ya está en pantalla esperando la respuesta
+            }
+            // Otro documento: lo recuperado del anterior ya no aplica.
+            if (state.reto && state.reto.valor) { state.reto = null; state.prev = null; }
+            ocultarReto();
+            status.textContent = 'Buscando sus datos anteriores...'; status.className = 'text-xs font-semibold text-gray-500';
+            try {
+                const { data, error } = await supabase.functions.invoke('documental-lookup', { body: { cedula:key } });
+                if (error) throw error;
+                if (docLookupActual().key !== key) return;    // cambió el documento mientras tanto
+                status.textContent = '';
+                if (data && data.exists === true && (data.masked_phone || data.masked_email)) mostrarReto(key, data);
+                // Sin registros previos: no molestar con mensajes, es un usuario nuevo.
             } catch(e) {
                 console.error(e);
                 // Falla silenciosa: el autorrellenado es una ayuda, no debe estorbar.
